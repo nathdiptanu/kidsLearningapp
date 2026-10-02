@@ -1,0 +1,7 @@
+{
+  "productionReady": false,
+  "status": "engineering_original",
+  "count": 24,
+  "note": "Sticker pictures are original drawings painted in sticker_glyph.dart. They are not third-party stock, not paid items, and not approved as final production art. Unlock rules live in reward_catalog.dart.",
+  "license": "Original to this project."
+}

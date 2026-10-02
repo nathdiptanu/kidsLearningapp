@@ -1,0 +1,52 @@
+name: sproutlab
+description: "SproutLab temporary codename. Offline-first kids learning app."
+publish_to: 'none'
+version: 0.1.2+3
+
+environment:
+  sdk: ^3.13.4
+
+dependencies:
+  audioplayers: ^6.5.0
+  drift: ^2.35.0
+  flutter:
+    sdk: flutter
+  flutter_riverpod: ^3.4.3
+  # Official Flutter plugin. Android uses Google Play Billing Library 8.
+  in_app_purchase: ^3.3.0
+  in_app_purchase_android: ^0.5.0
+  path: ^1.9.1
+  path_provider: ^2.1.6
+  sqlite3: ^3.5.2
+  # Parent Premium screen opens the Play subscription page. No child UI uses it.
+  url_launcher: ^6.3.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  drift_dev: ^2.35.0
+  build_runner: ^2.16.1
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/content/pack_manifest.json
+    - assets/content/illustration_provenance.json
+    - assets/content/sticker_provenance.json
+    - assets/content/audio_provenance.json
+    - assets/audio/
+    - assets/brand/sproutlab_fox.png
+    - assets/art/
+  # Nunito, SIL Open Font License 1.1. See assets/fonts/Nunito-OFL.txt.
+  fonts:
+    - family: Nunito
+      fonts:
+        - asset: assets/fonts/Nunito-400.ttf
+          weight: 400
+        - asset: assets/fonts/Nunito-600.ttf
+          weight: 600
+        - asset: assets/fonts/Nunito-700.ttf
+          weight: 700
+        - asset: assets/fonts/Nunito-800.ttf
+          weight: 800

@@ -1,0 +1,16 @@
+{
+  "productionReady": false,
+  "status": "engineering_original",
+  "format": "WAV PCM 16 kHz mono",
+  "files": [
+    "assets/audio/tap.wav",
+    "assets/audio/correct.wav",
+    "assets/audio/retry.wav",
+    "assets/audio/complete.wav",
+    "assets/audio/reward.wav",
+    "assets/audio/music.wav"
+  ],
+  "license": "Original to this project. Synthesized by tool/write_audio_assets.dart. No third-party music, no stock library, and no narration.",
+  "note": "Temporary synthesized tones, not studio production audio. The preferred shipping format is OGG Vorbis. These files stay WAV because this machine has no OGG encoder. Effects are under 15 KB each. The music loop is about 250 KB. Total bundled audio is about 305 KB, under the 15 MB guidance. No pronunciation clips are included.",
+  "narration": "None. The spoken-instructions switch is saved and plays nothing."
+}

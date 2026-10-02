@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Splash for Android 11 and lower. Android 12+ uses the system splash in values-v31. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@color/brand_background" />
+    <item>
+        <bitmap
+            android:gravity="center"
+            android:src="@drawable/launch_brand" />
+    </item>
+</layer-list>

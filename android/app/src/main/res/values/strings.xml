@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Temporary visible name. Keep in sync with AppIdentity.visibleName. -->
+    <string name="app_name">SproutLab</string>
+</resources>
