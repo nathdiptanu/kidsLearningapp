@@ -10,14 +10,14 @@ Pushed to `origin/main` on 3 October 2026. App version `0.1.2+3`. `flutter test 
 |---|---|
 | Remote | `origin` → `https://github.com/nathdiptanu/kidsLearningapp.git` |
 | Branch | `main` |
-| Commit | `REPLACE_AFTER_COMMIT` |
+| Commit | `34801ddaf46194aaa03f8643440ae1218dd3fd62` |
 | Date | 3 October 2026 |
 
 Restore this snapshot:
 
 ```text
 git fetch origin
-git checkout REPLACE_AFTER_COMMIT
+git checkout 34801ddaf46194aaa03f8643440ae1218dd3fd62
 ```
 
 If `main` has moved and you only want this file’s commit:
