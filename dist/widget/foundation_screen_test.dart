@@ -16,7 +16,9 @@ import 'package:sproutlab/data/repositories/drift_settings_repository.dart';
 import 'package:sproutlab/domain/games/play/activity_catalog.dart';
 import 'package:sproutlab/domain/models/age_band.dart';
 import 'package:sproutlab/domain/models/game_category.dart';
+import 'package:sproutlab/domain/regional/learning_preferences.dart';
 import 'package:sproutlab/domain/settings/local_settings.dart';
+import 'package:sproutlab/features/explore/explore_screen.dart';
 import 'package:sproutlab/features/play/activity_screen.dart';
 
 void main() {
@@ -27,7 +29,7 @@ void main() {
     addTearDown(database.close);
     await tester.pumpWidget(_app(database));
     await tester.pumpAndSettle();
-    expect(find.text(AppIdentity.visibleName), findsOneWidget);
+    expect(find.text(AppIdentity.visibleName), findsWidgets);
     expect(find.text('Saved on this device'), findsOneWidget);
     expect(find.textContaining('199'), findsNothing);
     expect(find.textContaining('₹'), findsNothing);
@@ -42,6 +44,10 @@ void main() {
     await tester.pumpWidget(_app(database));
     await tester.pumpAndSettle();
     await _tapContinue(tester);
+    await _tapContinue(tester);
+    expect(find.text('Choose which learning activities to show.'), findsOne);
+    await tester.tap(find.text(LearningRegion.other.label));
+    await tester.pumpAndSettle();
     await _tapContinue(tester);
     await tester.tap(find.text('Ages 4-5'));
     await tester.pumpAndSettle();
@@ -58,6 +64,9 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Hello!'), findsOneWidget);
     expect(find.text('Learning through short daily activities.'), findsNothing);
+    final saved = await DriftSettingsRepository(database).load();
+    expect(saved.learningRegion, LearningRegion.other);
+    expect(saved.onboardingComplete, isTrue);
   });
 
   testWidgets('a maths activity can be missed, hinted and finished once', (
@@ -133,34 +142,34 @@ void main() {
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
     expect(find.text('Hello, Asha!'), findsOneWidget);
-    expect(find.text('0 of 5 activities'), findsOneWidget);
-    expect(find.text('Start today\'s adventure'), findsOneWidget);
-    await tester.tap(find.text('Explore'));
+    expect(find.text('0 of 5 activities complete'), findsOneWidget);
+    expect(find.text('Start adventure'), findsOneWidget);
+    await tester.tap(_navigation('Explore'));
     await tester.pumpAndSettle();
-    await tester.scrollUntilVisible(find.text('Addition'), 200);
-    await tester.tap(find.text('Addition'));
+    await tester.tap(find.text('Maths'));
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
-    await tester.tap(find.byIcon(Icons.close));
+    await tester.tap(find.byType(LevelCard).first);
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    await tester.tap(find.byIcon(Icons.close_rounded));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Leave'));
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
-    await tester.tap(find.text('Explore'));
+    expect(find.byType(LevelCard), findsWidgets);
+    await tester.pageBack();
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
-    await tester.scrollUntilVisible(find.text('A short path'), 300);
-    expect(find.text('A short path'), findsOneWidget);
-    await tester.scrollUntilVisible(find.text('Tic-Tac-Toe'), 300);
-    expect(find.text('Tic-Tac-Toe'), findsOneWidget);
+    await tester.scrollUntilVisible(find.text('Logic'), 300);
+    expect(find.text('Logic'), findsOneWidget);
     await tester.scrollUntilVisible(find.text('Knowledge'), 300);
     expect(find.text('Knowledge'), findsOneWidget);
-    await tester.tap(find.text('Rewards'));
+    await tester.scrollUntilVisible(find.text('Tic-Tac-Toe'), 300);
+    expect(find.text('Tic-Tac-Toe'), findsOneWidget);
+    await tester.tap(_navigation('Rewards'));
     await tester.pumpAndSettle();
-    expect(
-      find.text('No stars yet. Stars are saved when an activity is finished.'),
-      findsOneWidget,
-    );
+    expect(find.text('No stars yet'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
@@ -251,7 +260,16 @@ Widget _app(AppDatabase database) {
   );
 }
 
+Finder _navigation(String label) {
+  return find.descendant(
+    of: find.byType(NavigationBar),
+    matching: find.text(label),
+  );
+}
+
 Future<void> _tapContinue(WidgetTester tester) async {
-  await tester.tap(find.text('Continue'));
+  await tester.ensureVisible(find.text('Next'));
+  await tester.pumpAndSettle();
+  await tester.tap(find.text('Next'));
   await tester.pumpAndSettle();
 }

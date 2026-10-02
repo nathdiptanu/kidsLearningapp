@@ -19,7 +19,23 @@ class SilentAudioController implements AudioController {
   Future<void> playEffect(SoundEffect effect) async {}
 
   @override
-  Future<void> playNarration(String clipId) async {}
+  String? get lastNarrationId => null;
+
+  @override
+  Future<NarrationPlayResult> playNarration(
+    String clipId, {
+    String? assetPath,
+  }) async {
+    return NarrationPlayResult.missing;
+  }
+
+  @override
+  Future<NarrationPlayResult> replayNarration() async {
+    return NarrationPlayResult.missing;
+  }
+
+  @override
+  Future<void> stopNarration() async {}
 
   @override
   Future<void> applySettings({

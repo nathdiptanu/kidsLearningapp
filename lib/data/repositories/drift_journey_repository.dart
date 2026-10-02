@@ -3,8 +3,14 @@ import 'package:drift/drift.dart';
 import '../../../domain/adaptive/daily_journey_planner.dart';
 import '../../../domain/adaptive/local_date.dart';
 import '../../../domain/games/play/activity_catalog.dart';
+import '../../../domain/learning/item_progress.dart';
+import '../../../domain/learning/learning_candidate.dart';
+import '../../../domain/learning/learning_index.dart';
+import '../../../domain/lessons/lesson_models.dart';
 import '../../../domain/models/child_profile.dart';
 import '../../../domain/progress/activity_record.dart';
+import '../../../domain/regional/regional_availability.dart';
+import '../../../domain/settings/local_settings.dart';
 import '../local/database/app_database.dart' hide ChildProfile;
 
 class JourneySlotView {
@@ -86,6 +92,8 @@ class DriftJourneyRepository {
     required List<ActivityRecord> records,
     required DateTime now,
     bool premiumActive = false,
+    LocalSettings? settings,
+    List<LearningItemSnapshot> itemProgress = const [],
   }) async {
     final dateKey = localDateKey(now);
     final existing = await _load(profile.id, dateKey, records);
@@ -93,12 +101,20 @@ class DriftJourneyRepository {
       return existing;
     }
     final difficulties = await skillDifficulties(profile.id);
+    final regional = _regionalCandidates(
+      settings: settings,
+      profile: profile,
+      itemProgress: itemProgress,
+    );
     final plan = _planner.plan(
       dateKey: dateKey,
       band: profile.ageBand,
       records: records,
       difficultyBySkill: difficulties,
       premiumActive: premiumActive,
+      readiness: profile.readiness,
+      regionalCandidates: regional,
+      itemProgress: itemProgress,
     );
     await _database.transaction(() async {
       final again = await _load(profile.id, dateKey, records);
@@ -221,6 +237,27 @@ class DriftJourneyRepository {
               stars: item.done ? _stars(records, item.activityId) : 0,
             ),
       ],
+    );
+  }
+
+  List<LearningCandidate> _regionalCandidates({
+    required LocalSettings? settings,
+    required ChildProfile profile,
+    required List<LearningItemSnapshot> itemProgress,
+  }) {
+    if (settings == null ||
+        RegionalAvailability.available(settings).isEmpty) {
+      return const [];
+    }
+    return LearningIndex().visible(
+      settings: settings,
+      band: profile.ageBand,
+      readiness: profile.readiness,
+      includeDrafts: includeDevelopmentSamples(),
+      introducedItemIds: {
+        for (final row in itemProgress)
+          if (row.hasBeenIntroduced) row.itemId,
+      },
     );
   }
 

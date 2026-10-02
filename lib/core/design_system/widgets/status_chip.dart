@@ -27,17 +27,17 @@ class StatusChip extends StatelessWidget {
       StatusTone.inProgress => (
         SproutColors.englishSurface,
         SproutColors.accent,
-        Icons.timelapse,
+        Icons.timelapse_rounded,
       ),
       StatusTone.done => (
         SproutColors.successSoft,
         SproutColors.success,
-        Icons.check_circle,
+        Icons.check_circle_rounded,
       ),
       StatusTone.locked => (
         SproutColors.disabledFill,
         SproutColors.lock,
-        Icons.lock,
+        Icons.lock_rounded,
       ),
       StatusTone.info => (
         SproutColors.surface,

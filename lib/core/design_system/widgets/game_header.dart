@@ -84,7 +84,12 @@ class GameHeader extends StatelessWidget {
                     children: [
                       Text(
                         title,
-                        style: text.titleMedium,
+                        style: text.titleMedium?.copyWith(
+                          height: containsDevanagari(title)
+                              ? SproutType.devanagariHeight
+                              : null,
+                          fontFamilyFallback: SproutType.fallback,
+                        ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),

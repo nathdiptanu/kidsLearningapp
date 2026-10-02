@@ -83,7 +83,7 @@ class ChildBottomNavigation extends StatelessWidget {
           ),
           NavigationDestination(
             icon: Icon(Icons.explore_outlined),
-            selectedIcon: Icon(Icons.explore),
+            selectedIcon: Icon(Icons.explore_rounded),
             label: 'Explore',
           ),
           NavigationDestination(

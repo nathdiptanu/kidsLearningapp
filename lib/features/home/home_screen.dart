@@ -213,7 +213,7 @@ class _JourneyHero extends StatelessWidget {
                   children: [
                     const ExcludeSemantics(
                       child: Icon(
-                        Icons.check_circle,
+                        Icons.check_circle_rounded,
                         color: SproutColors.success,
                         size: 32,
                       ),
@@ -234,7 +234,7 @@ class _JourneyHero extends StatelessWidget {
               alignment: Alignment.centerLeft,
               child: PrimaryKidButton(
                 label: done == 0 ? 'Start adventure' : 'Continue adventure',
-                trailingIcon: Icons.chevron_right,
+                trailingIcon: Icons.chevron_right_rounded,
                 onPressed: onStart,
               ),
             ),

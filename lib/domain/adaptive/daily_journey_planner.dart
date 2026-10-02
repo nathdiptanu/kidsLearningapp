@@ -1,8 +1,12 @@
 import '../games/play/activity_catalog.dart';
 import '../games/play/activity_definition.dart';
 import '../games/play/activity_skill.dart';
+import '../learning/item_progress.dart';
+import '../learning/learning_candidate.dart';
+import '../learning/session_planner.dart';
 import '../models/age_band.dart';
 import '../models/game_category.dart';
+import '../models/readiness.dart';
 import '../monetization/free_entitlement_policy.dart';
 import '../progress/activity_record.dart';
 import 'local_date.dart';
@@ -27,6 +31,9 @@ class DailyJourneyPlanner {
     required List<ActivityRecord> records,
     required Map<String, int> difficultyBySkill,
     bool premiumActive = false,
+    Readiness readiness = Readiness.steady,
+    List<LearningCandidate> regionalCandidates = const [],
+    List<LearningItemSnapshot> itemProgress = const [],
   }) {
     final seed = dateSeed(dateKey);
     final logic = seed.isEven ? GameCategory.pattern : GameCategory.maze;
@@ -57,15 +64,43 @@ class DailyJourneyPlanner {
         PlannedActivity(activity: picked, role: JourneyRole.current),
       );
     }
+    ActivityDefinition? regionalReview;
+    if (regionalCandidates.isNotEmpty) {
+      final session = const LearningSessionPlanner().plan(
+        band: band,
+        readiness: readiness,
+        candidates: regionalCandidates,
+        progress: itemProgress,
+        records: records,
+      );
+      PlannedActivity? regionalFresh;
+      for (final slot in session) {
+        if (slot.role == JourneyRole.current && regionalFresh == null) {
+          regionalFresh = slot;
+        }
+        if (slot.role == JourneyRole.review && regionalReview == null) {
+          regionalReview = slot.activity;
+        }
+      }
+      if (regionalFresh != null) {
+        used.remove(currentSlots.last.activity.id);
+        used.add(regionalFresh.activity.id);
+        currentSlots[currentSlots.length - 1] = PlannedActivity(
+          activity: regionalFresh.activity,
+          role: JourneyRole.current,
+        );
+      }
+    }
     final reviewDifficulty = _difficulty(difficultyBySkill, otherLogic, band);
-    final reviewPick = _confidencePick(
-      category: otherLogic,
-      difficulty: reviewDifficulty,
-      records: records,
-      premiumActive: premiumActive,
-      used: used,
-      band: band,
-    );
+    final reviewPick = regionalReview ??
+        _confidencePick(
+          category: otherLogic,
+          difficulty: reviewDifficulty,
+          records: records,
+          premiumActive: premiumActive,
+          used: used,
+          band: band,
+        );
     used.add(reviewPick.id);
     final review = PlannedActivity(
       activity: reviewPick,

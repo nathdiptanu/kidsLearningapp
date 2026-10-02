@@ -18,8 +18,8 @@ void main() {
     await database.close();
   });
 
-  test('schema version is 7', () {
-    expect(database.schemaVersion, 7);
+  test('schema version is 9', () {
+    expect(database.schemaVersion, 9);
   });
 
   test('one profile can be saved and read back', () async {

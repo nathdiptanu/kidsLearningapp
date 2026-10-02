@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/design_system/feedback_copy.dart';
+import '../../core/design_system/learning_area.dart';
 import '../../core/design_system/sprout_tokens.dart';
 import '../../core/design_system/widgets/choice_card.dart';
 import '../../core/design_system/widgets/feedback_overlay.dart';
@@ -275,7 +276,7 @@ class _ActivityScreenState extends ConsumerState<ActivityScreen>
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             GameHeader(
-                              title: widget.activity.title,
+                              title: activityHeaderTitle(widget.activity),
                               activity: widget.activity,
                               onClose: _requestLeave,
                               progress:
@@ -292,9 +293,7 @@ class _ActivityScreenState extends ConsumerState<ActivityScreen>
                                 children: [
                                   Text(
                                     question.prompt,
-                                    style: Theme.of(
-                                      context,
-                                    ).textTheme.headlineMedium,
+                                    style: Theme.of(context).textTheme.titleLarge,
                                   ),
                                   if (question.promptVisuals.isNotEmpty) ...[
                                     const SizedBox(height: SproutSpace.md),
@@ -390,7 +389,7 @@ class _HintBanner extends StatelessWidget {
           padding: const EdgeInsets.all(SproutSpace.md),
           child: Row(
             children: [
-              const Icon(Icons.lightbulb_outline, color: SproutColors.accent),
+              const Icon(Icons.lightbulb_outline_rounded, color: SproutColors.accent),
               const SizedBox(width: SproutSpace.sm),
               Expanded(
                 child: Text(

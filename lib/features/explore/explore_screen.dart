@@ -11,16 +11,21 @@ import '../../core/design_system/widgets/category_card.dart';
 import '../../core/design_system/widgets/fox_mascot.dart';
 import '../../core/design_system/widgets/sprout_card.dart';
 import '../../core/design_system/widgets/status_chip.dart';
+import '../../domain/lessons/lesson_models.dart';
 import '../../domain/games/play/activity_catalog.dart';
+import '../lessons/lesson_list.dart';
 import '../../domain/games/play/activity_definition.dart';
 import '../../domain/models/age_band.dart';
 import '../../domain/models/game_category.dart';
 import '../../domain/monetization/free_entitlement_policy.dart';
 import '../../domain/monetization/monetization_config.dart';
 import '../../domain/progress/activity_record.dart';
+import '../../domain/regional/regional_availability.dart';
 import '../../features/play/activity_access.dart';
 import '../../features/play/open_activity.dart';
 import '../home/home_screen.dart';
+import '../regional/regional_module_screen.dart';
+import '../regional/regional_module_style.dart';
 
 class ExploreScreen extends ConsumerWidget {
   const ExploreScreen({super.key});
@@ -34,6 +39,7 @@ class ExploreScreen extends ConsumerWidget {
     final progress = ref.watch(progressListProvider).value ?? const [];
     final band = profile.ageBand;
     final replayable = progress.where((record) => record.completed).length;
+    final regional = ref.watch(regionalModulesProvider);
     final text = Theme.of(context).textTheme;
     return SafeArea(
       bottom: false,
@@ -56,7 +62,7 @@ class ExploreScreen extends ConsumerWidget {
                   children: [
                     Semantics(
                       header: true,
-                      child: Text('Explore', style: text.headlineLarge),
+                      child: Text('Explore', style: text.headlineMedium),
                     ),
                     const SizedBox(height: SproutSpace.xs),
                     Text(
@@ -68,7 +74,7 @@ class ExploreScreen extends ConsumerWidget {
                     const SizedBox(height: 12),
                     StatusChip(
                       label: 'Ages ${band.label}',
-                      icon: Icons.child_care,
+                      icon: Icons.child_care_rounded,
                     ),
                   ],
                 ),
@@ -91,6 +97,19 @@ class ExploreScreen extends ConsumerWidget {
                       builder: (context) => CategoryScreen(area: area),
                     ),
                   ),
+                ),
+              for (final module in regional)
+                CategoryCard(
+                  title: module.title,
+                  subtitle: module.subtitle,
+                  art: module.art,
+                  tint: module.tint,
+                  scriptSample: module.scriptSample,
+                  scriptColor: module.mark,
+                  footnote: includeDevelopmentSamples()
+                      ? 'Development samples'
+                      : 'Coming soon',
+                  onTap: () => openRegionalModule(context, ref, module),
                 ),
             ],
           ),
@@ -232,7 +251,7 @@ class CategoryScreen extends ConsumerWidget {
                           const SizedBox(height: SproutSpace.sm),
                           StatusChip(
                             label: 'Ages ${profile.ageBand.label}',
-                            icon: Icons.child_care,
+                            icon: Icons.child_care_rounded,
                           ),
                         ],
                       ),
@@ -262,6 +281,16 @@ class CategoryScreen extends ConsumerWidget {
               ),
             ),
           ],
+          if (area == LearningArea.english)
+            SliverPadding(
+              padding: pad,
+              sliver: SliverToBoxAdapter(
+                child: LessonLane(
+                  title: 'Letters and sounds',
+                  lessons: englishLetterLessonsForSession(ref),
+                ),
+              ),
+            ),
           const SliverToBoxAdapter(child: SizedBox(height: SproutSpace.xl)),
         ],
       ),
@@ -372,6 +401,19 @@ class LevelCard extends StatelessWidget {
   }
 }
 
+bool _replayVisible(
+  ActivityDefinition activity,
+  List<RegionalModule> modules,
+) {
+  if (activity.category == GameCategory.hindi) {
+    return modules.contains(RegionalModule.hindi);
+  }
+  if (activity.category == GameCategory.discoverIndia) {
+    return modules.contains(RegionalModule.discoverIndia);
+  }
+  return true;
+}
+
 /// Finished activities that can be replayed, newest first.
 class PlayAgainScreen extends ConsumerWidget {
   const PlayAgainScreen({super.key});
@@ -382,11 +424,16 @@ class PlayAgainScreen extends ConsumerWidget {
     final premium = ref.watch(premiumActiveProvider);
     final started = ref.watch(startedActivityIdsProvider).value ?? const {};
     const catalog = ActivityCatalog();
+    final settings = ref.watch(sessionProvider).value?.settings;
+    final modules = settings == null
+        ? const <RegionalModule>[]
+        : RegionalAvailability.available(settings);
     final finished = progress.where((record) => record.completed).toList()
       ..sort((a, b) => b.lastPlayedAt.compareTo(a.lastPlayedAt));
     final decisions = <ActivityAccess>[
       for (final record in finished)
         if (catalog.byId(record.activityId) case final activity?)
+          if (_replayVisible(activity, modules))
           accessFor(
             activity: activity,
             records: progress,
@@ -402,8 +449,7 @@ class PlayAgainScreen extends ConsumerWidget {
               children: const [
                 EmptyState(
                   title: 'Nothing to play again yet',
-                  message:
-                      'When you finish an activity, it shows up here so you can play it again.',
+                  message: 'When you finish an activity, it shows up here so you can play it again.',
                 ),
               ],
             )

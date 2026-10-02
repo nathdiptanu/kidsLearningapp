@@ -3,6 +3,11 @@ import 'package:drift/drift.dart';
 import '../../../domain/adaptive/skill_adaptation.dart';
 import '../../../domain/games/play/activity_skill.dart';
 import '../../../domain/games/play/play_checkpoint.dart';
+import '../../../domain/geography/geography_catalog.dart';
+import '../../../domain/heritage/heritage_catalog.dart';
+import '../../../domain/learning/item_progress.dart';
+import '../../../domain/learning/learning_index.dart';
+import '../../../domain/lessons/lesson_catalog.dart';
 import '../../../domain/models/age_band.dart';
 import '../../../domain/models/game_category.dart';
 import '../../../domain/games/play/generated_instance.dart';
@@ -48,6 +53,7 @@ class DriftProgressRepository {
     required bool firstAttemptCorrect,
     required int stars,
     required bool premiumActive,
+    bool countTowardFree = true,
     int? nowMillis,
     String? generatorType,
     String? generatorVersion,
@@ -95,6 +101,13 @@ class DriftProgressRepository {
           outcome: outcome,
           now: now,
         );
+        await _recordItemPractice(
+          profileId: profileId,
+          activityId: activityId,
+          hintsUsed: hintsUsed,
+          firstAttemptCorrect: firstAttemptCorrect,
+          now: now,
+        );
         return _finishSave(
           profileId: profileId,
           activityId: activityId,
@@ -117,6 +130,7 @@ class DriftProgressRepository {
         uniqueFreeLevelsCompleted: freeCount,
       );
       final countsAsFree =
+          countTowardFree &&
           !premiumActive &&
           access == LevelAccess.playNew &&
           freeCount < MonetizationConfig.freeCompletedLevelsPerGame;
@@ -181,6 +195,13 @@ class DriftProgressRepository {
         score: score,
         stars: stars,
         outcome: outcome,
+        now: now,
+      );
+      await _recordItemPractice(
+        profileId: profileId,
+        activityId: activityId,
+        hintsUsed: hintsUsed,
+        firstAttemptCorrect: firstAttemptCorrect,
         now: now,
       );
       await _rememberInstance(
@@ -253,6 +274,13 @@ class DriftProgressRepository {
             earnedAt: now,
           ),
         );
+  }
+
+  Future<List<LearningItemSnapshot>> listItemProgress(int profileId) async {
+    final rows = await (_database.select(
+      _database.learningItemProgress,
+    )..where((table) => table.profileId.equals(profileId))).get();
+    return rows.map(_mapItem).toList();
   }
 
   Future<int> levelBadgeCount(int profileId) async {
@@ -365,6 +393,96 @@ class DriftProgressRepository {
             recentActivityIds: Value(next.recentActivityIds.join(',')),
           ),
         );
+  }
+
+  Future<void> _recordItemPractice({
+    required int profileId,
+    required String activityId,
+    required int hintsUsed,
+    required bool firstAttemptCorrect,
+    required int now,
+  }) async {
+    final mapped = LearningIndex().candidate(activityId, AgeBand.c);
+    if (mapped == null) {
+      return;
+    }
+    const rules = ItemPracticeRules();
+    final existing =
+        await (_database.select(_database.learningItemProgress)..where(
+              (table) =>
+                  table.profileId.equals(profileId) &
+                  table.itemId.equals(mapped.itemId) &
+                  table.mode.equals(mapped.mode.name),
+            ))
+            .getSingleOrNull();
+    final current = existing == null
+        ? rules.empty(mapped.itemId, mapped.mode)
+        : _mapItem(existing);
+    final unaided = firstAttemptCorrect && hintsUsed == 0;
+    final next = rules.apply(
+      current: current,
+      attempt: ItemAttempt(
+        completed: true,
+        unaided: unaided,
+        hinted: hintsUsed > 0,
+        assisted: hintsUsed > 0,
+        recalled: mapped.mode == PracticeMode.recall && unaided,
+        nowMillis: now,
+        contentVersion: _contentVersion(activityId),
+      ),
+    );
+    await _database
+        .into(_database.learningItemProgress)
+        .insertOnConflictUpdate(
+          LearningItemProgressCompanion.insert(
+            profileId: profileId,
+            itemId: next.itemId,
+            mode: next.mode.name,
+            contentVersion: Value(next.contentVersion),
+            attempts: Value(next.attempts),
+            correct: Value(next.correct),
+            unaidedCorrect: Value(next.unaidedCorrect),
+            hintsUsed: Value(next.hintsUsed),
+            assisted: Value(next.assisted),
+            recalledCount: Value(next.recalledCount),
+            firstCompletedAt: Value(next.firstCompletedAt),
+            lastCompletedAt: Value(next.lastCompletedAt),
+            lastSeenAt: next.lastSeenAt,
+            status: Value(next.status.name),
+          ),
+        );
+  }
+
+  LearningItemSnapshot _mapItem(LearningItemProgressData row) {
+    return LearningItemSnapshot(
+      itemId: row.itemId,
+      mode: PracticeMode.values.byName(row.mode),
+      contentVersion: row.contentVersion,
+      attempts: row.attempts,
+      correct: row.correct,
+      unaidedCorrect: row.unaidedCorrect,
+      hintsUsed: row.hintsUsed,
+      assisted: row.assisted,
+      recalledCount: row.recalledCount,
+      status: ItemPracticeStatus.values.byName(row.status),
+      firstCompletedAt: row.firstCompletedAt,
+      lastCompletedAt: row.lastCompletedAt,
+      lastSeenAt: row.lastSeenAt,
+    );
+  }
+
+  int _contentVersion(String activityId) {
+    final lesson = LessonCatalog().byId(activityId);
+    if (lesson != null) {
+      return lesson.packVersion;
+    }
+    if (activityId.startsWith('geo:')) {
+      return GeographyCatalog().pack.contentVersion;
+    }
+    if (activityId.startsWith('heritage:')) {
+      return HeritageCatalog().pack.contentVersion;
+    }
+    return 1;
   }
 
   List<String> _csv(String value) {

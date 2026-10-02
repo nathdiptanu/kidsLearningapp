@@ -129,6 +129,53 @@ BoardCheckpoint? parseBoardCheckpoint(
   );
 }
 
+String lessonCheckpointPayload({
+  required String lessonId,
+  required int strokeIndex,
+  required bool assisted,
+  required bool accepted,
+  required int wrong,
+  required int hints,
+  required List<String> placed,
+}) {
+  return 'v=$checkpointPayloadVersion;kind=lesson;id=$lessonId;stroke=$strokeIndex;assisted=${assisted ? 1 : 0};accepted=${accepted ? 1 : 0};wrong=$wrong;hints=$hints;placed=${placed.join('|')}';
+}
+
+({
+  int strokeIndex,
+  bool assisted,
+  bool accepted,
+  int wrong,
+  int hints,
+  List<String> placed,
+})?
+parseLessonCheckpoint(String payload, {required String lessonId}) {
+  final fields = _fields(payload);
+  if (fields == null ||
+      fields['v'] != '$checkpointPayloadVersion' ||
+      fields['kind'] != 'lesson' ||
+      fields['id'] != lessonId) {
+    return null;
+  }
+  final stroke = int.tryParse(fields['stroke'] ?? '');
+  final wrong = int.tryParse(fields['wrong'] ?? '');
+  final hints = int.tryParse(fields['hints'] ?? '');
+  if (stroke == null || wrong == null || hints == null) {
+    return null;
+  }
+  return (
+    strokeIndex: stroke,
+    assisted: fields['assisted'] == '1',
+    accepted: fields['accepted'] == '1',
+    wrong: wrong,
+    hints: hints,
+    placed: (fields['placed'] ?? '')
+        .split('|')
+        .where((id) => id.isNotEmpty)
+        .toList(),
+  );
+}
+
 Map<String, String>? _fields(String payload) {
   if (payload.trim().isEmpty) {
     return null;

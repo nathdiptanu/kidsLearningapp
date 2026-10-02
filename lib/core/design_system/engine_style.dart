@@ -13,6 +13,8 @@ Color engineColor(GameCategory category) {
     GameCategory.findDifference => SproutColors.difference,
     GameCategory.knowledge => SproutColors.knowledge,
     GameCategory.ticTacToe => SproutColors.logic,
+    GameCategory.hindi => SproutColors.hindi,
+    GameCategory.discoverIndia => SproutColors.india,
   };
 }
 
@@ -26,6 +28,8 @@ Color sectionSurface(GameCategory category) {
     GameCategory.matching ||
     GameCategory.findDifference => SproutColors.observationSurface,
     GameCategory.knowledge => SproutColors.knowledgeSurface,
+    GameCategory.hindi => SproutColors.hindiSurface,
+    GameCategory.discoverIndia => SproutColors.indiaSurface,
   };
 }
 
@@ -149,6 +153,25 @@ class _EngineMarkPainter extends CustomPainter {
             ),
             Radius.circular(size.width * 0.08),
           ),
+          stroke,
+        );
+      case GameCategory.hindi:
+        canvas.drawRRect(
+          RRect.fromRectAndRadius(
+            Rect.fromLTWH(
+              size.width * 0.18,
+              size.height * 0.22,
+              size.width * 0.64,
+              size.height * 0.56,
+            ),
+            Radius.circular(size.width * 0.1),
+          ),
+          stroke,
+        );
+      case GameCategory.discoverIndia:
+        canvas.drawCircle(
+          Offset(size.width * 0.5, size.height * 0.5),
+          size.width * 0.28,
           stroke,
         );
       case GameCategory.ticTacToe:

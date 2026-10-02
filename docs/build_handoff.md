@@ -28,6 +28,7 @@ Both files were built from the clean copy `AppData\Local\Temp\sproutlab-apk` and
 - Package `com.sproutlab.kids`, versionName `0.1.2`, versionCode `3`
 - Checks: `flutter analyze` no issues; `flutter test` 72 passed, including `test/screen_smoke_test.dart`, which renders Home, Explore, Rewards, Play again, every category page and the completion summary on 320 dp and 411 dp phones, a 800 dp tablet, at 2× text, and with no saved progress, failing on any layout overflow or exception
 - Not run: emulator or device install, TalkBack, Play Billing sandbox. No new store screenshots were taken
+- Later finding (3 October 2026): `flutter test` covers only `test/`. The 21 files in `dist/` were not run for these builds. Run on 3 October with `flutter test test dist`: 4 outdated copy expectations and one debug-only `ListTile` assertion in `SproutCard` were found and fixed; 164 tests pass. See `docs/india-learning-implementation-status.md` section 5
 
 ## Release bundle (0.1.0)
 

@@ -2,10 +2,12 @@ import 'package:drift/drift.dart';
 
 import '../../domain/adaptive/local_date.dart';
 import '../../domain/games/play/activity_catalog.dart';
+import '../../domain/learning/learning_notes.dart';
 import '../../domain/parent/parent_report.dart';
 import '../../domain/rewards/reward_catalog.dart';
 import '../../domain/rewards/reward_snapshot.dart';
 import '../local/database/app_database.dart';
+import 'drift_progress_repository.dart';
 
 class DriftRewardRepository {
   DriftRewardRepository(this._database);
@@ -204,6 +206,9 @@ class DriftRewardRepository {
             playedAt: row.lastPlayedAt,
           ),
       ],
+      learningNotes: factualLearningNotes(
+        await DriftProgressRepository(_database).listItemProgress(profileId),
+      ),
     );
   }
 

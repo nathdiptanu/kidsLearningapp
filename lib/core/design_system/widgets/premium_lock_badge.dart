@@ -24,7 +24,7 @@ class PremiumLockBadge extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               const Icon(
-                Icons.lock,
+                Icons.lock_rounded,
                 color: SproutColors.lock,
                 size: SproutSize.parentIcon,
               ),

@@ -207,7 +207,7 @@ class _HoldGate extends StatelessWidget {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Icon(
-                                Icons.lock_outline,
+                                Icons.lock_outline_rounded,
                                 color: SproutColors.surface,
                                 size: 32,
                               ),

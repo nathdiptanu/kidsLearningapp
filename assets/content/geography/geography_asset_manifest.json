@@ -1,0 +1,102 @@
+{
+  "packId": "geography_dev_slice",
+  "schemaVersion": 1,
+  "contentVersion": 1,
+  "reviewStatus": "PLACEHOLDER",
+  "releaseIncluded": false,
+  "note": "Small Discover India slice only. Facts were checked against Know India on 2026-10-03 and still need an editorial review. Map geometry is Natural Earth 50m, public domain, simplified for child screens. This is not a Survey of India product and not a verified full catalogue of 28 states and 8 union territories.",
+  "assets": [
+    {
+      "id": "slice_geometry",
+      "kind": "map",
+      "originalUrl": "https://www.naturalearthdata.com/downloads/50m-cultural-vectors/",
+      "creator": "Natural Earth",
+      "license": "Public Domain (Natural Earth terms of use)",
+      "attribution": "Made with Natural Earth. Free vector and raster map data @ naturalearthdata.com.",
+      "modifications": "India extracted, projected to a 0-1 canvas, simplified with Ramer-Douglas-Peucker. Borders were not moved for decoration.",
+      "localFile": "assets/content/geography/slice_geometry.json",
+      "checksum": null,
+      "rightsReview": "pending_owner_and_geography_review",
+      "reviewStatus": "PLACEHOLDER",
+      "retrievedAt": "2026-10-03"
+    },
+    {
+      "id": "clip_geo_rajasthan",
+      "kind": "narration",
+      "originalUrl": null,
+      "creator": null,
+      "license": null,
+      "attribution": null,
+      "modifications": "Not created.",
+      "localFile": null,
+      "checksum": null,
+      "rightsReview": "pending",
+      "reviewStatus": "PLACEHOLDER"
+    },
+    {
+      "id": "clip_geo_kerala",
+      "kind": "narration",
+      "originalUrl": null,
+      "creator": null,
+      "license": null,
+      "attribution": null,
+      "modifications": "Not created.",
+      "localFile": null,
+      "checksum": null,
+      "rightsReview": "pending",
+      "reviewStatus": "PLACEHOLDER"
+    },
+    {
+      "id": "clip_geo_goa",
+      "kind": "narration",
+      "originalUrl": null,
+      "creator": null,
+      "license": null,
+      "attribution": null,
+      "modifications": "Not created.",
+      "localFile": null,
+      "checksum": null,
+      "rightsReview": "pending",
+      "reviewStatus": "PLACEHOLDER"
+    },
+    {
+      "id": "clip_geo_delhi",
+      "kind": "narration",
+      "originalUrl": null,
+      "creator": null,
+      "license": null,
+      "attribution": null,
+      "modifications": "Not created.",
+      "localFile": null,
+      "checksum": null,
+      "rightsReview": "pending",
+      "reviewStatus": "PLACEHOLDER"
+    }
+  ],
+  "facts": [
+    {
+      "id": "fact-rajasthan-west",
+      "sourceUrl": "https://knowindia.india.gov.in/states-uts/rajasthan.php",
+      "verifiedAt": "2026-10-03",
+      "reviewStatus": "PLACEHOLDER"
+    },
+    {
+      "id": "fact-kerala-coast",
+      "sourceUrl": "https://knowindia.india.gov.in/states-uts/kerala.php",
+      "verifiedAt": "2026-10-03",
+      "reviewStatus": "PLACEHOLDER"
+    },
+    {
+      "id": "fact-goa-west",
+      "sourceUrl": "https://knowindia.india.gov.in/states-uts/goa.php",
+      "verifiedAt": "2026-10-03",
+      "reviewStatus": "PLACEHOLDER"
+    },
+    {
+      "id": "fact-delhi-ut",
+      "sourceUrl": "https://knowindia.india.gov.in/states-uts/government-of-nct-of-delhi.php",
+      "verifiedAt": "2026-10-03",
+      "reviewStatus": "PLACEHOLDER"
+    }
+  ]
+}

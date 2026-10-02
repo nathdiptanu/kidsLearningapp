@@ -18,9 +18,9 @@ class FeedbackOverlay extends StatelessWidget {
       FeedbackKind.hint => FeedbackCopy.hint,
     };
     final icon = switch (kind) {
-      FeedbackKind.correct => Icons.star,
-      FeedbackKind.retry => Icons.refresh,
-      FeedbackKind.hint => Icons.lightbulb_outline,
+      FeedbackKind.correct => Icons.star_rounded,
+      FeedbackKind.retry => Icons.refresh_rounded,
+      FeedbackKind.hint => Icons.lightbulb_outline_rounded,
     };
     final color = switch (kind) {
       FeedbackKind.correct => SproutColors.success,

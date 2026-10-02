@@ -61,9 +61,9 @@ class ChoiceCard extends StatelessWidget {
                   ],
                   Icon(
                     highlighted
-                        ? Icons.lightbulb_outline
+                        ? Icons.lightbulb_outline_rounded
                         : selected
-                        ? Icons.check_circle
+                        ? Icons.check_circle_rounded
                         : Icons.circle_outlined,
                     color: highlighted
                         ? SproutColors.accent

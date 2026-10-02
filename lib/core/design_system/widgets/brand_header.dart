@@ -110,7 +110,7 @@ class ParentEntryButton extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.lock_outline, color: SproutColors.primary, size: 20),
+                  Icon(Icons.lock_outline_rounded, color: SproutColors.primary, size: 20),
                   SizedBox(width: SproutSpace.xs),
                   Text(
                     'Parents',

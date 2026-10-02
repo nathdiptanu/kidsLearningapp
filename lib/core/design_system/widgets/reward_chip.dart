@@ -25,7 +25,7 @@ class RewardChip extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               const Icon(
-                Icons.star,
+                Icons.star_rounded,
                 color: SproutColors.accent,
                 size: SproutSize.childIcon,
               ),

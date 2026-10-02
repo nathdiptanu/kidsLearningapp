@@ -1,0 +1,147 @@
+{
+  "packId": "heritage_dev_slice",
+  "schemaVersion": 1,
+  "contentVersion": 1,
+  "reviewStatus": "PLACEHOLDER",
+  "releaseIncluded": false,
+  "note": "Small Discover India heritage slice. Facts were checked against UNESCO and ASI pages on 2026-10-03 and still need an editorial review. Pictures are original in-app drawings, not photographs. No third-party monument photo is bundled or hotlinked. Hampi, Ajanta and Ellora were researched and left out of playable activities.",
+  "assets": [
+    {
+      "id": "heritage-sanchi",
+      "kind": "illustration",
+      "originalUrl": null,
+      "creator": "SproutLab engineering",
+      "license": "Original work for this project",
+      "attribution": "Drawn in the app. Not copied from a photo.",
+      "modifications": "Geometric stupa, railing and harmika for child recognition.",
+      "localFile": null,
+      "checksum": null,
+      "rightsReview": "pending_owner_and_art_review",
+      "reviewStatus": "PLACEHOLDER",
+      "retrievedAt": "2026-10-03"
+    },
+    {
+      "id": "heritage-konark",
+      "kind": "illustration",
+      "originalUrl": null,
+      "creator": "SproutLab engineering",
+      "license": "Original work for this project",
+      "attribution": "Drawn in the app. Not copied from a photo.",
+      "modifications": "Stepped roof and wheels for child recognition. Horse count omitted.",
+      "localFile": null,
+      "checksum": null,
+      "rightsReview": "pending_owner_and_art_review",
+      "reviewStatus": "PLACEHOLDER",
+      "retrievedAt": "2026-10-03"
+    },
+    {
+      "id": "heritage-mahabalipuram",
+      "kind": "illustration",
+      "originalUrl": null,
+      "creator": "SproutLab engineering",
+      "license": "Original work for this project",
+      "attribution": "Drawn in the app. Not copied from a photo.",
+      "modifications": "Two stone towers beside water.",
+      "localFile": null,
+      "checksum": null,
+      "rightsReview": "pending_owner_and_art_review",
+      "reviewStatus": "PLACEHOLDER",
+      "retrievedAt": "2026-10-03"
+    },
+    {
+      "id": "heritage-taj",
+      "kind": "illustration",
+      "originalUrl": null,
+      "creator": "SproutLab engineering",
+      "license": "Original work for this project",
+      "attribution": "Drawn in the app. Not copied from a photo.",
+      "modifications": "White dome and four thin towers for child recognition.",
+      "localFile": null,
+      "checksum": null,
+      "rightsReview": "pending_owner_and_art_review",
+      "reviewStatus": "PLACEHOLDER",
+      "retrievedAt": "2026-10-03"
+    },
+    {
+      "id": "clip_heritage_sanchi",
+      "kind": "narration",
+      "originalUrl": null,
+      "creator": null,
+      "license": null,
+      "attribution": null,
+      "modifications": "Not created.",
+      "localFile": null,
+      "checksum": null,
+      "rightsReview": "pending",
+      "reviewStatus": "PLACEHOLDER"
+    },
+    {
+      "id": "clip_heritage_konark",
+      "kind": "narration",
+      "originalUrl": null,
+      "creator": null,
+      "license": null,
+      "attribution": null,
+      "modifications": "Not created.",
+      "localFile": null,
+      "checksum": null,
+      "rightsReview": "pending",
+      "reviewStatus": "PLACEHOLDER"
+    },
+    {
+      "id": "clip_heritage_mahabalipuram",
+      "kind": "narration",
+      "originalUrl": null,
+      "creator": null,
+      "license": null,
+      "attribution": null,
+      "modifications": "Not created.",
+      "localFile": null,
+      "checksum": null,
+      "rightsReview": "pending",
+      "reviewStatus": "PLACEHOLDER"
+    },
+    {
+      "id": "clip_heritage_taj",
+      "kind": "narration",
+      "originalUrl": null,
+      "creator": null,
+      "license": null,
+      "attribution": null,
+      "modifications": "Not created.",
+      "localFile": null,
+      "checksum": null,
+      "rightsReview": "pending",
+      "reviewStatus": "PLACEHOLDER"
+    }
+  ],
+  "facts": [
+    {
+      "id": "site-sanchi",
+      "sourceUrl": "https://whc.unesco.org/en/list/524/",
+      "alsoChecked": "https://asi.nic.in/pages/WorldHeritageBuddhistMonumentsatSanchi",
+      "verifiedAt": "2026-10-03",
+      "reviewStatus": "PLACEHOLDER"
+    },
+    {
+      "id": "site-konark",
+      "sourceUrl": "https://whc.unesco.org/en/list/246/",
+      "alsoChecked": "https://asi.nic.in/pages/WorldHeritageKonarak",
+      "verifiedAt": "2026-10-03",
+      "reviewStatus": "PLACEHOLDER",
+      "note": "UNESCO short text says six horses; ASI and the UNESCO long note say seven. Child questions never ask for a count."
+    },
+    {
+      "id": "site-mahabalipuram",
+      "sourceUrl": "https://whc.unesco.org/en/list/249/",
+      "verifiedAt": "2026-10-03",
+      "reviewStatus": "PLACEHOLDER"
+    },
+    {
+      "id": "site-taj",
+      "sourceUrl": "https://whc.unesco.org/en/list/252/",
+      "verifiedAt": "2026-10-03",
+      "reviewStatus": "PLACEHOLDER"
+    }
+  ]
+}

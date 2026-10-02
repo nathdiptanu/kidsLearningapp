@@ -214,13 +214,13 @@ class _Picture extends StatelessWidget {
       PictureKind.flower => const Color(0xFFB84C6A),
     };
     final icon = switch (item.kind) {
-      PictureKind.fruit => Icons.eco,
+      PictureKind.fruit => Icons.eco_rounded,
       PictureKind.animal => Icons.pets,
-      PictureKind.vehicle => Icons.directions_bus,
-      PictureKind.sky => Icons.wb_sunny,
+      PictureKind.vehicle => Icons.directions_bus_rounded,
+      PictureKind.sky => Icons.wb_sunny_rounded,
       PictureKind.clothing => Icons.checkroom,
       PictureKind.home => Icons.chair,
-      PictureKind.flower => Icons.local_florist,
+      PictureKind.flower => Icons.local_florist_rounded,
     };
     return Icon(icon, color: color, size: size);
   }

@@ -107,7 +107,11 @@ class FinishedBanner extends ConsumerWidget {
         child: ListView(
           padding: const EdgeInsets.all(SproutSpace.page),
           children: [
-            const Center(child: FoxMascot(size: 150)),
+            Center(
+              child: FoxMascot(
+                size: MediaQuery.sizeOf(context).width < 360 ? 96.0 : 128.0,
+              ),
+            ),
             const SizedBox(height: SproutSpace.sm),
             Semantics(
               header: true,
@@ -213,7 +217,7 @@ class _LevelBadge extends StatelessWidget {
           child: Row(
             children: [
               const Icon(
-                Icons.workspace_premium,
+                Icons.workspace_premium_rounded,
                 color: SproutColors.primary,
                 size: 32,
               ),
@@ -240,6 +244,66 @@ class _FinishActions extends StatefulWidget {
   State<_FinishActions> createState() => _FinishActionsState();
 }
 
+/// Hear again, Next/Skip, and Done/Next activity. Same words on every game.
+class PinnedActivityActions extends StatelessWidget {
+  const PinnedActivityActions({
+    required this.finished,
+    required this.primaryKey,
+    required this.onPrimary,
+    this.onHearAgain,
+    this.onSkip,
+    this.fromJourney = false,
+    this.onHome,
+    super.key,
+  });
+
+  final bool finished;
+  final Key primaryKey;
+  final VoidCallback onPrimary;
+  final VoidCallback? onHearAgain;
+  final VoidCallback? onSkip;
+  final bool fromJourney;
+  final VoidCallback? onHome;
+
+  @override
+  Widget build(BuildContext context) {
+    final hear = onHearAgain;
+    final skip = onSkip;
+    final home = onHome;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        if (hear != null) ...[
+          SecondaryKidButton(
+            label: 'Hear again',
+            trailingIcon: Icons.replay_rounded,
+            onPressed: hear,
+          ),
+          const SizedBox(height: 12),
+        ],
+        PrimaryKidButton(
+          key: primaryKey,
+          label: finished
+              ? fromJourney
+                    ? 'Next activity'
+                    : 'Done'
+              : 'Next',
+          trailingIcon: Icons.chevron_right_rounded,
+          onPressed: onPrimary,
+        ),
+        if (!finished && skip != null) ...[
+          const SizedBox(height: 12),
+          SecondaryKidButton(label: 'Skip', onPressed: skip),
+        ],
+        if (finished && fromJourney && home != null) ...[
+          const SizedBox(height: 12),
+          SecondaryKidButton(label: 'Home', onPressed: home),
+        ],
+      ],
+    );
+  }
+}
+
 class _FinishActionsState extends State<_FinishActions> {
   var _busy = false;
 
@@ -261,7 +325,7 @@ class _FinishActionsState extends State<_FinishActions> {
         if (next != null) ...[
           PrimaryKidButton(
             label: 'Next activity',
-            trailingIcon: Icons.chevron_right,
+            trailingIcon: Icons.chevron_right_rounded,
             onPressed: _busy ? null : () => _run(next),
           ),
           const SizedBox(height: 12),

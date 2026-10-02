@@ -1,4 +1,5 @@
 import 'age_band.dart';
+import 'readiness.dart';
 
 class ChildProfile {
   const ChildProfile({
@@ -8,6 +9,7 @@ class ChildProfile {
     required this.ageBand,
     required this.createdAtMillis,
     required this.active,
+    this.readiness = Readiness.steady,
   });
 
   final int id;
@@ -16,4 +18,5 @@ class ChildProfile {
   final AgeBand ageBand;
   final int createdAtMillis;
   final bool active;
+  final Readiness readiness;
 }

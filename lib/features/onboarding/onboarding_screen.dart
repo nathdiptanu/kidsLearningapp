@@ -15,6 +15,8 @@ import '../../core/design_system/widgets/primary_kid_button.dart';
 import '../../core/design_system/widgets/progress_pill.dart';
 import '../../core/design_system/widgets/sprout_card.dart';
 import '../../domain/models/age_band.dart';
+import '../../domain/regional/learning_preferences.dart';
+import '../parent/learning_preferences_screen.dart';
 import '../../domain/repositories/profile_repository.dart';
 import '../../domain/settings/local_settings.dart';
 
@@ -28,7 +30,13 @@ class OnboardingScreen extends ConsumerStatefulWidget {
 }
 
 class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
+  static const _regionStep = 2;
+  static const _bandStep = 3;
+  static const _avatarStep = 4;
+  static const _lastStep = 6;
+
   late int _step;
+  LearningRegion? _region;
   AgeBand? _band;
   String? _avatarId;
   late final TextEditingController _nickname;
@@ -40,7 +48,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   @override
   void initState() {
     super.initState();
-    _step = widget.initial.onboardingStep.clamp(0, 5);
+    _step = widget.initial.onboardingStep.clamp(0, _lastStep);
+    _region = widget.initial.learningRegion;
     _band = widget.initial.draftAgeBand;
     _avatarId = widget.initial.draftAvatarId ?? avatarIds.first;
     _nickname = TextEditingController(text: widget.initial.draftNickname ?? '');
@@ -57,15 +66,18 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
   LocalSettings _draft(int step) {
     final nickname = normalizeNickname(_nickname.text);
-    return LocalSettings(
+    return widget.initial.copyWith(
       soundEffectsEnabled: _effects,
       musicEnabled: _music,
       narrationEnabled: _narration,
       onboardingComplete: false,
       onboardingStep: step,
+      learningRegion: _region,
       draftAgeBand: _band,
       draftAvatarId: _avatarId,
       draftNickname: nickname,
+      clearDraftAgeBand: _band == null,
+      clearDraftNickname: nickname == null,
     );
   }
 
@@ -77,10 +89,13 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     if (_saving) {
       return;
     }
-    if (_step == 2 && _band == null) {
+    if (_step == _regionStep && _region == null) {
       return;
     }
-    if (_step < 5) {
+    if (_step == _bandStep && _band == null) {
+      return;
+    }
+    if (_step < _lastStep) {
       setState(() => _saving = true);
       final next = _step + 1;
       await _persist(next);
@@ -95,8 +110,14 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     }
     final band = _band;
     final avatar = _avatarId;
-    if (band == null || avatar == null) {
-      setState(() => _step = band == null ? 2 : 3);
+    if (_region == null || band == null || avatar == null) {
+      setState(
+        () => _step = _region == null
+            ? _regionStep
+            : band == null
+            ? _bandStep
+            : _avatarStep,
+      );
       return;
     }
     setState(() => _saving = true);
@@ -106,7 +127,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           avatarId: avatar,
           ageBand: band,
           nickname: _nickname.text,
-          settings: _draft(5),
+          settings: _draft(_lastStep),
         );
   }
 
@@ -115,6 +136,11 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     final pages = [
       _WelcomePage(onContinue: _saving ? null : _continue),
       _LocalPage(onContinue: _saving ? null : _continue),
+      _RegionPage(
+        selected: _region,
+        onSelected: (region) => setState(() => _region = region),
+        onContinue: _region == null || _saving ? null : _continue,
+      ),
       _BandPage(
         selected: _band,
         onSelected: (band) => setState(() => _band = band),
@@ -169,8 +195,14 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                         else
                           const SizedBox(width: SproutSpace.page - 8),
                         const SizedBox(width: SproutSpace.xs),
-                        const SproutWordmark(size: 22),
-                        const Spacer(),
+                        const Expanded(
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            alignment: Alignment.centerLeft,
+                            child: SproutWordmark(size: 22),
+                          ),
+                        ),
+                        const SizedBox(width: SproutSpace.sm),
                         _StepDots(step: _step, count: pages.length),
                       ],
                     ),
@@ -271,7 +303,7 @@ class _WelcomePage extends StatelessWidget {
         const SizedBox(height: SproutSpace.xl),
         PrimaryKidButton(
           label: 'Next',
-          trailingIcon: Icons.chevron_right,
+          trailingIcon: Icons.chevron_right_rounded,
           onPressed: onContinue,
         ),
       ],
@@ -308,7 +340,53 @@ class _LocalPage extends StatelessWidget {
         const SizedBox(height: SproutSpace.xl),
         PrimaryKidButton(
           label: 'Next',
-          trailingIcon: Icons.chevron_right,
+          trailingIcon: Icons.chevron_right_rounded,
+          onPressed: onContinue,
+        ),
+      ],
+    );
+  }
+}
+
+class _RegionPage extends StatelessWidget {
+  const _RegionPage({
+    required this.selected,
+    required this.onSelected,
+    required this.onContinue,
+  });
+
+  final LearningRegion? selected;
+  final ValueChanged<LearningRegion> onSelected;
+  final VoidCallback? onContinue;
+
+  @override
+  Widget build(BuildContext context) {
+    final text = Theme.of(context).textTheme;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text('Learning region', style: text.headlineMedium),
+        const SizedBox(height: SproutSpace.sm),
+        Text(
+          'Choose which learning activities to show.',
+          style: text.bodyLarge,
+        ),
+        const SizedBox(height: SproutSpace.xs),
+        Text(
+          'India adds Hindi and Discover India. Every region keeps the English, maths and puzzle activities. The app does not use location to decide.',
+          style: text.bodyMedium,
+        ),
+        const SizedBox(height: SproutSpace.md),
+        RegionChoices(selected: selected, onSelected: onSelected),
+        const SizedBox(height: SproutSpace.xs),
+        Text(
+          'Languages and these activities can be changed later in grown-up settings. Progress is kept.',
+          style: text.bodySmall,
+        ),
+        const SizedBox(height: SproutSpace.lg),
+        PrimaryKidButton(
+          label: 'Next',
+          trailingIcon: Icons.chevron_right_rounded,
           onPressed: onContinue,
         ),
       ],
@@ -371,7 +449,7 @@ class _BandPage extends StatelessWidget {
         const SizedBox(height: SproutSpace.md),
         PrimaryKidButton(
           label: 'Next',
-          trailingIcon: Icons.chevron_right,
+          trailingIcon: Icons.chevron_right_rounded,
           onPressed: onContinue,
         ),
       ],
@@ -444,7 +522,7 @@ class _AvatarPage extends StatelessWidget {
         const SizedBox(height: SproutSpace.md),
         PrimaryKidButton(
           label: 'Next',
-          trailingIcon: Icons.chevron_right,
+          trailingIcon: Icons.chevron_right_rounded,
           onPressed: onContinue,
         ),
       ],
@@ -511,7 +589,7 @@ class _SoundPage extends StatelessWidget {
         const SizedBox(height: SproutSpace.lg),
         PrimaryKidButton(
           label: 'Next',
-          trailingIcon: Icons.chevron_right,
+          trailingIcon: Icons.chevron_right_rounded,
           onPressed: onContinue,
         ),
       ],
@@ -540,7 +618,7 @@ class _ReadyPage extends StatelessWidget {
           detail: 'Five short activities for today.',
         ),
         const _InfoLine(
-          icon: Icons.explore,
+          icon: Icons.explore_rounded,
           title: 'Explore',
           detail: 'Choose an activity for this learning band.',
         ),
@@ -550,7 +628,7 @@ class _ReadyPage extends StatelessWidget {
           detail: 'Stars, badges and stickers saved on this device.',
         ),
         const _InfoLine(
-          icon: Icons.lock_outline,
+          icon: Icons.lock_outline_rounded,
           title: 'Parents',
           detail:
               'Hold for 3 seconds to see the learning summary and settings.',
@@ -655,7 +733,7 @@ class _SelectRow extends StatelessWidget {
               child: Row(
                 children: [
                   Icon(
-                    selected ? Icons.check_circle : Icons.circle_outlined,
+                    selected ? Icons.check_circle_rounded : Icons.circle_outlined,
                     color: selected ? SproutColors.seed : SproutColors.inkMuted,
                   ),
                   const SizedBox(width: SproutSpace.sm),

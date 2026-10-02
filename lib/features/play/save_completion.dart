@@ -40,6 +40,8 @@ Future<void> saveFinishedActivity(
     GameCategory.findDifference => 'find_difference:v1',
     GameCategory.knowledge => KnowledgeGenerator.generatorVersion,
     GameCategory.ticTacToe => TicTacToeEngine.generatorVersion,
+    GameCategory.hindi => 'hindi:v1',
+    GameCategory.discoverIndia => 'discover_india:v1',
   };
   final scored = scoreRound(
     category: activity.category,
@@ -59,6 +61,12 @@ Future<void> saveFinishedActivity(
         score: scored.points,
         outcome: scored.outcome.name,
         recordSkill: activity.category != GameCategory.ticTacToe,
+        countTowardFree:
+            activity.category != GameCategory.hindi &&
+            activity.category != GameCategory.discoverIndia &&
+            !activity.id.startsWith('lesson:') &&
+            !activity.id.startsWith('geo:') &&
+            !activity.id.startsWith('heritage:'),
         premiumActive: ref.read(premiumActiveProvider),
         generatorType: activity.category.storageKey,
         generatorVersion: version,
@@ -68,6 +76,7 @@ Future<void> saveFinishedActivity(
         journeyDate: journeyDate,
       );
   ref.invalidate(progressListProvider);
+  ref.invalidate(itemProgressProvider);
   ref.invalidate(dailyJourneyProvider);
   ref.invalidate(rewardShelfProvider);
   ref.invalidate(parentReportProvider);

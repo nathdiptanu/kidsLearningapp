@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../learning_area.dart';
 import '../sprout_tokens.dart';
 import 'fox_mascot.dart';
 
@@ -20,7 +21,20 @@ class AppPageScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(title), actions: actions),
+      appBar: AppBar(
+        title: Text(
+          title,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+          style: Theme.of(context).appBarTheme.titleTextStyle?.copyWith(
+            height: containsDevanagari(title)
+                ? SproutType.devanagariHeight
+                : null,
+            fontFamilyFallback: SproutType.fallback,
+          ),
+        ),
+        actions: actions,
+      ),
       body: SafeArea(top: false, child: PageWidth(child: body)),
     );
   }

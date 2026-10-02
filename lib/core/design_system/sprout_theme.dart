@@ -40,6 +40,7 @@ abstract final class SproutTheme {
     );
     final buttonText = TextStyle(
       fontFamily: SproutType.family,
+      fontFamilyFallback: SproutType.fallback,
       fontSize: parent ? 16 : SproutType.childLabel + 2,
       fontWeight: FontWeight.w800,
     );
@@ -47,6 +48,7 @@ abstract final class SproutTheme {
       useMaterial3: true,
       colorScheme: scheme,
       fontFamily: SproutType.family,
+      fontFamilyFallback: SproutType.fallback,
       scaffoldBackgroundColor: SproutColors.background,
       canvasColor: SproutColors.background,
       appBarTheme: AppBarTheme(
@@ -59,6 +61,7 @@ abstract final class SproutTheme {
         toolbarHeight: 64,
         titleTextStyle: const TextStyle(
           fontFamily: SproutType.family,
+          fontFamilyFallback: SproutType.fallback,
           fontSize: 22,
           fontWeight: FontWeight.w800,
           color: SproutColors.ink,
@@ -107,6 +110,7 @@ abstract final class SproutTheme {
           ),
           textStyle: const TextStyle(
             fontFamily: SproutType.family,
+            fontFamilyFallback: SproutType.fallback,
             fontSize: 16,
             fontWeight: FontWeight.w800,
           ),
@@ -163,12 +167,14 @@ abstract final class SproutTheme {
         minVerticalPadding: SproutSpace.sm,
         titleTextStyle: TextStyle(
           fontFamily: SproutType.family,
+          fontFamilyFallback: SproutType.fallback,
           fontSize: 17,
           fontWeight: FontWeight.w700,
           color: SproutColors.ink,
         ),
         subtitleTextStyle: TextStyle(
           fontFamily: SproutType.family,
+          fontFamilyFallback: SproutType.fallback,
           fontSize: 15,
           color: SproutColors.inkMuted,
           height: 1.35,
@@ -182,12 +188,14 @@ abstract final class SproutTheme {
         ),
         titleTextStyle: TextStyle(
           fontFamily: SproutType.family,
+          fontFamilyFallback: SproutType.fallback,
           fontSize: 22,
           fontWeight: FontWeight.w800,
           color: SproutColors.ink,
         ),
         contentTextStyle: TextStyle(
           fontFamily: SproutType.family,
+          fontFamilyFallback: SproutType.fallback,
           fontSize: 17,
           color: SproutColors.ink,
           height: 1.35,
@@ -202,6 +210,7 @@ abstract final class SproutTheme {
         backgroundColor: SproutColors.ink,
         contentTextStyle: TextStyle(
           fontFamily: SproutType.family,
+          fontFamilyFallback: SproutType.fallback,
           color: SproutColors.surface,
           fontSize: 16,
         ),
@@ -225,6 +234,7 @@ abstract final class SproutTheme {
         labelTextStyle: WidgetStateProperty.resolveWith(
           (states) => TextStyle(
             fontFamily: SproutType.family,
+            fontFamilyFallback: SproutType.fallback,
             fontSize: 15,
             fontWeight: states.contains(WidgetState.selected)
                 ? FontWeight.w800

@@ -8,7 +8,9 @@ enum GameCategory {
   pattern('pattern'),
   matching('matching'),
   knowledge('knowledge'),
-  ticTacToe('tic_tac_toe');
+  ticTacToe('tic_tac_toe'),
+  hindi('hindi'),
+  discoverIndia('discover_india');
 
   /// Milestone "every game" still means these six engines.
   static const originalEngines = <GameCategory>[

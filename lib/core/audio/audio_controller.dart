@@ -1,6 +1,8 @@
 /// Short sounds the child can hear. Narration is a separate, optional switch.
 enum SoundEffect { tap, correct, retry, complete, reward }
 
+enum NarrationPlayResult { played, muted, missing, debounced, paused }
+
 /// Plays bundled sounds. Implementations must stay quiet when a switch is off
 /// and must not throw when the device has no audio plugin.
 abstract class AudioController {
@@ -10,10 +12,16 @@ abstract class AudioController {
 
   bool get narrationEnabled;
 
+  String? get lastNarrationId;
+
   Future<void> playEffect(SoundEffect effect);
 
-  /// Reviewed pronunciation clips only. This build has none, so this returns.
-  Future<void> playNarration(String clipId);
+  /// Plays a reviewed clip when one is bundled. Missing files stay silent.
+  Future<NarrationPlayResult> playNarration(String clipId, {String? assetPath});
+
+  Future<NarrationPlayResult> replayNarration();
+
+  Future<void> stopNarration();
 
   Future<void> applySettings({
     required bool effectsEnabled,

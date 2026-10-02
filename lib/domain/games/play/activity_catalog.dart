@@ -1,3 +1,6 @@
+import '../../geography/geography_catalog.dart';
+import '../../heritage/heritage_catalog.dart';
+import '../../lessons/lesson_catalog.dart';
 import '../../models/age_band.dart';
 import '../../models/game_category.dart';
 import '../find_difference/difference_catalog.dart';
@@ -21,6 +24,7 @@ int activitiesInBand(GameCategory category) {
     GameCategory.matching => 19,
     GameCategory.findDifference => differenceScenes.length,
     GameCategory.ticTacToe => 5,
+    GameCategory.hindi || GameCategory.discoverIndia => 0,
   };
 }
 
@@ -53,7 +57,8 @@ class ActivityCatalog {
         GameCategory.maze ||
         GameCategory.findDifference ||
         GameCategory.knowledge ||
-        GameCategory.ticTacToe => 1,
+        GameCategory.ticTacToe ||
+        GameCategory.hindi || GameCategory.discoverIndia => 1,
         _ => 3,
       },
     );
@@ -75,6 +80,18 @@ class ActivityCatalog {
 
   /// Parses `category:v1:band:variant` instead of scanning the catalog.
   ActivityDefinition? byId(String id) {
+    final lesson = LessonCatalog().definitionById(id, AgeBand.c);
+    if (lesson != null) {
+      return lesson;
+    }
+    final geography = GeographyCatalog().definitionById(id, AgeBand.c);
+    if (geography != null) {
+      return geography;
+    }
+    final heritage = HeritageCatalog().definitionById(id, AgeBand.c);
+    if (heritage != null) {
+      return heritage;
+    }
     final parts = id.split(':');
     if (parts.length != 4 || parts[1] != 'v1') {
       return null;
@@ -125,7 +142,8 @@ class ActivityCatalog {
       ),
       GameCategory.maze ||
       GameCategory.findDifference ||
-      GameCategory.ticTacToe => const [],
+      GameCategory.ticTacToe ||
+      GameCategory.hindi || GameCategory.discoverIndia => const [],
     };
   }
 
@@ -142,6 +160,8 @@ class ActivityCatalog {
         const DifferenceCatalog().sceneFor(variant).title,
       GameCategory.knowledge => _knowledgeTitle(band, variant),
       GameCategory.ticTacToe => _ticTitle(variant),
+      GameCategory.hindi => 'Hindi',
+      GameCategory.discoverIndia => 'Discover India',
     };
   }
 
@@ -166,12 +186,12 @@ class ActivityCatalog {
 
   String _vocabTitle(AgeBand band, int variant) {
     if (band == AgeBand.a) {
-      return variant.isEven ? 'Match the picture' : 'Find the picture';
+      return variant.isEven ? 'Match the picture' : 'Find this picture';
     }
     return switch (variant % 3) {
       0 => 'Match the picture',
-      1 => 'Find the picture',
-      _ => 'First letter',
+      1 => 'Find this picture',
+      _ => 'Starting letter',
     };
   }
 
@@ -190,33 +210,33 @@ class ActivityCatalog {
     final titles = switch (band) {
       AgeBand.a => const [
         'Count the leaves',
-        'Count again',
+        'Count the group',
         'Which has more?',
-        'More pebbles',
+        'Compare pebbles',
         'Match the number',
         'How many?',
       ],
       AgeBand.b => const [
-        'Count the leaves',
+        'Count the group',
         'Which has more?',
         'Add one or two',
-        'Add again',
+        'Add a little more',
         'Missing number',
-        'What comes next?',
+        'Number order',
       ],
       AgeBand.c => const [
-        'Addition',
-        'More addition',
-        'Subtraction',
+        'Add two numbers',
+        'Add a larger pair',
         'Take away',
+        'Subtract a little',
         'Number pattern',
-        'Finish the pattern',
+        'Finish the numbers',
       ],
       AgeBand.d => const [
-        'Mental addition',
-        'Subtraction',
+        'Add in your head',
+        'Take away in your head',
         'Equal groups',
-        'Groups again',
+        'Share into groups',
         'Number pattern',
         'A longer sum',
       ],

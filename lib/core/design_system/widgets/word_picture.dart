@@ -265,6 +265,33 @@ class _WordPainter extends CustomPainter {
           false,
           paint,
         );
+      case 'anar':
+        paint.color = const Color(0xFFB42318);
+        canvas.drawCircle(Offset(s * 0.5, s * 0.58), s * 0.28, paint);
+        paint.color = const Color(0xFF2F7D4A);
+        canvas.drawCircle(Offset(s * 0.5, s * 0.26), s * 0.08, paint);
+        paint.color = const Color(0xFFF2C14E);
+        canvas.drawCircle(Offset(s * 0.42, s * 0.54), s * 0.04, paint);
+        canvas.drawCircle(Offset(s * 0.58, s * 0.6), s * 0.04, paint);
+      case 'queen':
+        paint.color = const Color(0xFFF2C14E);
+        canvas.drawPath(
+          Path()
+            ..moveTo(s * 0.18, s * 0.58)
+            ..lineTo(s * 0.28, s * 0.28)
+            ..lineTo(s * 0.42, s * 0.48)
+            ..lineTo(s * 0.5, s * 0.22)
+            ..lineTo(s * 0.58, s * 0.48)
+            ..lineTo(s * 0.72, s * 0.28)
+            ..lineTo(s * 0.82, s * 0.58)
+            ..close(),
+          paint,
+        );
+        paint.color = const Color(0xFF3D6FBF);
+        canvas.drawRect(
+          Rect.fromLTWH(s * 0.22, s * 0.58, s * 0.56, s * 0.16),
+          paint,
+        );
       case 'cup':
         paint
           ..style = PaintingStyle.fill

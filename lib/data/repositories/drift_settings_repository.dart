@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 
 import '../../../domain/models/age_band.dart';
+import '../../../domain/regional/learning_preferences.dart';
 import '../../../domain/repositories/settings_repository.dart';
 import '../../../domain/settings/local_settings.dart';
 import '../local/database/app_database.dart';
@@ -36,6 +37,11 @@ class DriftSettingsRepository implements SettingsRepository {
       reminderMinutes: row.reminderMinutes,
       reducedMotion: row.reducedMotion,
       sessionLimitMinutes: row.sessionLimitMinutes,
+      learningRegion: LearningRegion.fromStorage(row.learningRegion),
+      interfaceLanguage: InterfaceLanguage.fromStorage(row.interfaceLanguage),
+      teachingLanguage: TeachingLanguage.fromStorage(row.teachingLanguage),
+      hindiEnabled: row.hindiEnabled,
+      discoverIndiaEnabled: row.discoverIndiaEnabled,
     );
   }
 
@@ -58,6 +64,11 @@ class DriftSettingsRepository implements SettingsRepository {
             reminderMinutes: Value(settings.reminderMinutes),
             reducedMotion: Value(settings.reducedMotion),
             sessionLimitMinutes: Value(settings.sessionLimitMinutes),
+            learningRegion: Value(settings.learningRegion?.storageKey),
+            interfaceLanguage: Value(settings.interfaceLanguage.storageKey),
+            teachingLanguage: Value(settings.teachingLanguage.storageKey),
+            hindiEnabled: Value(settings.hindiEnabled),
+            discoverIndiaEnabled: Value(settings.discoverIndiaEnabled),
           ),
           mode: InsertMode.insertOrReplace,
         );

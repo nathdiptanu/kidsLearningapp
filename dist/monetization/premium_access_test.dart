@@ -153,6 +153,9 @@ void main() {
     final records = <ActivityRecord>[];
     for (final category in GameCategory.values) {
       final levels = catalog.forBand(category, AgeBand.a);
+      if (levels.length < 5) {
+        continue;
+      }
       for (var variant = 0; variant < 5; variant++) {
         records.add(
           finished(

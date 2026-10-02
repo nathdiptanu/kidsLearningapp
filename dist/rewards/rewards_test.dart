@@ -278,7 +278,7 @@ void main() {
       const ProviderScope(child: MaterialApp(home: ParentDashboardScreen())),
     );
     expect(find.text('Parents: press and hold for 3 seconds.'), findsOneWidget);
-    expect(find.text('No finished activities yet.'), findsNothing);
+    expect(find.text('No finished activities yet'), findsNothing);
     await tester.pumpWidget(
       const ProviderScope(child: MaterialApp(home: GrownUpSettingsScreen())),
     );
@@ -307,7 +307,7 @@ void main() {
     await tester.pump(const Duration(seconds: 4));
     await gesture.up();
     await tester.pumpAndSettle();
-    expect(find.text('No finished activities yet.'), findsOneWidget);
+    expect(find.text('No finished activities yet'), findsOneWidget);
     expect(find.text(ParentReport.disclaimer), findsOneWidget);
   });
 }

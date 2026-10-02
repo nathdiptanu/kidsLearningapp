@@ -18,13 +18,14 @@ part 'app_database.g.dart';
     RecentGeneratedLevels,
     ActivityCheckpoints,
     LevelBadges,
+    LearningItemProgress,
   ],
 )
 class AppDatabase extends _$AppDatabase {
   AppDatabase(super.e);
 
   @override
-  int get schemaVersion => 7;
+  int get schemaVersion => 9;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -80,7 +81,24 @@ class AppDatabase extends _$AppDatabase {
         );
         await migrator.createTable(levelBadges);
       }
-      if (to > 7) {
+      if (from < 8) {
+        await migrator.addColumn(childProfiles, childProfiles.readiness);
+        await migrator.addColumn(localSettings, localSettings.learningRegion);
+        await migrator.addColumn(
+          localSettings,
+          localSettings.interfaceLanguage,
+        );
+        await migrator.addColumn(localSettings, localSettings.teachingLanguage);
+        await migrator.addColumn(localSettings, localSettings.hindiEnabled);
+        await migrator.addColumn(
+          localSettings,
+          localSettings.discoverIndiaEnabled,
+        );
+      }
+      if (from < 9) {
+        await migrator.createTable(learningItemProgress);
+      }
+      if (to > 9) {
         throw StateError(
           'No migration is defined from schema $from to $to. Progress must not be erased.',
         );

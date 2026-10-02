@@ -23,19 +23,23 @@ class SproutCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const radius = BorderRadius.all(Radius.circular(SproutRadius.card));
     return DecoratedBox(
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: const BorderRadius.all(
-          Radius.circular(SproutRadius.card),
-        ),
-        border: Border.all(
-          color: accent ?? SproutColors.cardEdge,
-          width: accent == null ? 1 : 2,
-        ),
+      decoration: const BoxDecoration(
+        borderRadius: radius,
         boxShadow: _cardShadow,
       ),
-      child: Padding(padding: padding, child: child),
+      child: Material(
+        color: color,
+        shape: RoundedRectangleBorder(
+          borderRadius: radius,
+          side: BorderSide(
+            color: accent ?? SproutColors.cardEdge,
+            width: accent == null ? 1 : 2,
+          ),
+        ),
+        child: Padding(padding: padding, child: child),
+      ),
     );
   }
 }

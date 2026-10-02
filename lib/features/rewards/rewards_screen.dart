@@ -71,7 +71,7 @@ class RewardsScreen extends ConsumerWidget {
                         children: [
                           Semantics(
                             header: true,
-                            child: Text('Rewards', style: text.headlineLarge),
+                            child: Text('Rewards', style: text.headlineMedium),
                           ),
                           const SizedBox(height: SproutSpace.xs),
                           Text(
@@ -274,7 +274,7 @@ class _RewardCard extends StatelessWidget {
                           : SproutColors.disabledFill,
                     ),
                     child: Icon(
-                      unlocked ? Icons.workspace_premium : Icons.lock_outline,
+                      unlocked ? Icons.workspace_premium_rounded : Icons.lock_outline_rounded,
                       color: unlocked ? SproutColors.surface : SproutColors.lock,
                       size: 30,
                     ),

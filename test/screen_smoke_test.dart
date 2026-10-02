@@ -18,6 +18,20 @@ import 'package:sproutlab/features/explore/explore_screen.dart';
 import 'package:sproutlab/features/home/home_screen.dart';
 import 'package:sproutlab/features/play/play_chrome.dart';
 import 'package:sproutlab/features/rewards/rewards_screen.dart';
+import 'package:sproutlab/domain/models/readiness.dart';
+import 'package:sproutlab/domain/regional/learning_preferences.dart';
+import 'package:sproutlab/domain/regional/regional_availability.dart';
+import 'package:sproutlab/features/onboarding/onboarding_screen.dart';
+import 'package:sproutlab/features/parent/grown_up_settings_screen.dart';
+import 'package:sproutlab/features/parent/learning_preferences_screen.dart';
+import 'package:sproutlab/domain/geography/geography_catalog.dart';
+import 'package:sproutlab/domain/heritage/heritage_catalog.dart';
+import 'package:sproutlab/domain/lessons/lesson_catalog.dart';
+import 'package:sproutlab/features/geography/geography_activity_screen.dart';
+import 'package:sproutlab/features/heritage/heritage_activity_screen.dart';
+import 'package:sproutlab/features/lessons/lesson_activity_screen.dart';
+import 'package:sproutlab/features/parent/credits_screen.dart';
+import 'package:sproutlab/features/regional/regional_module_screen.dart';
 
 const _settings = LocalSettings(
   soundEffectsEnabled: true,
@@ -28,7 +42,14 @@ const _settings = LocalSettings(
   draftAgeBand: AgeBand.d,
   draftAvatarId: 'fox',
   draftNickname: null,
+  learningRegion: LearningRegion.india,
+  teachingLanguage: TeachingLanguage.bilingual,
 );
+
+class _OpenGate extends ParentGateSession {
+  @override
+  bool build() => true;
+}
 
 const _profile = ChildProfile(
   id: 1,
@@ -123,6 +144,21 @@ Future<void> _pump(
         ),
         startedActivityIdsProvider.overrideWith((ref) async => <String>{}),
         premiumActiveProvider.overrideWith((ref) => false),
+        parentGateProvider.overrideWith(_OpenGate.new),
+        profilesProvider.overrideWith(
+          (ref) async => const [
+            _profile,
+            ChildProfile(
+              id: 2,
+              nickname: 'Ravindranath',
+              avatarId: 'owl',
+              ageBand: AgeBand.a,
+              createdAtMillis: 1,
+              active: false,
+              readiness: Readiness.gentle,
+            ),
+          ],
+        ),
       ],
       child: MaterialApp(
         theme: SproutTheme.child(),
@@ -148,6 +184,36 @@ void main() {
     'Play again': () => const PlayAgainScreen(),
     for (final area in LearningArea.values)
       'Category ${area.title}': () => CategoryScreen(area: area),
+    for (final module in RegionalModule.values)
+      'Module ${module.storageKey}': () => RegionalModuleScreen(module: module),
+    'Learning preferences': () => const LearningPreferencesScreen(),
+    'Grown-up settings': () => const GrownUpSettingsScreen(),
+    'Add a child': () => const AddChildScreen(),
+    'Onboarding region step': () => OnboardingScreen(
+      initial: _settings.copyWith(onboardingComplete: false, onboardingStep: 2),
+    ),
+    'Hindi trace': () => LessonActivityScreen(
+      lesson: LessonCatalog().byId('lesson:hindi:trace:a')!,
+    ),
+    'Hindi build': () => LessonActivityScreen(
+      lesson: LessonCatalog().byId('lesson:hindi:build:anar')!,
+    ),
+    'English Q': () => LessonActivityScreen(
+      lesson: LessonCatalog().byId('lesson:english:listen:q_queen')!,
+    ),
+    'Discover India explore': () => GeographyActivityScreen(
+      activity: GeographyCatalog().byId('geo:india:explore')!,
+    ),
+    'Discover India learn': () => GeographyActivityScreen(
+      activity: GeographyCatalog().byId('geo:india:learn:goa')!,
+    ),
+    'Discover India heritage': () => HeritageActivityScreen(
+      activity: HeritageCatalog().byId('heritage:india:identify:sanchi')!,
+    ),
+    'Discover India story': () => HeritageActivityScreen(
+      activity: HeritageCatalog().byId('heritage:india:story:konark')!,
+    ),
+    'Sources and credits': () => const CreditsScreen(),
   };
 
   for (final screen in screens.entries) {
@@ -158,17 +224,10 @@ void main() {
       });
     }
     testWidgets('${screen.key} renders at 2x text on a phone', (tester) async {
-      await _pump(
-        tester,
-        screen.value(),
-        size: _sizes['phone']!,
-        textScale: 2,
-      );
+      await _pump(tester, screen.value(), size: _sizes['phone']!, textScale: 2);
       expect(tester.takeException(), isNull);
     });
-    testWidgets('${screen.key} renders with no saved progress', (
-      tester,
-    ) async {
+    testWidgets('${screen.key} renders with no saved progress', (tester) async {
       await _pump(
         tester,
         screen.value(),
@@ -190,8 +249,37 @@ void main() {
     for (final area in LearningArea.values) {
       expect(find.text(area.title), findsOneWidget);
     }
+    expect(find.text('Hindi'), findsOneWidget);
+    expect(find.text('Discover India'), findsOneWidget);
+    expect(find.text('अ आ'), findsOneWidget);
     expect(find.text('Play again'), findsOneWidget);
   });
+
+  final guidelineScreens = <String, Widget Function()>{
+    'Explore with India cards': () => const ExploreScreen(),
+    'Hindi module': () =>
+        const RegionalModuleScreen(module: RegionalModule.hindi),
+    'Learning preferences': () => const LearningPreferencesScreen(),
+    'Onboarding region step': () => OnboardingScreen(
+      initial: _settings.copyWith(onboardingComplete: false, onboardingStep: 2),
+    ),
+    'Hindi build': () => LessonActivityScreen(
+      lesson: LessonCatalog().byId('lesson:hindi:build:anar')!,
+    ),
+  };
+  for (final entry in guidelineScreens.entries) {
+    testWidgets('${entry.key} meets tap target and contrast guidelines', (
+      tester,
+    ) async {
+      final semantics = tester.ensureSemantics();
+      await _pump(tester, entry.value(), size: _sizes['phone']!);
+      await tester.pumpAndSettle();
+      await expectLater(tester, meetsGuideline(androidTapTargetGuideline));
+      await expectLater(tester, meetsGuideline(labeledTapTargetGuideline));
+      await expectLater(tester, meetsGuideline(textContrastGuideline));
+      semantics.dispose();
+    });
+  }
 
   testWidgets('a finished journey shows calm feedback without a button', (
     tester,

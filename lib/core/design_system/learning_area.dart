@@ -85,6 +85,8 @@ String gameKindLabel(GameCategory category) {
     GameCategory.findDifference => 'Spot the difference',
     GameCategory.knowledge => 'Quiz',
     GameCategory.ticTacToe => 'Tic-Tac-Toe',
+    GameCategory.hindi => 'Hindi',
+    GameCategory.discoverIndia => 'Discover India',
   };
 }
 
@@ -98,21 +100,42 @@ String gameKindDetail(GameCategory category) {
     GameCategory.findDifference => 'Find what is not the same',
     GameCategory.knowledge => 'Questions about the world',
     GameCategory.ticTacToe => 'Three in a row',
+    GameCategory.hindi => 'Letters and words',
+    GameCategory.discoverIndia => 'Places and heritage',
   };
 }
 
 String artFor(GameCategory category) {
-  return category == GameCategory.maze
-      ? SproutArt.maze
-      : LearningArea.forCategory(category).art;
+  return switch (category) {
+    GameCategory.maze => SproutArt.maze,
+    GameCategory.hindi => SproutArt.hindi,
+    GameCategory.discoverIndia => SproutArt.discoverIndia,
+    _ => LearningArea.forCategory(category).art,
+  };
 }
 
 Color tintFor(GameCategory category) {
-  return category == GameCategory.maze
-      ? SproutColors.mazeSurface
-      : LearningArea.forCategory(category).tint;
+  return switch (category) {
+    GameCategory.maze => SproutColors.mazeSurface,
+    GameCategory.hindi => SproutColors.hindiSurface,
+    GameCategory.discoverIndia => SproutColors.indiaSurface,
+    _ => LearningArea.forCategory(category).tint,
+  };
 }
 
 String levelLabel(ActivityDefinition activity) {
   return 'Level ${activity.variant + 1}';
+}
+
+/// Short bar title. Long quiz prompts stay in the question card, not here.
+String activityHeaderTitle(ActivityDefinition activity) {
+  if (activity.category == GameCategory.knowledge ||
+      activity.title.length > 34) {
+    return '${gameKindLabel(activity.category)} · ${levelLabel(activity)}';
+  }
+  return activity.title;
+}
+
+bool containsDevanagari(String value) {
+  return value.runes.any((code) => code >= 0x0900 && code <= 0x097F);
 }

@@ -86,6 +86,11 @@ void main() {
         final owners = LearningArea.values
             .where((area) => area.categories.contains(category))
             .toList();
+        if (category == GameCategory.hindi ||
+            category == GameCategory.discoverIndia) {
+          expect(owners, isEmpty, reason: category.name);
+          continue;
+        }
         expect(owners.length, 1, reason: category.name);
       }
     });

@@ -8,6 +8,8 @@ String skillForCategory(GameCategory category) {
     GameCategory.matching || GameCategory.findDifference => 'observation',
     GameCategory.knowledge => 'knowledge',
     GameCategory.ticTacToe => 'tic_tac_toe',
+    GameCategory.hindi => 'hindi',
+    GameCategory.discoverIndia => 'discover_india',
   };
 }
 
@@ -20,5 +22,7 @@ String learningSectionFor(GameCategory category) {
     GameCategory.matching || GameCategory.findDifference => 'observation',
     GameCategory.knowledge => 'knowledge',
     GameCategory.ticTacToe => 'tic_tac_toe',
+    GameCategory.hindi => 'hindi',
+    GameCategory.discoverIndia => 'discover_india',
   };
 }

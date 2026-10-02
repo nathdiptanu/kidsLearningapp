@@ -70,6 +70,23 @@ class ParentDashboardBody extends ConsumerWidget {
         children: [
           Text(ParentReport.disclaimer, style: text.bodyMedium),
           const SizedBox(height: SproutSpace.md),
+          if (data.learningNotes.isNotEmpty) ...[
+            const SectionHeading(title: 'Letters and places'),
+            SproutCard(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  for (var index = 0;
+                      index < data.learningNotes.length;
+                      index++) ...[
+                    if (index > 0) const SizedBox(height: SproutSpace.sm),
+                    Text(data.learningNotes[index], style: text.bodyLarge),
+                  ],
+                ],
+              ),
+            ),
+            const SizedBox(height: SproutSpace.md),
+          ],
           if (data.finishedActivities == 0)
             SproutCard(
               child: Column(

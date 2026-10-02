@@ -1,4 +1,5 @@
 import '../models/age_band.dart';
+import '../regional/learning_preferences.dart';
 
 class LocalSettings {
   static const defaultReminderMinutes = 16 * 60;
@@ -15,6 +16,11 @@ class LocalSettings {
     this.reminderMinutes = defaultReminderMinutes,
     this.reducedMotion = false,
     this.sessionLimitMinutes = 0,
+    this.learningRegion,
+    this.interfaceLanguage = InterfaceLanguage.english,
+    this.teachingLanguage = TeachingLanguage.english,
+    this.hindiEnabled = true,
+    this.discoverIndiaEnabled = true,
   });
 
   static const defaults = LocalSettings(
@@ -41,6 +47,15 @@ class LocalSettings {
   final bool reducedMotion;
   final int sessionLimitMinutes;
 
+  /// Null until a grown-up chooses. Null shows the global activities only.
+  final LearningRegion? learningRegion;
+  final InterfaceLanguage interfaceLanguage;
+  final TeachingLanguage teachingLanguage;
+
+  /// Grown-up switches. They only apply when [learningRegion] is India.
+  final bool hindiEnabled;
+  final bool discoverIndiaEnabled;
+
   LocalSettings copyWith({
     bool? soundEffectsEnabled,
     bool? musicEnabled,
@@ -54,6 +69,11 @@ class LocalSettings {
     int? reminderMinutes,
     bool? reducedMotion,
     int? sessionLimitMinutes,
+    LearningRegion? learningRegion,
+    InterfaceLanguage? interfaceLanguage,
+    TeachingLanguage? teachingLanguage,
+    bool? hindiEnabled,
+    bool? discoverIndiaEnabled,
     bool clearDraftAgeBand = false,
     bool clearDraftAvatar = false,
     bool clearDraftNickname = false,
@@ -77,6 +97,11 @@ class LocalSettings {
       reminderMinutes: reminderMinutes ?? this.reminderMinutes,
       reducedMotion: reducedMotion ?? this.reducedMotion,
       sessionLimitMinutes: sessionLimitMinutes ?? this.sessionLimitMinutes,
+      learningRegion: learningRegion ?? this.learningRegion,
+      interfaceLanguage: interfaceLanguage ?? this.interfaceLanguage,
+      teachingLanguage: teachingLanguage ?? this.teachingLanguage,
+      hindiEnabled: hindiEnabled ?? this.hindiEnabled,
+      discoverIndiaEnabled: discoverIndiaEnabled ?? this.discoverIndiaEnabled,
     );
   }
 }

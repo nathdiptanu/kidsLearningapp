@@ -79,6 +79,18 @@ class $ChildProfilesTable extends ChildProfiles
     ),
     defaultValue: const Constant(true),
   );
+  static const VerificationMeta _readinessMeta = const VerificationMeta(
+    'readiness',
+  );
+  @override
+  late final GeneratedColumn<String> readiness = GeneratedColumn<String>(
+    'readiness',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('steady'),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -87,6 +99,7 @@ class $ChildProfilesTable extends ChildProfiles
     ageBand,
     createdAt,
     active,
+    readiness,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -139,6 +152,12 @@ class $ChildProfilesTable extends ChildProfiles
         active.isAcceptableOrUnknown(data['active']!, _activeMeta),
       );
     }
+    if (data.containsKey('readiness')) {
+      context.handle(
+        _readinessMeta,
+        readiness.isAcceptableOrUnknown(data['readiness']!, _readinessMeta),
+      );
+    }
     return context;
   }
 
@@ -172,6 +191,10 @@ class $ChildProfilesTable extends ChildProfiles
         DriftSqlType.bool,
         data['${effectivePrefix}active'],
       )!,
+      readiness: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}readiness'],
+      )!,
     );
   }
 
@@ -188,6 +211,7 @@ class ChildProfile extends DataClass implements Insertable<ChildProfile> {
   final String ageBand;
   final int createdAt;
   final bool active;
+  final String readiness;
   const ChildProfile({
     required this.id,
     this.nickname,
@@ -195,6 +219,7 @@ class ChildProfile extends DataClass implements Insertable<ChildProfile> {
     required this.ageBand,
     required this.createdAt,
     required this.active,
+    required this.readiness,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -207,6 +232,7 @@ class ChildProfile extends DataClass implements Insertable<ChildProfile> {
     map['age_band'] = Variable<String>(ageBand);
     map['created_at'] = Variable<int>(createdAt);
     map['active'] = Variable<bool>(active);
+    map['readiness'] = Variable<String>(readiness);
     return map;
   }
 
@@ -220,6 +246,7 @@ class ChildProfile extends DataClass implements Insertable<ChildProfile> {
       ageBand: Value(ageBand),
       createdAt: Value(createdAt),
       active: Value(active),
+      readiness: Value(readiness),
     );
   }
 
@@ -235,6 +262,7 @@ class ChildProfile extends DataClass implements Insertable<ChildProfile> {
       ageBand: serializer.fromJson<String>(json['ageBand']),
       createdAt: serializer.fromJson<int>(json['createdAt']),
       active: serializer.fromJson<bool>(json['active']),
+      readiness: serializer.fromJson<String>(json['readiness']),
     );
   }
   @override
@@ -247,6 +275,7 @@ class ChildProfile extends DataClass implements Insertable<ChildProfile> {
       'ageBand': serializer.toJson<String>(ageBand),
       'createdAt': serializer.toJson<int>(createdAt),
       'active': serializer.toJson<bool>(active),
+      'readiness': serializer.toJson<String>(readiness),
     };
   }
 
@@ -257,6 +286,7 @@ class ChildProfile extends DataClass implements Insertable<ChildProfile> {
     String? ageBand,
     int? createdAt,
     bool? active,
+    String? readiness,
   }) => ChildProfile(
     id: id ?? this.id,
     nickname: nickname.present ? nickname.value : this.nickname,
@@ -264,6 +294,7 @@ class ChildProfile extends DataClass implements Insertable<ChildProfile> {
     ageBand: ageBand ?? this.ageBand,
     createdAt: createdAt ?? this.createdAt,
     active: active ?? this.active,
+    readiness: readiness ?? this.readiness,
   );
   ChildProfile copyWithCompanion(ChildProfilesCompanion data) {
     return ChildProfile(
@@ -273,6 +304,7 @@ class ChildProfile extends DataClass implements Insertable<ChildProfile> {
       ageBand: data.ageBand.present ? data.ageBand.value : this.ageBand,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       active: data.active.present ? data.active.value : this.active,
+      readiness: data.readiness.present ? data.readiness.value : this.readiness,
     );
   }
 
@@ -284,14 +316,22 @@ class ChildProfile extends DataClass implements Insertable<ChildProfile> {
           ..write('avatarId: $avatarId, ')
           ..write('ageBand: $ageBand, ')
           ..write('createdAt: $createdAt, ')
-          ..write('active: $active')
+          ..write('active: $active, ')
+          ..write('readiness: $readiness')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode =>
-      Object.hash(id, nickname, avatarId, ageBand, createdAt, active);
+  int get hashCode => Object.hash(
+    id,
+    nickname,
+    avatarId,
+    ageBand,
+    createdAt,
+    active,
+    readiness,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -301,7 +341,8 @@ class ChildProfile extends DataClass implements Insertable<ChildProfile> {
           other.avatarId == this.avatarId &&
           other.ageBand == this.ageBand &&
           other.createdAt == this.createdAt &&
-          other.active == this.active);
+          other.active == this.active &&
+          other.readiness == this.readiness);
 }
 
 class ChildProfilesCompanion extends UpdateCompanion<ChildProfile> {
@@ -311,6 +352,7 @@ class ChildProfilesCompanion extends UpdateCompanion<ChildProfile> {
   final Value<String> ageBand;
   final Value<int> createdAt;
   final Value<bool> active;
+  final Value<String> readiness;
   const ChildProfilesCompanion({
     this.id = const Value.absent(),
     this.nickname = const Value.absent(),
@@ -318,6 +360,7 @@ class ChildProfilesCompanion extends UpdateCompanion<ChildProfile> {
     this.ageBand = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.active = const Value.absent(),
+    this.readiness = const Value.absent(),
   });
   ChildProfilesCompanion.insert({
     this.id = const Value.absent(),
@@ -326,6 +369,7 @@ class ChildProfilesCompanion extends UpdateCompanion<ChildProfile> {
     required String ageBand,
     required int createdAt,
     this.active = const Value.absent(),
+    this.readiness = const Value.absent(),
   }) : avatarId = Value(avatarId),
        ageBand = Value(ageBand),
        createdAt = Value(createdAt);
@@ -336,6 +380,7 @@ class ChildProfilesCompanion extends UpdateCompanion<ChildProfile> {
     Expression<String>? ageBand,
     Expression<int>? createdAt,
     Expression<bool>? active,
+    Expression<String>? readiness,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -344,6 +389,7 @@ class ChildProfilesCompanion extends UpdateCompanion<ChildProfile> {
       if (ageBand != null) 'age_band': ageBand,
       if (createdAt != null) 'created_at': createdAt,
       if (active != null) 'active': active,
+      if (readiness != null) 'readiness': readiness,
     });
   }
 
@@ -354,6 +400,7 @@ class ChildProfilesCompanion extends UpdateCompanion<ChildProfile> {
     Value<String>? ageBand,
     Value<int>? createdAt,
     Value<bool>? active,
+    Value<String>? readiness,
   }) {
     return ChildProfilesCompanion(
       id: id ?? this.id,
@@ -362,6 +409,7 @@ class ChildProfilesCompanion extends UpdateCompanion<ChildProfile> {
       ageBand: ageBand ?? this.ageBand,
       createdAt: createdAt ?? this.createdAt,
       active: active ?? this.active,
+      readiness: readiness ?? this.readiness,
     );
   }
 
@@ -386,6 +434,9 @@ class ChildProfilesCompanion extends UpdateCompanion<ChildProfile> {
     if (active.present) {
       map['active'] = Variable<bool>(active.value);
     }
+    if (readiness.present) {
+      map['readiness'] = Variable<String>(readiness.value);
+    }
     return map;
   }
 
@@ -397,7 +448,8 @@ class ChildProfilesCompanion extends UpdateCompanion<ChildProfile> {
           ..write('avatarId: $avatarId, ')
           ..write('ageBand: $ageBand, ')
           ..write('createdAt: $createdAt, ')
-          ..write('active: $active')
+          ..write('active: $active, ')
+          ..write('readiness: $readiness')
           ..write(')'))
         .toString();
   }
@@ -3863,6 +3915,71 @@ class $LocalSettingsTable extends LocalSettings
     requiredDuringInsert: false,
     defaultValue: const Constant(0),
   );
+  static const VerificationMeta _learningRegionMeta = const VerificationMeta(
+    'learningRegion',
+  );
+  @override
+  late final GeneratedColumn<String> learningRegion = GeneratedColumn<String>(
+    'learning_region',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _interfaceLanguageMeta = const VerificationMeta(
+    'interfaceLanguage',
+  );
+  @override
+  late final GeneratedColumn<String> interfaceLanguage =
+      GeneratedColumn<String>(
+        'interface_language',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        defaultValue: const Constant('en'),
+      );
+  static const VerificationMeta _teachingLanguageMeta = const VerificationMeta(
+    'teachingLanguage',
+  );
+  @override
+  late final GeneratedColumn<String> teachingLanguage = GeneratedColumn<String>(
+    'teaching_language',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('en'),
+  );
+  static const VerificationMeta _hindiEnabledMeta = const VerificationMeta(
+    'hindiEnabled',
+  );
+  @override
+  late final GeneratedColumn<bool> hindiEnabled = GeneratedColumn<bool>(
+    'hindi_enabled',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("hindi_enabled" IN (0, 1))',
+    ),
+    defaultValue: const Constant(true),
+  );
+  static const VerificationMeta _discoverIndiaEnabledMeta =
+      const VerificationMeta('discoverIndiaEnabled');
+  @override
+  late final GeneratedColumn<bool> discoverIndiaEnabled = GeneratedColumn<bool>(
+    'discover_india_enabled',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("discover_india_enabled" IN (0, 1))',
+    ),
+    defaultValue: const Constant(true),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -3878,6 +3995,11 @@ class $LocalSettingsTable extends LocalSettings
     reminderMinutes,
     reducedMotion,
     sessionLimitMinutes,
+    learningRegion,
+    interfaceLanguage,
+    teachingLanguage,
+    hindiEnabled,
+    discoverIndiaEnabled,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -4002,6 +4124,51 @@ class $LocalSettingsTable extends LocalSettings
         ),
       );
     }
+    if (data.containsKey('learning_region')) {
+      context.handle(
+        _learningRegionMeta,
+        learningRegion.isAcceptableOrUnknown(
+          data['learning_region']!,
+          _learningRegionMeta,
+        ),
+      );
+    }
+    if (data.containsKey('interface_language')) {
+      context.handle(
+        _interfaceLanguageMeta,
+        interfaceLanguage.isAcceptableOrUnknown(
+          data['interface_language']!,
+          _interfaceLanguageMeta,
+        ),
+      );
+    }
+    if (data.containsKey('teaching_language')) {
+      context.handle(
+        _teachingLanguageMeta,
+        teachingLanguage.isAcceptableOrUnknown(
+          data['teaching_language']!,
+          _teachingLanguageMeta,
+        ),
+      );
+    }
+    if (data.containsKey('hindi_enabled')) {
+      context.handle(
+        _hindiEnabledMeta,
+        hindiEnabled.isAcceptableOrUnknown(
+          data['hindi_enabled']!,
+          _hindiEnabledMeta,
+        ),
+      );
+    }
+    if (data.containsKey('discover_india_enabled')) {
+      context.handle(
+        _discoverIndiaEnabledMeta,
+        discoverIndiaEnabled.isAcceptableOrUnknown(
+          data['discover_india_enabled']!,
+          _discoverIndiaEnabledMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -4063,6 +4230,26 @@ class $LocalSettingsTable extends LocalSettings
         DriftSqlType.int,
         data['${effectivePrefix}session_limit_minutes'],
       )!,
+      learningRegion: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}learning_region'],
+      ),
+      interfaceLanguage: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}interface_language'],
+      )!,
+      teachingLanguage: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}teaching_language'],
+      )!,
+      hindiEnabled: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}hindi_enabled'],
+      )!,
+      discoverIndiaEnabled: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}discover_india_enabled'],
+      )!,
     );
   }
 
@@ -4091,6 +4278,13 @@ class LocalSetting extends DataClass implements Insertable<LocalSetting> {
 
   /// 0 means no gentle stop. This is an in-app suggestion, not device screen time.
   final int sessionLimitMinutes;
+
+  /// ISO code chosen by a grown-up. Null means not chosen yet.
+  final String? learningRegion;
+  final String interfaceLanguage;
+  final String teachingLanguage;
+  final bool hindiEnabled;
+  final bool discoverIndiaEnabled;
   const LocalSetting({
     required this.id,
     required this.soundEffectsEnabled,
@@ -4105,6 +4299,11 @@ class LocalSetting extends DataClass implements Insertable<LocalSetting> {
     required this.reminderMinutes,
     required this.reducedMotion,
     required this.sessionLimitMinutes,
+    this.learningRegion,
+    required this.interfaceLanguage,
+    required this.teachingLanguage,
+    required this.hindiEnabled,
+    required this.discoverIndiaEnabled,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -4128,6 +4327,13 @@ class LocalSetting extends DataClass implements Insertable<LocalSetting> {
     map['reminder_minutes'] = Variable<int>(reminderMinutes);
     map['reduced_motion'] = Variable<bool>(reducedMotion);
     map['session_limit_minutes'] = Variable<int>(sessionLimitMinutes);
+    if (!nullToAbsent || learningRegion != null) {
+      map['learning_region'] = Variable<String>(learningRegion);
+    }
+    map['interface_language'] = Variable<String>(interfaceLanguage);
+    map['teaching_language'] = Variable<String>(teachingLanguage);
+    map['hindi_enabled'] = Variable<bool>(hindiEnabled);
+    map['discover_india_enabled'] = Variable<bool>(discoverIndiaEnabled);
     return map;
   }
 
@@ -4152,6 +4358,13 @@ class LocalSetting extends DataClass implements Insertable<LocalSetting> {
       reminderMinutes: Value(reminderMinutes),
       reducedMotion: Value(reducedMotion),
       sessionLimitMinutes: Value(sessionLimitMinutes),
+      learningRegion: learningRegion == null && nullToAbsent
+          ? const Value.absent()
+          : Value(learningRegion),
+      interfaceLanguage: Value(interfaceLanguage),
+      teachingLanguage: Value(teachingLanguage),
+      hindiEnabled: Value(hindiEnabled),
+      discoverIndiaEnabled: Value(discoverIndiaEnabled),
     );
   }
 
@@ -4178,6 +4391,13 @@ class LocalSetting extends DataClass implements Insertable<LocalSetting> {
       sessionLimitMinutes: serializer.fromJson<int>(
         json['sessionLimitMinutes'],
       ),
+      learningRegion: serializer.fromJson<String?>(json['learningRegion']),
+      interfaceLanguage: serializer.fromJson<String>(json['interfaceLanguage']),
+      teachingLanguage: serializer.fromJson<String>(json['teachingLanguage']),
+      hindiEnabled: serializer.fromJson<bool>(json['hindiEnabled']),
+      discoverIndiaEnabled: serializer.fromJson<bool>(
+        json['discoverIndiaEnabled'],
+      ),
     );
   }
   @override
@@ -4197,6 +4417,11 @@ class LocalSetting extends DataClass implements Insertable<LocalSetting> {
       'reminderMinutes': serializer.toJson<int>(reminderMinutes),
       'reducedMotion': serializer.toJson<bool>(reducedMotion),
       'sessionLimitMinutes': serializer.toJson<int>(sessionLimitMinutes),
+      'learningRegion': serializer.toJson<String?>(learningRegion),
+      'interfaceLanguage': serializer.toJson<String>(interfaceLanguage),
+      'teachingLanguage': serializer.toJson<String>(teachingLanguage),
+      'hindiEnabled': serializer.toJson<bool>(hindiEnabled),
+      'discoverIndiaEnabled': serializer.toJson<bool>(discoverIndiaEnabled),
     };
   }
 
@@ -4214,6 +4439,11 @@ class LocalSetting extends DataClass implements Insertable<LocalSetting> {
     int? reminderMinutes,
     bool? reducedMotion,
     int? sessionLimitMinutes,
+    Value<String?> learningRegion = const Value.absent(),
+    String? interfaceLanguage,
+    String? teachingLanguage,
+    bool? hindiEnabled,
+    bool? discoverIndiaEnabled,
   }) => LocalSetting(
     id: id ?? this.id,
     soundEffectsEnabled: soundEffectsEnabled ?? this.soundEffectsEnabled,
@@ -4232,6 +4462,13 @@ class LocalSetting extends DataClass implements Insertable<LocalSetting> {
     reminderMinutes: reminderMinutes ?? this.reminderMinutes,
     reducedMotion: reducedMotion ?? this.reducedMotion,
     sessionLimitMinutes: sessionLimitMinutes ?? this.sessionLimitMinutes,
+    learningRegion: learningRegion.present
+        ? learningRegion.value
+        : this.learningRegion,
+    interfaceLanguage: interfaceLanguage ?? this.interfaceLanguage,
+    teachingLanguage: teachingLanguage ?? this.teachingLanguage,
+    hindiEnabled: hindiEnabled ?? this.hindiEnabled,
+    discoverIndiaEnabled: discoverIndiaEnabled ?? this.discoverIndiaEnabled,
   );
   LocalSetting copyWithCompanion(LocalSettingsCompanion data) {
     return LocalSetting(
@@ -4272,6 +4509,21 @@ class LocalSetting extends DataClass implements Insertable<LocalSetting> {
       sessionLimitMinutes: data.sessionLimitMinutes.present
           ? data.sessionLimitMinutes.value
           : this.sessionLimitMinutes,
+      learningRegion: data.learningRegion.present
+          ? data.learningRegion.value
+          : this.learningRegion,
+      interfaceLanguage: data.interfaceLanguage.present
+          ? data.interfaceLanguage.value
+          : this.interfaceLanguage,
+      teachingLanguage: data.teachingLanguage.present
+          ? data.teachingLanguage.value
+          : this.teachingLanguage,
+      hindiEnabled: data.hindiEnabled.present
+          ? data.hindiEnabled.value
+          : this.hindiEnabled,
+      discoverIndiaEnabled: data.discoverIndiaEnabled.present
+          ? data.discoverIndiaEnabled.value
+          : this.discoverIndiaEnabled,
     );
   }
 
@@ -4290,7 +4542,12 @@ class LocalSetting extends DataClass implements Insertable<LocalSetting> {
           ..write('remindersEnabled: $remindersEnabled, ')
           ..write('reminderMinutes: $reminderMinutes, ')
           ..write('reducedMotion: $reducedMotion, ')
-          ..write('sessionLimitMinutes: $sessionLimitMinutes')
+          ..write('sessionLimitMinutes: $sessionLimitMinutes, ')
+          ..write('learningRegion: $learningRegion, ')
+          ..write('interfaceLanguage: $interfaceLanguage, ')
+          ..write('teachingLanguage: $teachingLanguage, ')
+          ..write('hindiEnabled: $hindiEnabled, ')
+          ..write('discoverIndiaEnabled: $discoverIndiaEnabled')
           ..write(')'))
         .toString();
   }
@@ -4310,6 +4567,11 @@ class LocalSetting extends DataClass implements Insertable<LocalSetting> {
     reminderMinutes,
     reducedMotion,
     sessionLimitMinutes,
+    learningRegion,
+    interfaceLanguage,
+    teachingLanguage,
+    hindiEnabled,
+    discoverIndiaEnabled,
   );
   @override
   bool operator ==(Object other) =>
@@ -4327,7 +4589,12 @@ class LocalSetting extends DataClass implements Insertable<LocalSetting> {
           other.remindersEnabled == this.remindersEnabled &&
           other.reminderMinutes == this.reminderMinutes &&
           other.reducedMotion == this.reducedMotion &&
-          other.sessionLimitMinutes == this.sessionLimitMinutes);
+          other.sessionLimitMinutes == this.sessionLimitMinutes &&
+          other.learningRegion == this.learningRegion &&
+          other.interfaceLanguage == this.interfaceLanguage &&
+          other.teachingLanguage == this.teachingLanguage &&
+          other.hindiEnabled == this.hindiEnabled &&
+          other.discoverIndiaEnabled == this.discoverIndiaEnabled);
 }
 
 class LocalSettingsCompanion extends UpdateCompanion<LocalSetting> {
@@ -4344,6 +4611,11 @@ class LocalSettingsCompanion extends UpdateCompanion<LocalSetting> {
   final Value<int> reminderMinutes;
   final Value<bool> reducedMotion;
   final Value<int> sessionLimitMinutes;
+  final Value<String?> learningRegion;
+  final Value<String> interfaceLanguage;
+  final Value<String> teachingLanguage;
+  final Value<bool> hindiEnabled;
+  final Value<bool> discoverIndiaEnabled;
   const LocalSettingsCompanion({
     this.id = const Value.absent(),
     this.soundEffectsEnabled = const Value.absent(),
@@ -4358,6 +4630,11 @@ class LocalSettingsCompanion extends UpdateCompanion<LocalSetting> {
     this.reminderMinutes = const Value.absent(),
     this.reducedMotion = const Value.absent(),
     this.sessionLimitMinutes = const Value.absent(),
+    this.learningRegion = const Value.absent(),
+    this.interfaceLanguage = const Value.absent(),
+    this.teachingLanguage = const Value.absent(),
+    this.hindiEnabled = const Value.absent(),
+    this.discoverIndiaEnabled = const Value.absent(),
   });
   LocalSettingsCompanion.insert({
     this.id = const Value.absent(),
@@ -4373,6 +4650,11 @@ class LocalSettingsCompanion extends UpdateCompanion<LocalSetting> {
     this.reminderMinutes = const Value.absent(),
     this.reducedMotion = const Value.absent(),
     this.sessionLimitMinutes = const Value.absent(),
+    this.learningRegion = const Value.absent(),
+    this.interfaceLanguage = const Value.absent(),
+    this.teachingLanguage = const Value.absent(),
+    this.hindiEnabled = const Value.absent(),
+    this.discoverIndiaEnabled = const Value.absent(),
   });
   static Insertable<LocalSetting> custom({
     Expression<int>? id,
@@ -4388,6 +4670,11 @@ class LocalSettingsCompanion extends UpdateCompanion<LocalSetting> {
     Expression<int>? reminderMinutes,
     Expression<bool>? reducedMotion,
     Expression<int>? sessionLimitMinutes,
+    Expression<String>? learningRegion,
+    Expression<String>? interfaceLanguage,
+    Expression<String>? teachingLanguage,
+    Expression<bool>? hindiEnabled,
+    Expression<bool>? discoverIndiaEnabled,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -4405,6 +4692,12 @@ class LocalSettingsCompanion extends UpdateCompanion<LocalSetting> {
       if (reducedMotion != null) 'reduced_motion': reducedMotion,
       if (sessionLimitMinutes != null)
         'session_limit_minutes': sessionLimitMinutes,
+      if (learningRegion != null) 'learning_region': learningRegion,
+      if (interfaceLanguage != null) 'interface_language': interfaceLanguage,
+      if (teachingLanguage != null) 'teaching_language': teachingLanguage,
+      if (hindiEnabled != null) 'hindi_enabled': hindiEnabled,
+      if (discoverIndiaEnabled != null)
+        'discover_india_enabled': discoverIndiaEnabled,
     });
   }
 
@@ -4422,6 +4715,11 @@ class LocalSettingsCompanion extends UpdateCompanion<LocalSetting> {
     Value<int>? reminderMinutes,
     Value<bool>? reducedMotion,
     Value<int>? sessionLimitMinutes,
+    Value<String?>? learningRegion,
+    Value<String>? interfaceLanguage,
+    Value<String>? teachingLanguage,
+    Value<bool>? hindiEnabled,
+    Value<bool>? discoverIndiaEnabled,
   }) {
     return LocalSettingsCompanion(
       id: id ?? this.id,
@@ -4437,6 +4735,11 @@ class LocalSettingsCompanion extends UpdateCompanion<LocalSetting> {
       reminderMinutes: reminderMinutes ?? this.reminderMinutes,
       reducedMotion: reducedMotion ?? this.reducedMotion,
       sessionLimitMinutes: sessionLimitMinutes ?? this.sessionLimitMinutes,
+      learningRegion: learningRegion ?? this.learningRegion,
+      interfaceLanguage: interfaceLanguage ?? this.interfaceLanguage,
+      teachingLanguage: teachingLanguage ?? this.teachingLanguage,
+      hindiEnabled: hindiEnabled ?? this.hindiEnabled,
+      discoverIndiaEnabled: discoverIndiaEnabled ?? this.discoverIndiaEnabled,
     );
   }
 
@@ -4482,6 +4785,23 @@ class LocalSettingsCompanion extends UpdateCompanion<LocalSetting> {
     if (sessionLimitMinutes.present) {
       map['session_limit_minutes'] = Variable<int>(sessionLimitMinutes.value);
     }
+    if (learningRegion.present) {
+      map['learning_region'] = Variable<String>(learningRegion.value);
+    }
+    if (interfaceLanguage.present) {
+      map['interface_language'] = Variable<String>(interfaceLanguage.value);
+    }
+    if (teachingLanguage.present) {
+      map['teaching_language'] = Variable<String>(teachingLanguage.value);
+    }
+    if (hindiEnabled.present) {
+      map['hindi_enabled'] = Variable<bool>(hindiEnabled.value);
+    }
+    if (discoverIndiaEnabled.present) {
+      map['discover_india_enabled'] = Variable<bool>(
+        discoverIndiaEnabled.value,
+      );
+    }
     return map;
   }
 
@@ -4500,7 +4820,12 @@ class LocalSettingsCompanion extends UpdateCompanion<LocalSetting> {
           ..write('remindersEnabled: $remindersEnabled, ')
           ..write('reminderMinutes: $reminderMinutes, ')
           ..write('reducedMotion: $reducedMotion, ')
-          ..write('sessionLimitMinutes: $sessionLimitMinutes')
+          ..write('sessionLimitMinutes: $sessionLimitMinutes, ')
+          ..write('learningRegion: $learningRegion, ')
+          ..write('interfaceLanguage: $interfaceLanguage, ')
+          ..write('teachingLanguage: $teachingLanguage, ')
+          ..write('hindiEnabled: $hindiEnabled, ')
+          ..write('discoverIndiaEnabled: $discoverIndiaEnabled')
           ..write(')'))
         .toString();
   }
@@ -5719,6 +6044,835 @@ class LevelBadgesCompanion extends UpdateCompanion<LevelBadge> {
   }
 }
 
+class $LearningItemProgressTable extends LearningItemProgress
+    with TableInfo<$LearningItemProgressTable, LearningItemProgressData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $LearningItemProgressTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _profileIdMeta = const VerificationMeta(
+    'profileId',
+  );
+  @override
+  late final GeneratedColumn<int> profileId = GeneratedColumn<int>(
+    'profile_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES child_profiles (id)',
+    ),
+  );
+  static const VerificationMeta _itemIdMeta = const VerificationMeta('itemId');
+  @override
+  late final GeneratedColumn<String> itemId = GeneratedColumn<String>(
+    'item_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _modeMeta = const VerificationMeta('mode');
+  @override
+  late final GeneratedColumn<String> mode = GeneratedColumn<String>(
+    'mode',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _contentVersionMeta = const VerificationMeta(
+    'contentVersion',
+  );
+  @override
+  late final GeneratedColumn<int> contentVersion = GeneratedColumn<int>(
+    'content_version',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(1),
+  );
+  static const VerificationMeta _attemptsMeta = const VerificationMeta(
+    'attempts',
+  );
+  @override
+  late final GeneratedColumn<int> attempts = GeneratedColumn<int>(
+    'attempts',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _correctMeta = const VerificationMeta(
+    'correct',
+  );
+  @override
+  late final GeneratedColumn<int> correct = GeneratedColumn<int>(
+    'correct',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _unaidedCorrectMeta = const VerificationMeta(
+    'unaidedCorrect',
+  );
+  @override
+  late final GeneratedColumn<int> unaidedCorrect = GeneratedColumn<int>(
+    'unaided_correct',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _hintsUsedMeta = const VerificationMeta(
+    'hintsUsed',
+  );
+  @override
+  late final GeneratedColumn<int> hintsUsed = GeneratedColumn<int>(
+    'hints_used',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _assistedMeta = const VerificationMeta(
+    'assisted',
+  );
+  @override
+  late final GeneratedColumn<int> assisted = GeneratedColumn<int>(
+    'assisted',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _recalledCountMeta = const VerificationMeta(
+    'recalledCount',
+  );
+  @override
+  late final GeneratedColumn<int> recalledCount = GeneratedColumn<int>(
+    'recalled_count',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _firstCompletedAtMeta = const VerificationMeta(
+    'firstCompletedAt',
+  );
+  @override
+  late final GeneratedColumn<int> firstCompletedAt = GeneratedColumn<int>(
+    'first_completed_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _lastCompletedAtMeta = const VerificationMeta(
+    'lastCompletedAt',
+  );
+  @override
+  late final GeneratedColumn<int> lastCompletedAt = GeneratedColumn<int>(
+    'last_completed_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _lastSeenAtMeta = const VerificationMeta(
+    'lastSeenAt',
+  );
+  @override
+  late final GeneratedColumn<int> lastSeenAt = GeneratedColumn<int>(
+    'last_seen_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+    'status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('introduced'),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    profileId,
+    itemId,
+    mode,
+    contentVersion,
+    attempts,
+    correct,
+    unaidedCorrect,
+    hintsUsed,
+    assisted,
+    recalledCount,
+    firstCompletedAt,
+    lastCompletedAt,
+    lastSeenAt,
+    status,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'learning_item_progress';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<LearningItemProgressData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('profile_id')) {
+      context.handle(
+        _profileIdMeta,
+        profileId.isAcceptableOrUnknown(data['profile_id']!, _profileIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_profileIdMeta);
+    }
+    if (data.containsKey('item_id')) {
+      context.handle(
+        _itemIdMeta,
+        itemId.isAcceptableOrUnknown(data['item_id']!, _itemIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_itemIdMeta);
+    }
+    if (data.containsKey('mode')) {
+      context.handle(
+        _modeMeta,
+        mode.isAcceptableOrUnknown(data['mode']!, _modeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_modeMeta);
+    }
+    if (data.containsKey('content_version')) {
+      context.handle(
+        _contentVersionMeta,
+        contentVersion.isAcceptableOrUnknown(
+          data['content_version']!,
+          _contentVersionMeta,
+        ),
+      );
+    }
+    if (data.containsKey('attempts')) {
+      context.handle(
+        _attemptsMeta,
+        attempts.isAcceptableOrUnknown(data['attempts']!, _attemptsMeta),
+      );
+    }
+    if (data.containsKey('correct')) {
+      context.handle(
+        _correctMeta,
+        correct.isAcceptableOrUnknown(data['correct']!, _correctMeta),
+      );
+    }
+    if (data.containsKey('unaided_correct')) {
+      context.handle(
+        _unaidedCorrectMeta,
+        unaidedCorrect.isAcceptableOrUnknown(
+          data['unaided_correct']!,
+          _unaidedCorrectMeta,
+        ),
+      );
+    }
+    if (data.containsKey('hints_used')) {
+      context.handle(
+        _hintsUsedMeta,
+        hintsUsed.isAcceptableOrUnknown(data['hints_used']!, _hintsUsedMeta),
+      );
+    }
+    if (data.containsKey('assisted')) {
+      context.handle(
+        _assistedMeta,
+        assisted.isAcceptableOrUnknown(data['assisted']!, _assistedMeta),
+      );
+    }
+    if (data.containsKey('recalled_count')) {
+      context.handle(
+        _recalledCountMeta,
+        recalledCount.isAcceptableOrUnknown(
+          data['recalled_count']!,
+          _recalledCountMeta,
+        ),
+      );
+    }
+    if (data.containsKey('first_completed_at')) {
+      context.handle(
+        _firstCompletedAtMeta,
+        firstCompletedAt.isAcceptableOrUnknown(
+          data['first_completed_at']!,
+          _firstCompletedAtMeta,
+        ),
+      );
+    }
+    if (data.containsKey('last_completed_at')) {
+      context.handle(
+        _lastCompletedAtMeta,
+        lastCompletedAt.isAcceptableOrUnknown(
+          data['last_completed_at']!,
+          _lastCompletedAtMeta,
+        ),
+      );
+    }
+    if (data.containsKey('last_seen_at')) {
+      context.handle(
+        _lastSeenAtMeta,
+        lastSeenAt.isAcceptableOrUnknown(
+          data['last_seen_at']!,
+          _lastSeenAtMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_lastSeenAtMeta);
+    }
+    if (data.containsKey('status')) {
+      context.handle(
+        _statusMeta,
+        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {profileId, itemId, mode};
+  @override
+  LearningItemProgressData map(
+    Map<String, dynamic> data, {
+    String? tablePrefix,
+  }) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return LearningItemProgressData(
+      profileId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}profile_id'],
+      )!,
+      itemId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}item_id'],
+      )!,
+      mode: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}mode'],
+      )!,
+      contentVersion: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}content_version'],
+      )!,
+      attempts: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}attempts'],
+      )!,
+      correct: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}correct'],
+      )!,
+      unaidedCorrect: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}unaided_correct'],
+      )!,
+      hintsUsed: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}hints_used'],
+      )!,
+      assisted: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}assisted'],
+      )!,
+      recalledCount: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}recalled_count'],
+      )!,
+      firstCompletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}first_completed_at'],
+      ),
+      lastCompletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}last_completed_at'],
+      ),
+      lastSeenAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}last_seen_at'],
+      )!,
+      status: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}status'],
+      )!,
+    );
+  }
+
+  @override
+  $LearningItemProgressTable createAlias(String alias) {
+    return $LearningItemProgressTable(attachedDatabase, alias);
+  }
+}
+
+class LearningItemProgressData extends DataClass
+    implements Insertable<LearningItemProgressData> {
+  final int profileId;
+  final String itemId;
+  final String mode;
+  final int contentVersion;
+  final int attempts;
+  final int correct;
+  final int unaidedCorrect;
+  final int hintsUsed;
+  final int assisted;
+  final int recalledCount;
+  final int? firstCompletedAt;
+  final int? lastCompletedAt;
+  final int lastSeenAt;
+  final String status;
+  const LearningItemProgressData({
+    required this.profileId,
+    required this.itemId,
+    required this.mode,
+    required this.contentVersion,
+    required this.attempts,
+    required this.correct,
+    required this.unaidedCorrect,
+    required this.hintsUsed,
+    required this.assisted,
+    required this.recalledCount,
+    this.firstCompletedAt,
+    this.lastCompletedAt,
+    required this.lastSeenAt,
+    required this.status,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['profile_id'] = Variable<int>(profileId);
+    map['item_id'] = Variable<String>(itemId);
+    map['mode'] = Variable<String>(mode);
+    map['content_version'] = Variable<int>(contentVersion);
+    map['attempts'] = Variable<int>(attempts);
+    map['correct'] = Variable<int>(correct);
+    map['unaided_correct'] = Variable<int>(unaidedCorrect);
+    map['hints_used'] = Variable<int>(hintsUsed);
+    map['assisted'] = Variable<int>(assisted);
+    map['recalled_count'] = Variable<int>(recalledCount);
+    if (!nullToAbsent || firstCompletedAt != null) {
+      map['first_completed_at'] = Variable<int>(firstCompletedAt);
+    }
+    if (!nullToAbsent || lastCompletedAt != null) {
+      map['last_completed_at'] = Variable<int>(lastCompletedAt);
+    }
+    map['last_seen_at'] = Variable<int>(lastSeenAt);
+    map['status'] = Variable<String>(status);
+    return map;
+  }
+
+  LearningItemProgressCompanion toCompanion(bool nullToAbsent) {
+    return LearningItemProgressCompanion(
+      profileId: Value(profileId),
+      itemId: Value(itemId),
+      mode: Value(mode),
+      contentVersion: Value(contentVersion),
+      attempts: Value(attempts),
+      correct: Value(correct),
+      unaidedCorrect: Value(unaidedCorrect),
+      hintsUsed: Value(hintsUsed),
+      assisted: Value(assisted),
+      recalledCount: Value(recalledCount),
+      firstCompletedAt: firstCompletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(firstCompletedAt),
+      lastCompletedAt: lastCompletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastCompletedAt),
+      lastSeenAt: Value(lastSeenAt),
+      status: Value(status),
+    );
+  }
+
+  factory LearningItemProgressData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return LearningItemProgressData(
+      profileId: serializer.fromJson<int>(json['profileId']),
+      itemId: serializer.fromJson<String>(json['itemId']),
+      mode: serializer.fromJson<String>(json['mode']),
+      contentVersion: serializer.fromJson<int>(json['contentVersion']),
+      attempts: serializer.fromJson<int>(json['attempts']),
+      correct: serializer.fromJson<int>(json['correct']),
+      unaidedCorrect: serializer.fromJson<int>(json['unaidedCorrect']),
+      hintsUsed: serializer.fromJson<int>(json['hintsUsed']),
+      assisted: serializer.fromJson<int>(json['assisted']),
+      recalledCount: serializer.fromJson<int>(json['recalledCount']),
+      firstCompletedAt: serializer.fromJson<int?>(json['firstCompletedAt']),
+      lastCompletedAt: serializer.fromJson<int?>(json['lastCompletedAt']),
+      lastSeenAt: serializer.fromJson<int>(json['lastSeenAt']),
+      status: serializer.fromJson<String>(json['status']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'profileId': serializer.toJson<int>(profileId),
+      'itemId': serializer.toJson<String>(itemId),
+      'mode': serializer.toJson<String>(mode),
+      'contentVersion': serializer.toJson<int>(contentVersion),
+      'attempts': serializer.toJson<int>(attempts),
+      'correct': serializer.toJson<int>(correct),
+      'unaidedCorrect': serializer.toJson<int>(unaidedCorrect),
+      'hintsUsed': serializer.toJson<int>(hintsUsed),
+      'assisted': serializer.toJson<int>(assisted),
+      'recalledCount': serializer.toJson<int>(recalledCount),
+      'firstCompletedAt': serializer.toJson<int?>(firstCompletedAt),
+      'lastCompletedAt': serializer.toJson<int?>(lastCompletedAt),
+      'lastSeenAt': serializer.toJson<int>(lastSeenAt),
+      'status': serializer.toJson<String>(status),
+    };
+  }
+
+  LearningItemProgressData copyWith({
+    int? profileId,
+    String? itemId,
+    String? mode,
+    int? contentVersion,
+    int? attempts,
+    int? correct,
+    int? unaidedCorrect,
+    int? hintsUsed,
+    int? assisted,
+    int? recalledCount,
+    Value<int?> firstCompletedAt = const Value.absent(),
+    Value<int?> lastCompletedAt = const Value.absent(),
+    int? lastSeenAt,
+    String? status,
+  }) => LearningItemProgressData(
+    profileId: profileId ?? this.profileId,
+    itemId: itemId ?? this.itemId,
+    mode: mode ?? this.mode,
+    contentVersion: contentVersion ?? this.contentVersion,
+    attempts: attempts ?? this.attempts,
+    correct: correct ?? this.correct,
+    unaidedCorrect: unaidedCorrect ?? this.unaidedCorrect,
+    hintsUsed: hintsUsed ?? this.hintsUsed,
+    assisted: assisted ?? this.assisted,
+    recalledCount: recalledCount ?? this.recalledCount,
+    firstCompletedAt: firstCompletedAt.present
+        ? firstCompletedAt.value
+        : this.firstCompletedAt,
+    lastCompletedAt: lastCompletedAt.present
+        ? lastCompletedAt.value
+        : this.lastCompletedAt,
+    lastSeenAt: lastSeenAt ?? this.lastSeenAt,
+    status: status ?? this.status,
+  );
+  LearningItemProgressData copyWithCompanion(
+    LearningItemProgressCompanion data,
+  ) {
+    return LearningItemProgressData(
+      profileId: data.profileId.present ? data.profileId.value : this.profileId,
+      itemId: data.itemId.present ? data.itemId.value : this.itemId,
+      mode: data.mode.present ? data.mode.value : this.mode,
+      contentVersion: data.contentVersion.present
+          ? data.contentVersion.value
+          : this.contentVersion,
+      attempts: data.attempts.present ? data.attempts.value : this.attempts,
+      correct: data.correct.present ? data.correct.value : this.correct,
+      unaidedCorrect: data.unaidedCorrect.present
+          ? data.unaidedCorrect.value
+          : this.unaidedCorrect,
+      hintsUsed: data.hintsUsed.present ? data.hintsUsed.value : this.hintsUsed,
+      assisted: data.assisted.present ? data.assisted.value : this.assisted,
+      recalledCount: data.recalledCount.present
+          ? data.recalledCount.value
+          : this.recalledCount,
+      firstCompletedAt: data.firstCompletedAt.present
+          ? data.firstCompletedAt.value
+          : this.firstCompletedAt,
+      lastCompletedAt: data.lastCompletedAt.present
+          ? data.lastCompletedAt.value
+          : this.lastCompletedAt,
+      lastSeenAt: data.lastSeenAt.present
+          ? data.lastSeenAt.value
+          : this.lastSeenAt,
+      status: data.status.present ? data.status.value : this.status,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LearningItemProgressData(')
+          ..write('profileId: $profileId, ')
+          ..write('itemId: $itemId, ')
+          ..write('mode: $mode, ')
+          ..write('contentVersion: $contentVersion, ')
+          ..write('attempts: $attempts, ')
+          ..write('correct: $correct, ')
+          ..write('unaidedCorrect: $unaidedCorrect, ')
+          ..write('hintsUsed: $hintsUsed, ')
+          ..write('assisted: $assisted, ')
+          ..write('recalledCount: $recalledCount, ')
+          ..write('firstCompletedAt: $firstCompletedAt, ')
+          ..write('lastCompletedAt: $lastCompletedAt, ')
+          ..write('lastSeenAt: $lastSeenAt, ')
+          ..write('status: $status')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    profileId,
+    itemId,
+    mode,
+    contentVersion,
+    attempts,
+    correct,
+    unaidedCorrect,
+    hintsUsed,
+    assisted,
+    recalledCount,
+    firstCompletedAt,
+    lastCompletedAt,
+    lastSeenAt,
+    status,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is LearningItemProgressData &&
+          other.profileId == this.profileId &&
+          other.itemId == this.itemId &&
+          other.mode == this.mode &&
+          other.contentVersion == this.contentVersion &&
+          other.attempts == this.attempts &&
+          other.correct == this.correct &&
+          other.unaidedCorrect == this.unaidedCorrect &&
+          other.hintsUsed == this.hintsUsed &&
+          other.assisted == this.assisted &&
+          other.recalledCount == this.recalledCount &&
+          other.firstCompletedAt == this.firstCompletedAt &&
+          other.lastCompletedAt == this.lastCompletedAt &&
+          other.lastSeenAt == this.lastSeenAt &&
+          other.status == this.status);
+}
+
+class LearningItemProgressCompanion
+    extends UpdateCompanion<LearningItemProgressData> {
+  final Value<int> profileId;
+  final Value<String> itemId;
+  final Value<String> mode;
+  final Value<int> contentVersion;
+  final Value<int> attempts;
+  final Value<int> correct;
+  final Value<int> unaidedCorrect;
+  final Value<int> hintsUsed;
+  final Value<int> assisted;
+  final Value<int> recalledCount;
+  final Value<int?> firstCompletedAt;
+  final Value<int?> lastCompletedAt;
+  final Value<int> lastSeenAt;
+  final Value<String> status;
+  final Value<int> rowid;
+  const LearningItemProgressCompanion({
+    this.profileId = const Value.absent(),
+    this.itemId = const Value.absent(),
+    this.mode = const Value.absent(),
+    this.contentVersion = const Value.absent(),
+    this.attempts = const Value.absent(),
+    this.correct = const Value.absent(),
+    this.unaidedCorrect = const Value.absent(),
+    this.hintsUsed = const Value.absent(),
+    this.assisted = const Value.absent(),
+    this.recalledCount = const Value.absent(),
+    this.firstCompletedAt = const Value.absent(),
+    this.lastCompletedAt = const Value.absent(),
+    this.lastSeenAt = const Value.absent(),
+    this.status = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  LearningItemProgressCompanion.insert({
+    required int profileId,
+    required String itemId,
+    required String mode,
+    this.contentVersion = const Value.absent(),
+    this.attempts = const Value.absent(),
+    this.correct = const Value.absent(),
+    this.unaidedCorrect = const Value.absent(),
+    this.hintsUsed = const Value.absent(),
+    this.assisted = const Value.absent(),
+    this.recalledCount = const Value.absent(),
+    this.firstCompletedAt = const Value.absent(),
+    this.lastCompletedAt = const Value.absent(),
+    required int lastSeenAt,
+    this.status = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : profileId = Value(profileId),
+       itemId = Value(itemId),
+       mode = Value(mode),
+       lastSeenAt = Value(lastSeenAt);
+  static Insertable<LearningItemProgressData> custom({
+    Expression<int>? profileId,
+    Expression<String>? itemId,
+    Expression<String>? mode,
+    Expression<int>? contentVersion,
+    Expression<int>? attempts,
+    Expression<int>? correct,
+    Expression<int>? unaidedCorrect,
+    Expression<int>? hintsUsed,
+    Expression<int>? assisted,
+    Expression<int>? recalledCount,
+    Expression<int>? firstCompletedAt,
+    Expression<int>? lastCompletedAt,
+    Expression<int>? lastSeenAt,
+    Expression<String>? status,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (profileId != null) 'profile_id': profileId,
+      if (itemId != null) 'item_id': itemId,
+      if (mode != null) 'mode': mode,
+      if (contentVersion != null) 'content_version': contentVersion,
+      if (attempts != null) 'attempts': attempts,
+      if (correct != null) 'correct': correct,
+      if (unaidedCorrect != null) 'unaided_correct': unaidedCorrect,
+      if (hintsUsed != null) 'hints_used': hintsUsed,
+      if (assisted != null) 'assisted': assisted,
+      if (recalledCount != null) 'recalled_count': recalledCount,
+      if (firstCompletedAt != null) 'first_completed_at': firstCompletedAt,
+      if (lastCompletedAt != null) 'last_completed_at': lastCompletedAt,
+      if (lastSeenAt != null) 'last_seen_at': lastSeenAt,
+      if (status != null) 'status': status,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  LearningItemProgressCompanion copyWith({
+    Value<int>? profileId,
+    Value<String>? itemId,
+    Value<String>? mode,
+    Value<int>? contentVersion,
+    Value<int>? attempts,
+    Value<int>? correct,
+    Value<int>? unaidedCorrect,
+    Value<int>? hintsUsed,
+    Value<int>? assisted,
+    Value<int>? recalledCount,
+    Value<int?>? firstCompletedAt,
+    Value<int?>? lastCompletedAt,
+    Value<int>? lastSeenAt,
+    Value<String>? status,
+    Value<int>? rowid,
+  }) {
+    return LearningItemProgressCompanion(
+      profileId: profileId ?? this.profileId,
+      itemId: itemId ?? this.itemId,
+      mode: mode ?? this.mode,
+      contentVersion: contentVersion ?? this.contentVersion,
+      attempts: attempts ?? this.attempts,
+      correct: correct ?? this.correct,
+      unaidedCorrect: unaidedCorrect ?? this.unaidedCorrect,
+      hintsUsed: hintsUsed ?? this.hintsUsed,
+      assisted: assisted ?? this.assisted,
+      recalledCount: recalledCount ?? this.recalledCount,
+      firstCompletedAt: firstCompletedAt ?? this.firstCompletedAt,
+      lastCompletedAt: lastCompletedAt ?? this.lastCompletedAt,
+      lastSeenAt: lastSeenAt ?? this.lastSeenAt,
+      status: status ?? this.status,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (profileId.present) {
+      map['profile_id'] = Variable<int>(profileId.value);
+    }
+    if (itemId.present) {
+      map['item_id'] = Variable<String>(itemId.value);
+    }
+    if (mode.present) {
+      map['mode'] = Variable<String>(mode.value);
+    }
+    if (contentVersion.present) {
+      map['content_version'] = Variable<int>(contentVersion.value);
+    }
+    if (attempts.present) {
+      map['attempts'] = Variable<int>(attempts.value);
+    }
+    if (correct.present) {
+      map['correct'] = Variable<int>(correct.value);
+    }
+    if (unaidedCorrect.present) {
+      map['unaided_correct'] = Variable<int>(unaidedCorrect.value);
+    }
+    if (hintsUsed.present) {
+      map['hints_used'] = Variable<int>(hintsUsed.value);
+    }
+    if (assisted.present) {
+      map['assisted'] = Variable<int>(assisted.value);
+    }
+    if (recalledCount.present) {
+      map['recalled_count'] = Variable<int>(recalledCount.value);
+    }
+    if (firstCompletedAt.present) {
+      map['first_completed_at'] = Variable<int>(firstCompletedAt.value);
+    }
+    if (lastCompletedAt.present) {
+      map['last_completed_at'] = Variable<int>(lastCompletedAt.value);
+    }
+    if (lastSeenAt.present) {
+      map['last_seen_at'] = Variable<int>(lastSeenAt.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LearningItemProgressCompanion(')
+          ..write('profileId: $profileId, ')
+          ..write('itemId: $itemId, ')
+          ..write('mode: $mode, ')
+          ..write('contentVersion: $contentVersion, ')
+          ..write('attempts: $attempts, ')
+          ..write('correct: $correct, ')
+          ..write('unaidedCorrect: $unaidedCorrect, ')
+          ..write('hintsUsed: $hintsUsed, ')
+          ..write('assisted: $assisted, ')
+          ..write('recalledCount: $recalledCount, ')
+          ..write('firstCompletedAt: $firstCompletedAt, ')
+          ..write('lastCompletedAt: $lastCompletedAt, ')
+          ..write('lastSeenAt: $lastSeenAt, ')
+          ..write('status: $status, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -5740,6 +6894,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $ActivityCheckpointsTable activityCheckpoints =
       $ActivityCheckpointsTable(this);
   late final $LevelBadgesTable levelBadges = $LevelBadgesTable(this);
+  late final $LearningItemProgressTable learningItemProgress =
+      $LearningItemProgressTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -5757,6 +6913,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     recentGeneratedLevels,
     activityCheckpoints,
     levelBadges,
+    learningItemProgress,
   ];
 }
 
@@ -5768,6 +6925,7 @@ typedef $$ChildProfilesTableCreateCompanionBuilder =
       required String ageBand,
       required int createdAt,
       Value<bool> active,
+      Value<String> readiness,
     });
 typedef $$ChildProfilesTableUpdateCompanionBuilder =
     ChildProfilesCompanion Function({
@@ -5777,6 +6935,7 @@ typedef $$ChildProfilesTableUpdateCompanionBuilder =
       Value<String> ageBand,
       Value<int> createdAt,
       Value<bool> active,
+      Value<String> readiness,
     });
 
 final class $$ChildProfilesTableReferences
@@ -5946,6 +7105,31 @@ final class $$ChildProfilesTableReferences
       manager.$state.copyWith(prefetchedData: cache),
     );
   }
+
+  static MultiTypedResultKey<
+    $LearningItemProgressTable,
+    List<LearningItemProgressData>
+  >
+  _learningItemProgressRefsTable(_$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.learningItemProgress,
+        aliasName: 'child_profiles__id__learning_item_progress__profile_id',
+      );
+
+  $$LearningItemProgressTableProcessedTableManager
+  get learningItemProgressRefs {
+    final manager = $$LearningItemProgressTableTableManager(
+      $_db,
+      $_db.learningItemProgress,
+    ).filter((f) => f.profileId.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _learningItemProgressRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
 }
 
 class $$ChildProfilesTableFilterComposer
@@ -5984,6 +7168,11 @@ class $$ChildProfilesTableFilterComposer
 
   ColumnFilters<bool> get active => $composableBuilder(
     column: $table.active,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get readiness => $composableBuilder(
+    column: $table.readiness,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -6187,6 +7376,31 @@ class $$ChildProfilesTableFilterComposer
     );
     return f(composer);
   }
+
+  Expression<bool> learningItemProgressRefs(
+    Expression<bool> Function($$LearningItemProgressTableFilterComposer f) f,
+  ) {
+    final $$LearningItemProgressTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.learningItemProgress,
+      getReferencedColumn: (t) => t.profileId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$LearningItemProgressTableFilterComposer(
+            $db: $db,
+            $table: $db.learningItemProgress,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$ChildProfilesTableOrderingComposer
@@ -6227,6 +7441,11 @@ class $$ChildProfilesTableOrderingComposer
     column: $table.active,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<String> get readiness => $composableBuilder(
+    column: $table.readiness,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$ChildProfilesTableAnnotationComposer
@@ -6255,6 +7474,9 @@ class $$ChildProfilesTableAnnotationComposer
 
   GeneratedColumn<bool> get active =>
       $composableBuilder(column: $table.active, builder: (column) => column);
+
+  GeneratedColumn<String> get readiness =>
+      $composableBuilder(column: $table.readiness, builder: (column) => column);
 
   Expression<T> activityProgressRefs<T extends Object>(
     Expression<T> Function($$ActivityProgressTableAnnotationComposer a) f,
@@ -6457,6 +7679,32 @@ class $$ChildProfilesTableAnnotationComposer
     );
     return f(composer);
   }
+
+  Expression<T> learningItemProgressRefs<T extends Object>(
+    Expression<T> Function($$LearningItemProgressTableAnnotationComposer a) f,
+  ) {
+    final $$LearningItemProgressTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.learningItemProgress,
+          getReferencedColumn: (t) => t.profileId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$LearningItemProgressTableAnnotationComposer(
+                $db: $db,
+                $table: $db.learningItemProgress,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
 }
 
 class $$ChildProfilesTableTableManager
@@ -6481,6 +7729,7 @@ class $$ChildProfilesTableTableManager
             bool recentGeneratedLevelsRefs,
             bool activityCheckpointsRefs,
             bool levelBadgesRefs,
+            bool learningItemProgressRefs,
           })
         > {
   $$ChildProfilesTableTableManager(_$AppDatabase db, $ChildProfilesTable table)
@@ -6502,6 +7751,7 @@ class $$ChildProfilesTableTableManager
                 Value<String> ageBand = const Value.absent(),
                 Value<int> createdAt = const Value.absent(),
                 Value<bool> active = const Value.absent(),
+                Value<String> readiness = const Value.absent(),
               }) => ChildProfilesCompanion(
                 id: id,
                 nickname: nickname,
@@ -6509,6 +7759,7 @@ class $$ChildProfilesTableTableManager
                 ageBand: ageBand,
                 createdAt: createdAt,
                 active: active,
+                readiness: readiness,
               ),
           createCompanionCallback:
               ({
@@ -6518,6 +7769,7 @@ class $$ChildProfilesTableTableManager
                 required String ageBand,
                 required int createdAt,
                 Value<bool> active = const Value.absent(),
+                Value<String> readiness = const Value.absent(),
               }) => ChildProfilesCompanion.insert(
                 id: id,
                 nickname: nickname,
@@ -6525,6 +7777,7 @@ class $$ChildProfilesTableTableManager
                 ageBand: ageBand,
                 createdAt: createdAt,
                 active: active,
+                readiness: readiness,
               ),
           withReferenceMapper: (p0) => p0
               .map(
@@ -6544,6 +7797,7 @@ class $$ChildProfilesTableTableManager
                 recentGeneratedLevelsRefs = false,
                 activityCheckpointsRefs = false,
                 levelBadgesRefs = false,
+                learningItemProgressRefs = false,
               }) {
                 return PrefetchHooks(
                   db: db,
@@ -6556,6 +7810,7 @@ class $$ChildProfilesTableTableManager
                     if (recentGeneratedLevelsRefs) db.recentGeneratedLevels,
                     if (activityCheckpointsRefs) db.activityCheckpoints,
                     if (levelBadgesRefs) db.levelBadges,
+                    if (learningItemProgressRefs) db.learningItemProgress,
                   ],
                   addJoins: null,
                   getPrefetchedDataCallback: (items) async {
@@ -6728,6 +7983,27 @@ class $$ChildProfilesTableTableManager
                               ),
                           typedResults: items,
                         ),
+                      if (learningItemProgressRefs)
+                        await $_getPrefetchedData<
+                          ChildProfile,
+                          $ChildProfilesTable,
+                          LearningItemProgressData
+                        >(
+                          currentTable: table,
+                          referencedTable: $$ChildProfilesTableReferences
+                              ._learningItemProgressRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$ChildProfilesTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).learningItemProgressRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.profileId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
                     ];
                   },
                 );
@@ -6757,6 +8033,7 @@ typedef $$ChildProfilesTableProcessedTableManager =
         bool recentGeneratedLevelsRefs,
         bool activityCheckpointsRefs,
         bool levelBadgesRefs,
+        bool learningItemProgressRefs,
       })
     >;
 typedef $$ActivityProgressTableCreateCompanionBuilder =
@@ -9318,6 +10595,11 @@ typedef $$LocalSettingsTableCreateCompanionBuilder =
       Value<int> reminderMinutes,
       Value<bool> reducedMotion,
       Value<int> sessionLimitMinutes,
+      Value<String?> learningRegion,
+      Value<String> interfaceLanguage,
+      Value<String> teachingLanguage,
+      Value<bool> hindiEnabled,
+      Value<bool> discoverIndiaEnabled,
     });
 typedef $$LocalSettingsTableUpdateCompanionBuilder =
     LocalSettingsCompanion Function({
@@ -9334,6 +10616,11 @@ typedef $$LocalSettingsTableUpdateCompanionBuilder =
       Value<int> reminderMinutes,
       Value<bool> reducedMotion,
       Value<int> sessionLimitMinutes,
+      Value<String?> learningRegion,
+      Value<String> interfaceLanguage,
+      Value<String> teachingLanguage,
+      Value<bool> hindiEnabled,
+      Value<bool> discoverIndiaEnabled,
     });
 
 class $$LocalSettingsTableFilterComposer
@@ -9407,6 +10694,31 @@ class $$LocalSettingsTableFilterComposer
 
   ColumnFilters<int> get sessionLimitMinutes => $composableBuilder(
     column: $table.sessionLimitMinutes,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get learningRegion => $composableBuilder(
+    column: $table.learningRegion,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get interfaceLanguage => $composableBuilder(
+    column: $table.interfaceLanguage,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get teachingLanguage => $composableBuilder(
+    column: $table.teachingLanguage,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get hindiEnabled => $composableBuilder(
+    column: $table.hindiEnabled,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get discoverIndiaEnabled => $composableBuilder(
+    column: $table.discoverIndiaEnabled,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -9484,6 +10796,31 @@ class $$LocalSettingsTableOrderingComposer
     column: $table.sessionLimitMinutes,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<String> get learningRegion => $composableBuilder(
+    column: $table.learningRegion,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get interfaceLanguage => $composableBuilder(
+    column: $table.interfaceLanguage,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get teachingLanguage => $composableBuilder(
+    column: $table.teachingLanguage,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get hindiEnabled => $composableBuilder(
+    column: $table.hindiEnabled,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get discoverIndiaEnabled => $composableBuilder(
+    column: $table.discoverIndiaEnabled,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$LocalSettingsTableAnnotationComposer
@@ -9557,6 +10894,31 @@ class $$LocalSettingsTableAnnotationComposer
     column: $table.sessionLimitMinutes,
     builder: (column) => column,
   );
+
+  GeneratedColumn<String> get learningRegion => $composableBuilder(
+    column: $table.learningRegion,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get interfaceLanguage => $composableBuilder(
+    column: $table.interfaceLanguage,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get teachingLanguage => $composableBuilder(
+    column: $table.teachingLanguage,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get hindiEnabled => $composableBuilder(
+    column: $table.hindiEnabled,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get discoverIndiaEnabled => $composableBuilder(
+    column: $table.discoverIndiaEnabled,
+    builder: (column) => column,
+  );
 }
 
 class $$LocalSettingsTableTableManager
@@ -9603,6 +10965,11 @@ class $$LocalSettingsTableTableManager
                 Value<int> reminderMinutes = const Value.absent(),
                 Value<bool> reducedMotion = const Value.absent(),
                 Value<int> sessionLimitMinutes = const Value.absent(),
+                Value<String?> learningRegion = const Value.absent(),
+                Value<String> interfaceLanguage = const Value.absent(),
+                Value<String> teachingLanguage = const Value.absent(),
+                Value<bool> hindiEnabled = const Value.absent(),
+                Value<bool> discoverIndiaEnabled = const Value.absent(),
               }) => LocalSettingsCompanion(
                 id: id,
                 soundEffectsEnabled: soundEffectsEnabled,
@@ -9617,6 +10984,11 @@ class $$LocalSettingsTableTableManager
                 reminderMinutes: reminderMinutes,
                 reducedMotion: reducedMotion,
                 sessionLimitMinutes: sessionLimitMinutes,
+                learningRegion: learningRegion,
+                interfaceLanguage: interfaceLanguage,
+                teachingLanguage: teachingLanguage,
+                hindiEnabled: hindiEnabled,
+                discoverIndiaEnabled: discoverIndiaEnabled,
               ),
           createCompanionCallback:
               ({
@@ -9633,6 +11005,11 @@ class $$LocalSettingsTableTableManager
                 Value<int> reminderMinutes = const Value.absent(),
                 Value<bool> reducedMotion = const Value.absent(),
                 Value<int> sessionLimitMinutes = const Value.absent(),
+                Value<String?> learningRegion = const Value.absent(),
+                Value<String> interfaceLanguage = const Value.absent(),
+                Value<String> teachingLanguage = const Value.absent(),
+                Value<bool> hindiEnabled = const Value.absent(),
+                Value<bool> discoverIndiaEnabled = const Value.absent(),
               }) => LocalSettingsCompanion.insert(
                 id: id,
                 soundEffectsEnabled: soundEffectsEnabled,
@@ -9647,6 +11024,11 @@ class $$LocalSettingsTableTableManager
                 reminderMinutes: reminderMinutes,
                 reducedMotion: reducedMotion,
                 sessionLimitMinutes: sessionLimitMinutes,
+                learningRegion: learningRegion,
+                interfaceLanguage: interfaceLanguage,
+                teachingLanguage: teachingLanguage,
+                hindiEnabled: hindiEnabled,
+                discoverIndiaEnabled: discoverIndiaEnabled,
               ),
           withReferenceMapper: (p0) => p0
               .map(
@@ -10716,6 +12098,525 @@ typedef $$LevelBadgesTableProcessedTableManager =
       LevelBadge,
       PrefetchHooks Function({bool profileId})
     >;
+typedef $$LearningItemProgressTableCreateCompanionBuilder =
+    LearningItemProgressCompanion Function({
+      required int profileId,
+      required String itemId,
+      required String mode,
+      Value<int> contentVersion,
+      Value<int> attempts,
+      Value<int> correct,
+      Value<int> unaidedCorrect,
+      Value<int> hintsUsed,
+      Value<int> assisted,
+      Value<int> recalledCount,
+      Value<int?> firstCompletedAt,
+      Value<int?> lastCompletedAt,
+      required int lastSeenAt,
+      Value<String> status,
+      Value<int> rowid,
+    });
+typedef $$LearningItemProgressTableUpdateCompanionBuilder =
+    LearningItemProgressCompanion Function({
+      Value<int> profileId,
+      Value<String> itemId,
+      Value<String> mode,
+      Value<int> contentVersion,
+      Value<int> attempts,
+      Value<int> correct,
+      Value<int> unaidedCorrect,
+      Value<int> hintsUsed,
+      Value<int> assisted,
+      Value<int> recalledCount,
+      Value<int?> firstCompletedAt,
+      Value<int?> lastCompletedAt,
+      Value<int> lastSeenAt,
+      Value<String> status,
+      Value<int> rowid,
+    });
+
+final class $$LearningItemProgressTableReferences
+    extends
+        BaseReferences<
+          _$AppDatabase,
+          $LearningItemProgressTable,
+          LearningItemProgressData
+        > {
+  $$LearningItemProgressTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $ChildProfilesTable _profileIdTable(_$AppDatabase db) => db
+      .childProfiles
+      .createAlias('learning_item_progress__profile_id__child_profiles__id');
+
+  $$ChildProfilesTableProcessedTableManager get profileId {
+    final $_column = $_itemColumn<int>('profile_id')!;
+
+    final manager = $$ChildProfilesTableTableManager(
+      $_db,
+      $_db.childProfiles,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_profileIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$LearningItemProgressTableFilterComposer
+    extends Composer<_$AppDatabase, $LearningItemProgressTable> {
+  $$LearningItemProgressTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get itemId => $composableBuilder(
+    column: $table.itemId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get mode => $composableBuilder(
+    column: $table.mode,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get contentVersion => $composableBuilder(
+    column: $table.contentVersion,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get attempts => $composableBuilder(
+    column: $table.attempts,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get correct => $composableBuilder(
+    column: $table.correct,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get unaidedCorrect => $composableBuilder(
+    column: $table.unaidedCorrect,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get hintsUsed => $composableBuilder(
+    column: $table.hintsUsed,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get assisted => $composableBuilder(
+    column: $table.assisted,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get recalledCount => $composableBuilder(
+    column: $table.recalledCount,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get firstCompletedAt => $composableBuilder(
+    column: $table.firstCompletedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get lastCompletedAt => $composableBuilder(
+    column: $table.lastCompletedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get lastSeenAt => $composableBuilder(
+    column: $table.lastSeenAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$ChildProfilesTableFilterComposer get profileId {
+    final $$ChildProfilesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.profileId,
+      referencedTable: $db.childProfiles,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ChildProfilesTableFilterComposer(
+            $db: $db,
+            $table: $db.childProfiles,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$LearningItemProgressTableOrderingComposer
+    extends Composer<_$AppDatabase, $LearningItemProgressTable> {
+  $$LearningItemProgressTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get itemId => $composableBuilder(
+    column: $table.itemId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get mode => $composableBuilder(
+    column: $table.mode,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get contentVersion => $composableBuilder(
+    column: $table.contentVersion,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get attempts => $composableBuilder(
+    column: $table.attempts,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get correct => $composableBuilder(
+    column: $table.correct,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get unaidedCorrect => $composableBuilder(
+    column: $table.unaidedCorrect,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get hintsUsed => $composableBuilder(
+    column: $table.hintsUsed,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get assisted => $composableBuilder(
+    column: $table.assisted,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get recalledCount => $composableBuilder(
+    column: $table.recalledCount,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get firstCompletedAt => $composableBuilder(
+    column: $table.firstCompletedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get lastCompletedAt => $composableBuilder(
+    column: $table.lastCompletedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get lastSeenAt => $composableBuilder(
+    column: $table.lastSeenAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$ChildProfilesTableOrderingComposer get profileId {
+    final $$ChildProfilesTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.profileId,
+      referencedTable: $db.childProfiles,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ChildProfilesTableOrderingComposer(
+            $db: $db,
+            $table: $db.childProfiles,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$LearningItemProgressTableAnnotationComposer
+    extends Composer<_$AppDatabase, $LearningItemProgressTable> {
+  $$LearningItemProgressTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get itemId =>
+      $composableBuilder(column: $table.itemId, builder: (column) => column);
+
+  GeneratedColumn<String> get mode =>
+      $composableBuilder(column: $table.mode, builder: (column) => column);
+
+  GeneratedColumn<int> get contentVersion => $composableBuilder(
+    column: $table.contentVersion,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get attempts =>
+      $composableBuilder(column: $table.attempts, builder: (column) => column);
+
+  GeneratedColumn<int> get correct =>
+      $composableBuilder(column: $table.correct, builder: (column) => column);
+
+  GeneratedColumn<int> get unaidedCorrect => $composableBuilder(
+    column: $table.unaidedCorrect,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get hintsUsed =>
+      $composableBuilder(column: $table.hintsUsed, builder: (column) => column);
+
+  GeneratedColumn<int> get assisted =>
+      $composableBuilder(column: $table.assisted, builder: (column) => column);
+
+  GeneratedColumn<int> get recalledCount => $composableBuilder(
+    column: $table.recalledCount,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get firstCompletedAt => $composableBuilder(
+    column: $table.firstCompletedAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get lastCompletedAt => $composableBuilder(
+    column: $table.lastCompletedAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get lastSeenAt => $composableBuilder(
+    column: $table.lastSeenAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
+
+  $$ChildProfilesTableAnnotationComposer get profileId {
+    final $$ChildProfilesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.profileId,
+      referencedTable: $db.childProfiles,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ChildProfilesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.childProfiles,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$LearningItemProgressTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $LearningItemProgressTable,
+          LearningItemProgressData,
+          $$LearningItemProgressTableFilterComposer,
+          $$LearningItemProgressTableOrderingComposer,
+          $$LearningItemProgressTableAnnotationComposer,
+          $$LearningItemProgressTableCreateCompanionBuilder,
+          $$LearningItemProgressTableUpdateCompanionBuilder,
+          (LearningItemProgressData, $$LearningItemProgressTableReferences),
+          LearningItemProgressData,
+          PrefetchHooks Function({bool profileId})
+        > {
+  $$LearningItemProgressTableTableManager(
+    _$AppDatabase db,
+    $LearningItemProgressTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$LearningItemProgressTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$LearningItemProgressTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$LearningItemProgressTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<int> profileId = const Value.absent(),
+                Value<String> itemId = const Value.absent(),
+                Value<String> mode = const Value.absent(),
+                Value<int> contentVersion = const Value.absent(),
+                Value<int> attempts = const Value.absent(),
+                Value<int> correct = const Value.absent(),
+                Value<int> unaidedCorrect = const Value.absent(),
+                Value<int> hintsUsed = const Value.absent(),
+                Value<int> assisted = const Value.absent(),
+                Value<int> recalledCount = const Value.absent(),
+                Value<int?> firstCompletedAt = const Value.absent(),
+                Value<int?> lastCompletedAt = const Value.absent(),
+                Value<int> lastSeenAt = const Value.absent(),
+                Value<String> status = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => LearningItemProgressCompanion(
+                profileId: profileId,
+                itemId: itemId,
+                mode: mode,
+                contentVersion: contentVersion,
+                attempts: attempts,
+                correct: correct,
+                unaidedCorrect: unaidedCorrect,
+                hintsUsed: hintsUsed,
+                assisted: assisted,
+                recalledCount: recalledCount,
+                firstCompletedAt: firstCompletedAt,
+                lastCompletedAt: lastCompletedAt,
+                lastSeenAt: lastSeenAt,
+                status: status,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required int profileId,
+                required String itemId,
+                required String mode,
+                Value<int> contentVersion = const Value.absent(),
+                Value<int> attempts = const Value.absent(),
+                Value<int> correct = const Value.absent(),
+                Value<int> unaidedCorrect = const Value.absent(),
+                Value<int> hintsUsed = const Value.absent(),
+                Value<int> assisted = const Value.absent(),
+                Value<int> recalledCount = const Value.absent(),
+                Value<int?> firstCompletedAt = const Value.absent(),
+                Value<int?> lastCompletedAt = const Value.absent(),
+                required int lastSeenAt,
+                Value<String> status = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => LearningItemProgressCompanion.insert(
+                profileId: profileId,
+                itemId: itemId,
+                mode: mode,
+                contentVersion: contentVersion,
+                attempts: attempts,
+                correct: correct,
+                unaidedCorrect: unaidedCorrect,
+                hintsUsed: hintsUsed,
+                assisted: assisted,
+                recalledCount: recalledCount,
+                firstCompletedAt: firstCompletedAt,
+                lastCompletedAt: lastCompletedAt,
+                lastSeenAt: lastSeenAt,
+                status: status,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<
+                    $LearningItemProgressTable,
+                    LearningItemProgressData
+                  >(table),
+                  $$LearningItemProgressTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({profileId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (profileId) {
+                      state = state.withJoin(
+                        currentTable: table,
+                        currentColumn: table.profileId,
+                        referencedTable: $$LearningItemProgressTableReferences
+                            ._profileIdTable(db),
+                        referencedColumn: $$LearningItemProgressTableReferences
+                            ._profileIdTable(db)
+                            .id,
+                      ) as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$LearningItemProgressTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $LearningItemProgressTable,
+      LearningItemProgressData,
+      $$LearningItemProgressTableFilterComposer,
+      $$LearningItemProgressTableOrderingComposer,
+      $$LearningItemProgressTableAnnotationComposer,
+      $$LearningItemProgressTableCreateCompanionBuilder,
+      $$LearningItemProgressTableUpdateCompanionBuilder,
+      (LearningItemProgressData, $$LearningItemProgressTableReferences),
+      LearningItemProgressData,
+      PrefetchHooks Function({bool profileId})
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -10747,4 +12648,6 @@ class $AppDatabaseManager {
       $$ActivityCheckpointsTableTableManager(_db, _db.activityCheckpoints);
   $$LevelBadgesTableTableManager get levelBadges =>
       $$LevelBadgesTableTableManager(_db, _db.levelBadges);
+  $$LearningItemProgressTableTableManager get learningItemProgress =>
+      $$LearningItemProgressTableTableManager(_db, _db.learningItemProgress);
 }

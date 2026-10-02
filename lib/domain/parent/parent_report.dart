@@ -50,6 +50,7 @@ class ParentReport {
     required this.categoryCounts,
     required this.skills,
     required this.recent,
+    this.learningNotes = const [],
   });
 
   final int practicedToday;
@@ -61,9 +62,10 @@ class ParentReport {
   final Map<String, int> categoryCounts;
   final List<SkillPractice> skills;
   final List<RecentPractice> recent;
+  final List<String> learningNotes;
 
   static const disclaimer =
-      'These notes describe practice in this app. They are not a diagnosis, a school mark, or a formal assessment.';
+      'These notes describe practice in this app. They are not a diagnosis, a school mark, or a formal assessment. They are not an IQ score and they do not compare this child with other children.';
 }
 
 String skillTitle(String skillId) {
@@ -154,6 +156,8 @@ String categoryLabel(String engine) {
     GameCategory.findDifference => 'Spot the difference',
     GameCategory.knowledge => 'Knowledge',
     GameCategory.ticTacToe => 'Tic-Tac-Toe',
+    GameCategory.hindi => 'Hindi',
+    GameCategory.discoverIndia => 'Discover India',
     null => engine,
   };
 }

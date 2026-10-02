@@ -96,6 +96,8 @@ class LaunchManifest {
       GameCategory.findDifference => 'find_difference:v1',
       GameCategory.knowledge => 'knowledge:v1',
       GameCategory.ticTacToe => 'tic_tac_toe:v1',
+      GameCategory.hindi => 'hindi:v1',
+      GameCategory.discoverIndia => 'discover_india:v1',
     };
   }
 
@@ -104,6 +106,8 @@ class LaunchManifest {
       GameCategory.findDifference => 'placeholder_artwork',
       GameCategory.knowledge => 'authored_structure_checked',
       GameCategory.ticTacToe => 'rules_checked',
+      GameCategory.hindi => 'development_sample',
+      GameCategory.discoverIndia => 'development_sample',
       _ => 'generator_validated',
     };
   }

@@ -54,7 +54,9 @@ RoundScore scoreRound({
     GameCategory.maths ||
     GameCategory.vocabulary ||
     GameCategory.pattern ||
-    GameCategory.knowledge => _banded(
+    GameCategory.knowledge ||
+    GameCategory.hindi ||
+    GameCategory.discoverIndia => _banded(
       clean: 10,
       retry: 7,
       hinted: 5,

@@ -17,14 +17,17 @@ import '../data/repositories/drift_profile_repository.dart';
 import '../data/repositories/drift_reward_repository.dart';
 import '../data/repositories/drift_progress_repository.dart';
 import '../data/repositories/drift_settings_repository.dart';
+import '../domain/learning/item_progress.dart';
 import '../domain/models/age_band.dart';
 import '../domain/models/child_profile.dart';
 import '../domain/models/entitlement_snapshot.dart';
+import '../domain/models/readiness.dart';
 import '../domain/monetization/billing_product_config.dart';
 import '../domain/monetization/entitlement_reconciler.dart';
 import '../domain/monetization/store_models.dart';
 import '../domain/monetization/subscription_verifier.dart';
 import '../domain/progress/activity_record.dart';
+import '../domain/regional/regional_availability.dart';
 import '../domain/rewards/reward_shelf.dart';
 import '../domain/repositories/profile_repository.dart';
 import '../domain/repositories/settings_repository.dart';
@@ -85,11 +88,55 @@ class SessionController extends AsyncNotifier<AppSession> {
       ageBand: ageBand,
       nickname: nickname,
     );
-    final done = settings.copyWith(onboardingComplete: true, onboardingStep: 5);
+    final done = settings.copyWith(onboardingComplete: true);
     await ref.read(settingsRepositoryProvider).save(done);
     state = AsyncData(AppSession(settings: done, profile: profile));
   }
+
+  /// Progress, journeys and rewards are keyed by profile id, so every
+  /// provider that watches the session reloads for the new child.
+  Future<void> switchProfile(int profileId) async {
+    final profile = await ref
+        .read(profileRepositoryProvider)
+        .switchTo(profileId);
+    final settings = await ref.read(settingsRepositoryProvider).load();
+    state = AsyncData(AppSession(settings: settings, profile: profile));
+    ref.invalidate(profilesProvider);
+  }
+
+  Future<void> addProfile({
+    required String avatarId,
+    required AgeBand ageBand,
+    required String? nickname,
+    required Readiness readiness,
+  }) async {
+    final profile = await ref
+        .read(profileRepositoryProvider)
+        .addProfile(
+          avatarId: avatarId,
+          ageBand: ageBand,
+          nickname: nickname,
+          readiness: readiness,
+        );
+    final settings = await ref.read(settingsRepositoryProvider).load();
+    state = AsyncData(AppSession(settings: settings, profile: profile));
+    ref.invalidate(profilesProvider);
+  }
 }
+
+final profilesProvider = FutureProvider<List<ChildProfile>>((ref) async {
+  await ref.watch(sessionProvider.future);
+  return ref.watch(profileRepositoryProvider).listProfiles();
+});
+
+/// Regional modules the current settings allow. Every entry point uses this.
+final regionalModulesProvider = Provider<List<RegionalModule>>((ref) {
+  final settings = ref.watch(sessionProvider).value?.settings;
+  if (settings == null) {
+    return const [];
+  }
+  return RegionalAvailability.available(settings);
+});
 
 final sessionProvider = AsyncNotifierProvider<SessionController, AppSession>(
   SessionController.new,
@@ -115,6 +162,7 @@ final dailyJourneyProvider = FutureProvider((ref) async {
     throw StateError('A profile is required before today\'s adventure.');
   }
   final records = await ref.watch(progressListProvider.future);
+  final items = await ref.watch(itemProgressProvider.future);
   return ref
       .watch(journeyRepositoryProvider)
       .ensure(
@@ -122,7 +170,18 @@ final dailyJourneyProvider = FutureProvider((ref) async {
         records: records,
         now: DateTime.now(),
         premiumActive: ref.watch(premiumActiveProvider),
+        settings: session.settings,
+        itemProgress: items,
       );
+});
+
+final itemProgressProvider = FutureProvider((ref) async {
+  final session = await ref.watch(sessionProvider.future);
+  final profile = session.profile;
+  if (profile == null) {
+    return const <LearningItemSnapshot>[];
+  }
+  return ref.watch(progressRepositoryProvider).listItemProgress(profile.id);
 });
 
 final rewardRepositoryProvider = Provider<DriftRewardRepository>((ref) {

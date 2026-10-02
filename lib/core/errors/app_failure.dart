@@ -44,6 +44,13 @@ final class ProfileAlreadyExistsFailure extends AppFailure {
   String get userMessage => 'This device already has a child profile.';
 }
 
+final class ProfileLimitFailure extends AppFailure {
+  const ProfileLimitFailure();
+
+  @override
+  String get userMessage => 'This device already has the most child profiles.';
+}
+
 final class InvalidProfileInputFailure extends AppFailure {
   const InvalidProfileInputFailure();
 

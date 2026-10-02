@@ -51,7 +51,7 @@ class _PlanCard extends StatelessWidget {
                 children: [
                   const ExcludeSemantics(
                     child: Icon(
-                      Icons.check_circle,
+                      Icons.check_circle_rounded,
                       color: SproutColors.success,
                       size: 20,
                     ),
@@ -269,7 +269,7 @@ class _PremiumOfferState extends ConsumerState<PremiumOffer> {
               'No ads.',
             ],
             note:
-                'Knowledge questions, a separate parent report, and extra rewards are not part of this version.',
+                'Hindi and Discover India samples do not use a separate purchase and do not use the five free activities of Maths or Words. A store product is not connected in this build.',
           ),
           const SizedBox(height: SproutSpace.md),
           Text(

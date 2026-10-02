@@ -10,5 +10,13 @@ abstract interface class AudioPlayback {
 
   Future<void> stopMusic();
 
+  Future<void> playNarration(String assetPath);
+
+  Future<void> stopNarration();
+
+  Future<void> stopEffects();
+
+  Future<void> setMusicVolume(double volume);
+
   Future<void> dispose();
 }

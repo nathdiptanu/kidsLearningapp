@@ -39,6 +39,10 @@ abstract final class SproutColors {
   static const Color mazeSurface = Color(0xFFE3F6E8);
   static const Color difference = Color(0xFF8A3A2A);
   static const Color ticTacToeSurface = Color(0xFFF1EDFF);
+  static const Color hindi = Color(0xFF8A2E12);
+  static const Color hindiSurface = Color(0xFFFFEDE3);
+  static const Color india = Color(0xFF0F5A5C);
+  static const Color indiaSurface = Color(0xFFE2F5F2);
 }
 
 abstract final class SproutSpace {
@@ -67,6 +71,13 @@ abstract final class SproutSize {
 
 abstract final class SproutType {
   static const String family = 'Nunito';
+
+  /// Nunito has no Devanagari. Hindi text falls back to this OFL font.
+  static const String devanagari = 'NotoSansDevanagari';
+  static const List<String> fallback = [devanagari];
+
+  /// Matras above and below the line need more room than Latin text.
+  static const double devanagariHeight = 1.5;
   static const double childTitle = 30;
   static const double childBody = 18;
   static const double childLabel = 16;
@@ -85,6 +96,8 @@ abstract final class SproutArt {
   static const String knowledge = 'assets/art/category_knowledge.jpg';
   static const String ticTacToe = 'assets/art/category_tictactoe.jpg';
   static const String maze = 'assets/art/category_maze.jpg';
+  static const String hindi = 'assets/art/category_hindi.jpg';
+  static const String discoverIndia = 'assets/art/category_discover_india.jpg';
 }
 
 abstract final class SproutMotion {

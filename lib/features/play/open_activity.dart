@@ -6,6 +6,12 @@ import '../../domain/games/play/activity_catalog.dart';
 import '../../domain/games/play/activity_definition.dart';
 import '../../domain/models/game_category.dart';
 import '../../domain/monetization/free_entitlement_policy.dart';
+import '../../domain/geography/geography_catalog.dart';
+import '../../domain/heritage/heritage_catalog.dart';
+import '../../domain/lessons/lesson_catalog.dart';
+import '../geography/geography_activity_screen.dart';
+import '../heritage/heritage_activity_screen.dart';
+import '../lessons/lesson_activity_screen.dart';
 import 'activity_access.dart';
 import 'activity_screen.dart';
 import 'difference_screen.dart';
@@ -37,6 +43,30 @@ void openActivity(
 }
 
 Widget screenFor(ActivityDefinition activity, {String? journeyDate}) {
+  if (activity.id.startsWith('lesson:')) {
+    final lesson = LessonCatalog().byId(activity.id);
+    if (lesson != null) {
+      return LessonActivityScreen(lesson: lesson, journeyDate: journeyDate);
+    }
+  }
+  if (activity.id.startsWith('geo:')) {
+    final geography = GeographyCatalog().byId(activity.id);
+    if (geography != null) {
+      return GeographyActivityScreen(
+        activity: geography,
+        journeyDate: journeyDate,
+      );
+    }
+  }
+  if (activity.id.startsWith('heritage:')) {
+    final heritage = HeritageCatalog().byId(activity.id);
+    if (heritage != null) {
+      return HeritageActivityScreen(
+        activity: heritage,
+        journeyDate: journeyDate,
+      );
+    }
+  }
   return switch (activity.category) {
     GameCategory.maze => MazeScreen(
       activity: activity,

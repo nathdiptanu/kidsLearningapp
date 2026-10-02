@@ -4,7 +4,7 @@ import '../sprout_tokens.dart';
 
 /// Round arrow that marks a whole card as tappable.
 class ChevronBadge extends StatelessWidget {
-  const ChevronBadge({this.size = 40, this.icon = Icons.chevron_right, super.key});
+  const ChevronBadge({this.size = 40, this.icon = Icons.chevron_right_rounded, super.key});
 
   final double size;
   final IconData icon;

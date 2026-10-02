@@ -8,16 +8,19 @@ import 'audio_playback.dart';
 /// Two long-lived players. Playback failures stay silent so a missing plugin
 /// never blocks a game. Widget tests skip the plugin entirely.
 class PluginAudioPlayback implements AudioPlayback {
-  PluginAudioPlayback({this._effects, this._music});
+  PluginAudioPlayback({this._effects, this._music, this._narration});
 
   AudioPlayer? _effects;
   AudioPlayer? _music;
+  AudioPlayer? _narration;
 
   bool get _skipPlugin => Platform.environment['FLUTTER_TEST'] == 'true';
 
   AudioPlayer get _effectsPlayer => _effects ??= AudioPlayer();
 
   AudioPlayer get _musicPlayer => _music ??= AudioPlayer();
+
+  AudioPlayer get _narrationPlayer => _narration ??= AudioPlayer();
 
   @override
   Future<void> playEffect(String assetPath) {
@@ -69,17 +72,59 @@ class PluginAudioPlayback implements AudioPlayback {
   }
 
   @override
+  Future<void> playNarration(String assetPath) {
+    if (_skipPlugin) {
+      return Future<void>.value();
+    }
+    return _guard(() async {
+      await stopEffects();
+      await _narrationPlayer.stop();
+      await _narrationPlayer.setReleaseMode(ReleaseMode.release);
+      await _narrationPlayer.setVolume(1);
+      await _narrationPlayer.play(AssetSource(assetPath));
+    });
+  }
+
+  @override
+  Future<void> stopEffects() {
+    if (_skipPlugin || _effects == null) {
+      return Future<void>.value();
+    }
+    return _guard(_effectsPlayer.stop);
+  }
+
+  @override
+  Future<void> stopNarration() {
+    if (_skipPlugin || _narration == null) {
+      return Future<void>.value();
+    }
+    return _guard(_narrationPlayer.stop);
+  }
+
+  @override
+  Future<void> setMusicVolume(double volume) {
+    if (_skipPlugin || _music == null) {
+      return Future<void>.value();
+    }
+    return _guard(() => _musicPlayer.setVolume(volume));
+  }
+
+  @override
   Future<void> dispose() {
     final effects = _effects;
     final music = _music;
+    final narration = _narration;
     _effects = null;
     _music = null;
-    if (_skipPlugin || (effects == null && music == null)) {
+    _narration = null;
+    if (_skipPlugin ||
+        (effects == null && music == null && narration == null)) {
       return Future<void>.value();
     }
     return _guard(() async {
       await effects?.dispose();
       await music?.dispose();
+      await narration?.dispose();
     });
   }
 

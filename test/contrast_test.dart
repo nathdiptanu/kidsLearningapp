@@ -6,6 +6,54 @@ void main() {
   test('palette pairs meet the contrast floors', () {
     final pairs = <ContrastPair>[
       const ContrastPair(
+        name: 'Hindi script sample on its badge',
+        foreground: SproutColors.hindi,
+        background: SproutColors.surface,
+        minimum: 4.5,
+      ),
+      const ContrastPair(
+        name: 'Hindi journey icon',
+        foreground: SproutColors.hindi,
+        background: SproutColors.primarySoft,
+        minimum: 3,
+      ),
+      const ContrastPair(
+        name: 'India journey icon',
+        foreground: SproutColors.india,
+        background: SproutColors.primarySoft,
+        minimum: 3,
+      ),
+      const ContrastPair(
+        name: 'title on Hindi header',
+        foreground: SproutColors.ink,
+        background: SproutColors.hindiSurface,
+        minimum: 4.5,
+      ),
+      const ContrastPair(
+        name: 'title on India header',
+        foreground: SproutColors.ink,
+        background: SproutColors.indiaSurface,
+        minimum: 4.5,
+      ),
+      const ContrastPair(
+        name: 'secondary on Hindi header',
+        foreground: SproutColors.inkMuted,
+        background: SproutColors.hindiSurface,
+        minimum: 4.5,
+      ),
+      const ContrastPair(
+        name: 'secondary on India header',
+        foreground: SproutColors.inkMuted,
+        background: SproutColors.indiaSurface,
+        minimum: 4.5,
+      ),
+      const ContrastPair(
+        name: 'disabled choice icon',
+        foreground: SproutColors.disabledInk,
+        background: SproutColors.surface,
+        minimum: 3,
+      ),
+      const ContrastPair(
         name: 'body on canvas',
         foreground: SproutColors.ink,
         background: SproutColors.background,

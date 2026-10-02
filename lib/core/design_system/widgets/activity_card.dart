@@ -134,7 +134,7 @@ class StepCircle extends StatelessWidget {
               : null,
         ),
         child: mark == StepMark.done
-            ? Icon(Icons.check, color: SproutColors.surface, size: size * 0.6)
+            ? Icon(Icons.check_rounded, color: SproutColors.surface, size: size * 0.6)
             : Text(
                 '$step',
                 style: TextStyle(

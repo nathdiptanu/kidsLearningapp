@@ -12,6 +12,8 @@ class ChildProfiles extends Table {
   IntColumn get createdAt => integer()();
 
   BoolColumn get active => boolean().withDefault(const Constant(true))();
+
+  TextColumn get readiness => text().withDefault(const Constant('steady'))();
 }
 
 class ActivityProgress extends Table {
@@ -200,6 +202,19 @@ class LocalSettings extends Table {
   IntColumn get sessionLimitMinutes =>
       integer().withDefault(const Constant(0))();
 
+  /// ISO code chosen by a grown-up. Null means not chosen yet.
+  TextColumn get learningRegion => text().nullable()();
+
+  TextColumn get interfaceLanguage =>
+      text().withDefault(const Constant('en'))();
+
+  TextColumn get teachingLanguage => text().withDefault(const Constant('en'))();
+
+  BoolColumn get hindiEnabled => boolean().withDefault(const Constant(true))();
+
+  BoolColumn get discoverIndiaEnabled =>
+      boolean().withDefault(const Constant(true))();
+
   @override
   Set<Column> get primaryKey => {id};
 }
@@ -221,6 +236,39 @@ class LevelBadges extends Table {
 
   @override
   Set<Column> get primaryKey => {profileId, activityId};
+}
+
+class LearningItemProgress extends Table {
+  IntColumn get profileId => integer().references(ChildProfiles, #id)();
+
+  TextColumn get itemId => text()();
+
+  TextColumn get mode => text()();
+
+  IntColumn get contentVersion => integer().withDefault(const Constant(1))();
+
+  IntColumn get attempts => integer().withDefault(const Constant(0))();
+
+  IntColumn get correct => integer().withDefault(const Constant(0))();
+
+  IntColumn get unaidedCorrect => integer().withDefault(const Constant(0))();
+
+  IntColumn get hintsUsed => integer().withDefault(const Constant(0))();
+
+  IntColumn get assisted => integer().withDefault(const Constant(0))();
+
+  IntColumn get recalledCount => integer().withDefault(const Constant(0))();
+
+  IntColumn get firstCompletedAt => integer().nullable()();
+
+  IntColumn get lastCompletedAt => integer().nullable()();
+
+  IntColumn get lastSeenAt => integer()();
+
+  TextColumn get status => text().withDefault(const Constant('introduced'))();
+
+  @override
+  Set<Column> get primaryKey => {profileId, itemId, mode};
 }
 
 class RecentGeneratedLevels extends Table {
