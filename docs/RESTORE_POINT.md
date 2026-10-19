@@ -10,7 +10,7 @@ Pushed to `origin/main` on 19 October 2026. App version `0.1.7+9`. Play AAB hash
 |---|---|
 | Remote | `origin` → `https://github.com/nathdiptanu/kidsLearningapp.git` |
 | Branch | `main` |
-| Commit | `REPLACE_AFTER_COMMIT` |
+| Commit | `20d0e1726a715ac6cfb1a6e800ba0beb63f407e2` |
 | Date | 19 October 2026 |
 | Version | `0.1.7+9` |
 
@@ -18,7 +18,7 @@ Restore this snapshot:
 
 ```text
 git fetch origin
-git checkout REPLACE_AFTER_COMMIT
+git checkout 20d0e1726a715ac6cfb1a6e800ba0beb63f407e2
 ```
 
 If `main` has moved and you only want this file’s commit:
