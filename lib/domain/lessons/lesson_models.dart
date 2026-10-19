@@ -2,6 +2,7 @@ import '../models/age_band.dart';
 import '../models/content_pack.dart';
 import '../models/game_category.dart';
 import '../models/readiness.dart';
+import '../monetization/monetization_config.dart';
 import '../regional/learning_preferences.dart';
 import '../regional/regional_availability.dart';
 
@@ -216,7 +217,11 @@ class CuratedWord {
 
 /// Draft records load in debug and tests only. Release packs stay empty
 /// until a reviewer marks both the lesson and its media approved.
+/// An unlocked sideload (`UNLOCK_ALL_GAMES`) also loads the drafts.
 bool includeDevelopmentSamples() {
+  if (MonetizationConfig.unlockAllGames) {
+    return true;
+  }
   var include = false;
   assert(() {
     include = true;

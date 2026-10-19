@@ -5,29 +5,62 @@ import '../models/content_pack.dart';
 import 'geography_models.dart';
 
 class CanvasMapTransform {
-  const CanvasMapTransform(this.width, this.height);
+  const CanvasMapTransform(
+    this.width,
+    this.height, {
+    this.minX = 0,
+    this.minY = 0,
+    this.maxX = 1,
+    this.maxY = 1,
+  });
 
   final double width;
   final double height;
+  final double minX;
+  final double minY;
+  final double maxX;
+  final double maxY;
+
+  double get sourceWidth => maxX - minX;
+
+  double get sourceHeight => maxY - minY;
 
   Offset toLocal(OffsetPoint point) {
-    return Offset(point.x * width, point.y * height);
-  }
-
-  OffsetPoint toNormalized(Offset local) {
-    if (width <= 0 || height <= 0) {
-      return const OffsetPoint(0, 0);
+    if (sourceWidth <= 0 || sourceHeight <= 0) {
+      return Offset.zero;
     }
-    return OffsetPoint(
-      (local.dx / width).clamp(0, 1),
-      (local.dy / height).clamp(0, 1),
+    return Offset(
+      ((point.x - minX) / sourceWidth) * width,
+      ((point.y - minY) / sourceHeight) * height,
     );
   }
 
-  /// Letterbox the 1:1 India canvas into [size] without stretching borders.
-  static CanvasMapTransform fit(Size size) {
-    final side = math.min(size.width, size.height);
-    return CanvasMapTransform(side, side);
+  OffsetPoint toNormalized(Offset local) {
+    if (width <= 0 || height <= 0 || sourceWidth <= 0 || sourceHeight <= 0) {
+      return const OffsetPoint(0, 0);
+    }
+    return OffsetPoint(
+      minX + (local.dx / width).clamp(0, 1) * sourceWidth,
+      minY + (local.dy / height).clamp(0, 1) * sourceHeight,
+    );
+  }
+
+  /// Letterbox [content] into [size] without stretching borders.
+  static CanvasMapTransform fit(
+    Size size, [
+    Rect content = const Rect.fromLTWH(0, 0, 1, 1),
+  ]) {
+    final sourceW = content.width <= 0 ? 1.0 : content.width;
+    final sourceH = content.height <= 0 ? 1.0 : content.height;
+    final scale = math.min(size.width / sourceW, size.height / sourceH);
+    return CanvasMapTransform(
+      sourceW * scale,
+      sourceH * scale,
+      minX: content.left,
+      minY: content.top,
+      maxX: content.right,
+      maxY: content.bottom,
+    );
   }
 }
 
@@ -76,11 +109,12 @@ class MapInteractor {
     final height = math.max(region.height, minSpan);
     final cx = (region.minX + region.maxX) / 2;
     final cy = (region.minY + region.maxY) / 2;
+    final world = atlas.contentBounds.inflate(0.02);
     return Rect.fromCenter(
       center: Offset(cx, cy),
       width: width + pad,
       height: height + pad,
-    ).intersect(const Rect.fromLTWH(0, 0, 1, 1));
+    ).intersect(world);
   }
 
   static bool _inRing(List<OffsetPoint> ring, OffsetPoint point) {
@@ -108,6 +142,11 @@ class MapInteractor {
 
 IndiaMapAtlas atlasFromJson(Map<String, dynamic> json) {
   final source = Map<String, dynamic>.from(json['source'] as Map);
+  final country = _rings(json['country'] as Map<String, dynamic>);
+  final regions = [
+    for (final item in json['regions'] as List<dynamic>)
+      _region(Map<String, dynamic>.from(item as Map)),
+  ];
   return IndiaMapAtlas(
     packId: json['packId'] as String,
     sourceName: source['name'] as String,
@@ -118,12 +157,47 @@ IndiaMapAtlas atlasFromJson(Map<String, dynamic> json) {
     reviewStatus:
         ReviewStatus.fromStorage(json['reviewStatus'] as String) ??
         ReviewStatus.placeholder,
-    country: _rings(json['country'] as Map<String, dynamic>),
-    regions: [
-      for (final item in json['regions'] as List<dynamic>)
-        _region(Map<String, dynamic>.from(item as Map)),
-    ],
+    country: country,
+    regions: regions,
+    contentBounds: _contentBounds(country, regions),
   );
+}
+
+Rect _contentBounds(List<MapRing> country, List<RegionOutline> regions) {
+  var minX = 0.0;
+  var minY = 0.0;
+  var maxX = 1.0;
+  var maxY = 1.0;
+  var seen = false;
+  void consider(OffsetPoint point) {
+    if (!seen) {
+      minX = maxX = point.x;
+      minY = maxY = point.y;
+      seen = true;
+      return;
+    }
+    minX = math.min(minX, point.x);
+    minY = math.min(minY, point.y);
+    maxX = math.max(maxX, point.x);
+    maxY = math.max(maxY, point.y);
+  }
+
+  for (final ring in country) {
+    for (final point in ring.points) {
+      consider(point);
+    }
+  }
+  for (final region in regions) {
+    for (final ring in region.rings) {
+      for (final point in ring.points) {
+        consider(point);
+      }
+    }
+  }
+  if (!seen) {
+    return const Rect.fromLTWH(0, 0, 1, 1);
+  }
+  return Rect.fromLTRB(minX, minY, maxX, maxY);
 }
 
 List<MapRing> _rings(Map<String, dynamic> json) {

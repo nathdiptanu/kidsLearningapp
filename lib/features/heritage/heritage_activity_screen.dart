@@ -62,6 +62,7 @@ class _HeritageActivityScreenState
   bool _saved = false;
   int _wrong = 0;
   int _hints = 0;
+  NarrationPlayResult? _audioState;
 
   HeritageActivity get _activity => widget.activity;
 
@@ -146,13 +147,30 @@ class _HeritageActivityScreenState
     final id =
         _activity.narrationId ?? _catalog.site(_activity.siteId)?.narrationId;
     if (id == null) {
+      if (mounted) {
+        setState(() => _audioState = NarrationPlayResult.missing);
+      }
       return;
     }
-    await _audio.playNarration(id);
+    final clip = _catalog.pack.clips[id];
+    final result = await _audio.playNarration(id, assetPath: clip?.assetPath);
+    if (mounted) {
+      setState(() => _audioState = result);
+    }
   }
 
   Future<void> _finish({required bool skipped}) async {
     if (_saved) {
+      return;
+    }
+    if (skipped) {
+      await skipJourneyActivity(ref, _activity.id, widget.journeyDate);
+      if (!mounted) return;
+      // Leaving a task is not completed learning and earns no reward.
+      setState(() => _saved = true);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) Navigator.of(context).pop();
+      });
       return;
     }
     _saved = true;
@@ -253,6 +271,17 @@ class _HeritageActivityScreenState
                           ),
                         ),
                       PlayInstruction(text: _activity.prompt),
+                      if (_audioState == NarrationPlayResult.missing ||
+                          _audioState == NarrationPlayResult.muted)
+                        Padding(
+                          padding: const EdgeInsets.only(top: SproutSpace.sm),
+                          child: Text(
+                            _audioState == NarrationPlayResult.muted
+                                ? 'Spoken words are switched off in grown-up settings.'
+                                : 'The words stay on the screen. A reviewed recording is not in this build yet.',
+                            style: text.bodyMedium,
+                          ),
+                        ),
                       const SizedBox(height: SproutSpace.md),
                       if (_activity.mode == HeritageMode.match &&
                           site != null) ...[
@@ -307,33 +336,42 @@ class _HeritageActivityScreenState
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         PinnedActivityActions(
-                        finished: finished,
-                        primaryKey: const Key('heritage-next'),
-                        fromJourney: widget.journeyDate != null,
-                        onHearAgain: _play,
-                        onSkip: () => _finish(skipped: true),
-                        onHome: () => Navigator.of(context).maybePop(),
-                        onPrimary: () async {
-                          if (finished) {
-                            if (widget.journeyDate != null) {
-                              await openNextJourneyActivity(
-                                context,
-                                ref,
-                                activity: _definition,
-                                journeyDate: widget.journeyDate,
-                              );
+                          finished: finished,
+                          primaryKey: const Key('heritage-next'),
+                          fromJourney: widget.journeyDate != null,
+                          onHearAgain: _play,
+                          audioUnavailable:
+                              _catalog
+                                  .pack
+                                  .clips[_activity.narrationId ??
+                                      _catalog
+                                          .site(_activity.siteId)
+                                          ?.narrationId]
+                                  ?.hasReviewedFile !=
+                              true,
+                          onSkip: () => _finish(skipped: true),
+                          onHome: () => Navigator.of(context).maybePop(),
+                          onPrimary: () async {
+                            if (finished) {
+                              if (widget.journeyDate != null) {
+                                await openNextJourneyActivity(
+                                  context,
+                                  ref,
+                                  activity: _definition,
+                                  journeyDate: widget.journeyDate,
+                                );
+                                return;
+                              }
+                              Navigator.of(context).maybePop();
                               return;
                             }
-                            Navigator.of(context).maybePop();
-                            return;
-                          }
-                          final teach = _activity.mode == HeritageMode.story;
-                          await _finish(skipped: teach ? false : !_accepted);
-                        },
-                      ),
-                    ],
+                            final teach = _activity.mode == HeritageMode.story;
+                            await _finish(skipped: teach ? false : !_accepted);
+                          },
+                        ),
+                      ],
+                    ),
                   ),
-                ),
                 ),
               ],
             ),
@@ -354,7 +392,9 @@ class _HeritageActivityScreenState
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Center(child: HeritagePicture(pictureId: site.pictureId, size: 160)),
+            Center(
+              child: HeritagePicture(pictureId: site.pictureId, size: 160),
+            ),
             const SizedBox(height: SproutSpace.md),
             Text(site.name, style: text.headlineMedium),
             if (teaching.includesHindi && site.hindiName != null)

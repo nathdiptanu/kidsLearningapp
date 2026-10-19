@@ -10,6 +10,29 @@ class WordPicture extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const illustrated = {
+      'pomegranate',
+      'mango',
+      'lotus',
+      'banana',
+      'apple',
+      'flower',
+      'house',
+      'tree',
+      'fish',
+      'sun',
+      'ball',
+      'book',
+    };
+    if (illustrated.contains(wordId)) {
+      return Image.asset(
+        'assets/teaching/$wordId.png',
+        width: size,
+        height: size,
+        fit: BoxFit.contain,
+        cacheWidth: (size * 2).round().clamp(64, 720),
+      );
+    }
     return SizedBox(
       width: size,
       height: size,

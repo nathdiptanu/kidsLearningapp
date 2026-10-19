@@ -75,7 +75,10 @@ int _unique(
   List<LearningItemSnapshot> rows,
   bool Function(LearningItemSnapshot row) keep,
 ) {
-  return {for (final row in rows) if (keep(row)) row.itemId}.length;
+  return {
+    for (final row in rows)
+      if (keep(row)) row.itemId,
+  }.length;
 }
 
 bool notesAreFactual(Iterable<String> notes) {

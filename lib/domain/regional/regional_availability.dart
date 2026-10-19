@@ -1,3 +1,4 @@
+import '../monetization/monetization_config.dart';
 import '../settings/local_settings.dart';
 import 'learning_preferences.dart';
 
@@ -18,6 +19,9 @@ enum RegionalModule {
 /// this. Hiding a module never deletes its progress.
 abstract final class RegionalAvailability {
   static bool isAvailable(LocalSettings settings, RegionalModule module) {
+    if (MonetizationConfig.unlockAllGames) {
+      return true;
+    }
     if (settings.learningRegion != module.region) {
       return false;
     }

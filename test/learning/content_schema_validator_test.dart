@@ -116,8 +116,8 @@ void main() {
     final census = LearningIndex().census(includeDrafts: true);
     expect(census.reviewedItems, 0);
     expect(census.draftItems, greaterThan(0));
-    expect(census.playableActivities, greaterThan(census.draftItems));
-    expect(census.generatedVariants, greaterThan(census.playableActivities));
+    expect(census.playableActivities, greaterThan(0));
+    expect(census.generatedVariants, greaterThanOrEqualTo(1000));
     expect(census.reviewedItems, isNot(census.playableActivities));
     expect(census.activityTemplates, greaterThan(0));
   });

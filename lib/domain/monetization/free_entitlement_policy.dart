@@ -18,7 +18,7 @@ class FreeEntitlementPolicy {
     if (alreadyStarted) {
       return LevelAccess.continueInProgress;
     }
-    if (premiumActive) {
+    if (premiumActive || MonetizationConfig.unlockAllGames) {
       return LevelAccess.playNew;
     }
     if (uniqueFreeLevelsCompleted <

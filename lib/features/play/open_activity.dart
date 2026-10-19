@@ -15,8 +15,13 @@ import '../lessons/lesson_activity_screen.dart';
 import 'activity_access.dart';
 import 'activity_screen.dart';
 import 'difference_screen.dart';
+import 'find_objects_screen.dart';
 import 'maze_screen.dart';
 import 'tic_tac_toe_screen.dart';
+import '../../domain/regional/explorer_content.dart';
+import '../regional/explorer_library_screen.dart';
+import '../../domain/regional/india_learning_content.dart';
+import '../regional/india_learning_screen.dart';
 
 var _activityRouteOpen = false;
 
@@ -43,6 +48,24 @@ void openActivity(
 }
 
 Widget screenFor(ActivityDefinition activity, {String? journeyDate}) {
+  final india = indiaQuestionByActivityId(activity.id);
+  if (india != null) {
+    return IndiaLearningScreen(question: india, journeyDate: journeyDate);
+  }
+  final item = explorerItemById(activity.id);
+  if (item != null) {
+    return ExplorerActivityScreen(
+      title: item.title,
+      detail: item.detail,
+      activityId: activity.id,
+      spokenText: item.title,
+      choices: item.choices,
+      hindi: item.hindi,
+      picture: item.picture,
+      journeyDate: journeyDate,
+      speakOnOpen: true,
+    );
+  }
   if (activity.id.startsWith('lesson:')) {
     final lesson = LessonCatalog().byId(activity.id);
     if (lesson != null) {
@@ -73,6 +96,10 @@ Widget screenFor(ActivityDefinition activity, {String? journeyDate}) {
       journeyDate: journeyDate,
     ),
     GameCategory.findDifference => DifferenceScreen(
+      activity: activity,
+      journeyDate: journeyDate,
+    ),
+    GameCategory.findObjects => FindObjectsScreen(
       activity: activity,
       journeyDate: journeyDate,
     ),

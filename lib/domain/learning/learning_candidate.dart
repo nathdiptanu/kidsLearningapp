@@ -24,7 +24,8 @@ class LearningCandidate {
   GameCategory get category => activity.category;
 
   bool offeredFor(AgeBand band, Readiness readiness) {
-    return activity.band == band || activity.band.index <= band.index;
+    return activity.band == band ||
+        activity.band.learningRank <= band.learningRank;
   }
 }
 

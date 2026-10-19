@@ -1,10 +1,21 @@
+import 'dart:async';
+
 import 'audio_controller.dart';
 import 'audio_playback.dart';
 
 /// One effects player, one quieter music player, and one narration player.
 /// A new clip stops the previous clip so speech cannot overlap.
 class AssetAudioController implements AudioController {
-  AssetAudioController(this._playback);
+  AssetAudioController(this._playback) {
+    final player = _playback;
+    if (player is NarrationLifecycle) {
+      _completion = (player as NarrationLifecycle).narrationCompleted.listen(
+        (_) => unawaited(_restoreMusic()),
+      );
+    }
+  }
+  StreamSubscription<void>? _completion;
+  int _narrationGeneration = 0;
 
   static const musicVolume = 0.22;
   static const duckedMusicVolume = 0.06;
@@ -17,6 +28,7 @@ class AssetAudioController implements AudioController {
   bool _narration = true;
   bool _paused = false;
   bool _musicRunning = false;
+  bool _musicStarting = false;
   bool _musicDucked = false;
   String? _lastClip;
   String? _lastPath;
@@ -34,11 +46,15 @@ class AssetAudioController implements AudioController {
   @override
   String? get lastNarrationId => _lastClip;
 
+  Future<void> refreshMusicLevel() =>
+      _playback.setMusicVolume(_musicDucked ? duckedMusicVolume : musicVolume);
+
   @override
   Future<void> playEffect(SoundEffect effect) async {
     if (_disposed || !_effects || _paused) {
       return;
     }
+    _narrationGeneration++;
     await _playback.stopNarration();
     await _restoreMusic();
     await _playback.playEffect(_asset(effect));
@@ -65,13 +81,31 @@ class AssetAudioController implements AudioController {
         now.difference(_lastStarted!) < debounce) {
       return NarrationPlayResult.debounced;
     }
+    final generation = ++_narrationGeneration;
     await _playback.stopNarration();
     await _playback.stopEffects();
+    if (generation != _narrationGeneration ||
+        _disposed ||
+        _paused ||
+        !_narration) {
+      return NarrationPlayResult.paused;
+    }
     if (_musicRunning && !_musicDucked) {
       await _playback.setMusicVolume(duckedMusicVolume);
       _musicDucked = true;
     }
-    await _playback.playNarration(path);
+    try {
+      await _playback.playNarration(path);
+    } catch (_) {
+      if (generation == _narrationGeneration) await _restoreMusic();
+      return NarrationPlayResult.missing;
+    }
+    if (generation != _narrationGeneration ||
+        _disposed ||
+        _paused ||
+        !_narration) {
+      return NarrationPlayResult.paused;
+    }
     _lastClip = clipId;
     _lastPath = path;
     _lastStarted = now;
@@ -90,6 +124,7 @@ class AssetAudioController implements AudioController {
 
   @override
   Future<void> stopNarration() async {
+    _narrationGeneration++;
     await _playback.stopNarration();
     await _restoreMusic();
   }
@@ -111,9 +146,20 @@ class AssetAudioController implements AudioController {
       await _restoreMusic();
     }
     if (_music && !_paused) {
-      if (!_musicRunning) {
-        await _playback.startMusic('audio/music.wav', musicVolume);
-        _musicRunning = true;
+      if (!_musicRunning && !_musicStarting) {
+        _musicStarting = true;
+        try {
+          _musicRunning = await _playback.startMusic(
+            'audio/music.wav',
+            musicVolume,
+          );
+          if (!_music || _paused || _disposed) {
+            await _playback.stopMusic();
+            _musicRunning = false;
+          }
+        } finally {
+          _musicStarting = false;
+        }
       }
       return;
     }
@@ -126,6 +172,7 @@ class AssetAudioController implements AudioController {
 
   @override
   Future<void> pauseForLifecycle() async {
+    _narrationGeneration++;
     _paused = true;
     await _playback.stopNarration();
     if (_musicRunning) {
@@ -137,9 +184,14 @@ class AssetAudioController implements AudioController {
   @override
   Future<void> resumeForLifecycle() async {
     _paused = false;
-    if (_music && _musicRunning) {
-      await _playback.resumeMusic();
+    if (!_music) {
+      return;
     }
+    if (_musicRunning) {
+      await _playback.resumeMusic();
+      return;
+    }
+    _musicRunning = await _playback.startMusic('audio/music.wav', musicVolume);
   }
 
   @override
@@ -148,6 +200,8 @@ class AssetAudioController implements AudioController {
       return;
     }
     _disposed = true;
+    _narrationGeneration++;
+    await _completion?.cancel();
     await _playback.dispose();
   }
 

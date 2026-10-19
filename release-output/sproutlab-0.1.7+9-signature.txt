@@ -1,0 +1,18 @@
+Verifies
+Verified using v1 scheme (JAR signing): false
+Verified using v2 scheme (APK Signature Scheme v2): true
+Verified using v3 scheme (APK Signature Scheme v3): false
+Verified using v3.1 scheme (APK Signature Scheme v3.1): false
+Verified using v3.2 scheme (APK Signature Scheme v3.2): false
+Verified using v4 scheme (APK Signature Scheme v4): false
+Verified for SourceStamp: false
+Number of signers: 1
+V2 Signer: certificate DN: CN=SproutLab Upload, OU=Android, O=SproutLab, C=IN
+V2 Signer: certificate SHA-256 digest: 648d888dee6a94f75c2556515e74e2c09c735e8176566b8d7e7f29e13db45e17
+V2 Signer: certificate SHA-1 digest: f0dcfc3fe51a9e27cfb91552310af5b44d8aa519
+V2 Signer: certificate MD5 digest: 0f251997642291397b575c958d478f01
+V2 Signer: key algorithm: RSA
+V2 Signer: key size (bits): 2048
+V2 Signer: public key SHA-256 digest: 7af14b36d8f7e0251b07c06702906d397b2377094f43966d44c63b3e675acf7f
+V2 Signer: public key SHA-1 digest: 244b6bfa22899e37d9dc6df1ed248ea2916ec629
+V2 Signer: public key MD5 digest: e746a2144983dd1eb10ed48d4bf4324d

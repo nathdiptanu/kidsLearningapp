@@ -1,0 +1,16 @@
+{
+  "productionReady": false,
+  "status": "owner_music_and_interim_device_speech",
+  "format": "Sound effects: WAV PCM 16 kHz mono. Music: WAV PCM 16-bit 22050 Hz mono, 16 seconds.",
+  "files": [
+    "assets/audio/tap.wav",
+    "assets/audio/correct.wav",
+    "assets/audio/retry.wav",
+    "assets/audio/complete.wav",
+    "assets/audio/reward.wav",
+    "assets/audio/music.wav"
+  ],
+  "license": "Sound effects are project-original synthesized tones. Music is the owner-supplied sproutlab-gentle-loop.wav, copied unchanged with permission to integrate it into this app; no broader redistribution licence is inferred.",
+  "note": "Music SHA256: 68B2F5737FCD8EE00CB26F2684ADFD7B27134F1AFD5F0974240D1D8424FBFE21. Quiet looping playback, persisted volume, narration ducking and lifecycle pause. Physical listening remains pending.",
+  "narration": "Hindi and Discover India use installed offline Android device voices as an owner-approved interim option. They are labelled device speech. No reviewed pronunciation recordings are bundled."
+}

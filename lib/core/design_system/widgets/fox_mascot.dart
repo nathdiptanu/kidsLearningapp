@@ -51,7 +51,7 @@ class ArtTile extends StatelessWidget {
       art,
       width: width,
       height: height,
-      fit: BoxFit.cover,
+      fit: BoxFit.contain,
       filterQuality: FilterQuality.medium,
       excludeFromSemantics: true,
       cacheWidth: 640,

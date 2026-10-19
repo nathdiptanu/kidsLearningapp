@@ -4,6 +4,7 @@ import 'dart:ui' as ui;
 import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sproutlab/app/bootstrap_state.dart';
@@ -21,6 +22,20 @@ import 'package:sproutlab/features/play/difference_screen.dart';
 import 'package:sproutlab/features/play/maze_screen.dart';
 
 void main() {
+  setUpAll(() async {
+    final latin = FontLoader('Nunito');
+    for (final weight in [400, 600, 700, 800]) {
+      latin.addFont(rootBundle.load('assets/fonts/Nunito-$weight.ttf'));
+    }
+    await latin.load();
+    final hindi = FontLoader('NotoSansDevanagari')
+      ..addFont(rootBundle.load('assets/fonts/NotoSansDevanagari-400.ttf'))
+      ..addFont(rootBundle.load('assets/fonts/NotoSansDevanagari-700.ttf'));
+    await hindi.load();
+    final icons = FontLoader('MaterialIcons')
+      ..addFont(rootBundle.load('fonts/MaterialIcons-Regular.otf'));
+    await icons.load();
+  });
   testWidgets('review screenshots of home, explore, rewards and games', (
     tester,
   ) async {

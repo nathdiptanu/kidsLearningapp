@@ -1,8 +1,11 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
 import '../../core/design_system/sprout_tokens.dart';
 import '../../domain/geography/geography_models.dart';
 import '../../domain/geography/map_geometry.dart';
+import '../../domain/models/content_pack.dart';
 
 class IndiaMapView extends StatelessWidget {
   const IndiaMapView({
@@ -24,6 +27,14 @@ class IndiaMapView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (atlas.reviewStatus != ReviewStatus.approved) {
+      return const Padding(
+        padding: EdgeInsets.all(16),
+        child: Text(
+          'Map activities are temporarily unavailable while we verify the learning material.',
+        ),
+      );
+    }
     return Semantics(
       label: 'Map of India. Coloured places can be chosen.',
       child: SizedBox(
@@ -33,6 +44,7 @@ class IndiaMapView extends StatelessWidget {
           builder: (context, constraints) {
             final transform = CanvasMapTransform.fit(
               Size(constraints.maxWidth, constraints.maxHeight),
+              atlas.contentBounds,
             );
             final interactor = MapInteractor(atlas);
             return GestureDetector(
@@ -94,12 +106,19 @@ class _IndiaMapPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final side = size.shortestSide;
-    final origin = Offset((size.width - side) / 2, (size.height - side) / 2);
+    final transform = CanvasMapTransform.fit(size, atlas.contentBounds);
+    final origin = Offset(
+      (size.width - transform.width) / 2,
+      (size.height - transform.height) / 2,
+    );
     canvas.save();
     canvas.translate(origin.dx, origin.dy);
-    final transform = CanvasMapTransform(side, side);
+    canvas.clipRect(Rect.fromLTWH(0, 0, transform.width, transform.height));
     final fill = Paint()..color = land;
+    final outline = Paint()
+      ..color = ink.withValues(alpha: 0.28)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1;
     final stroke = Paint()
       ..color = ink.withValues(alpha: 0.45)
       ..style = PaintingStyle.stroke
@@ -109,32 +128,31 @@ class _IndiaMapPainter extends CustomPainter {
       canvas.drawPath(_path(ring, transform), stroke);
     }
     for (final region in atlas.regions) {
-      if (!highlightedIds.contains(region.id) && region.id != selectedId) {
-        continue;
-      }
-      final color = region.id == selectedId ? selected : highlight;
-      final paint = Paint()..color = color.withValues(alpha: 0.72);
-      for (final ring in region.rings) {
-        canvas.drawPath(_path(ring, transform), paint);
-        canvas.drawPath(_path(ring, transform), stroke);
+      final active =
+          highlightedIds.contains(region.id) || region.id == selectedId;
+      if (active) {
+        final color = region.id == selectedId ? selected : highlight;
+        final paint = Paint()..color = color.withValues(alpha: 0.72);
+        for (final ring in region.rings) {
+          canvas.drawPath(_path(ring, transform), paint);
+          canvas.drawPath(_path(ring, transform), stroke);
+        }
+      } else {
+        for (final ring in region.rings) {
+          canvas.drawPath(_path(ring, transform), outline);
+        }
       }
     }
     canvas.restore();
     if (insetId != null) {
       final region = atlas.byId(insetId!);
       if (region != null) {
-        _paintInset(canvas, size, region, transform, origin);
+        _paintInset(canvas, size, region);
       }
     }
   }
 
-  void _paintInset(
-    Canvas canvas,
-    Size size,
-    RegionOutline region,
-    CanvasMapTransform transform,
-    Offset origin,
-  ) {
+  void _paintInset(Canvas canvas, Size size, RegionOutline region) {
     final box = Rect.fromLTWH(size.width - 132, 8, 124, 124);
     final bg = Paint()..color = const Color(0xFFFFFFFF);
     final edge = Paint()
@@ -149,18 +167,22 @@ class _IndiaMapPainter extends CustomPainter {
       RRect.fromRectAndRadius(box, const Radius.circular(16)),
       edge,
     );
-    final pad = 16.0;
-    final inner = box.deflate(pad);
+    final inner = box.deflate(16);
     final width = region.width == 0 ? 0.1 : region.width;
     final height = region.height == 0 ? 0.1 : region.height;
+    final scale = math.min(inner.width / width, inner.height / height);
+    final drawW = width * scale;
+    final drawH = height * scale;
+    final left = inner.left + (inner.width - drawW) / 2;
+    final top = inner.top + (inner.height - drawH) / 2;
     canvas.save();
     canvas.clipRRect(RRect.fromRectAndRadius(inner, const Radius.circular(12)));
     for (final ring in region.rings) {
       final path = Path();
       for (var i = 0; i < ring.points.length; i++) {
         final point = ring.points[i];
-        final x = inner.left + ((point.x - region.minX) / width) * inner.width;
-        final y = inner.top + ((point.y - region.minY) / height) * inner.height;
+        final x = left + (point.x - region.minX) * scale;
+        final y = top + (point.y - region.minY) * scale;
         if (i == 0) {
           path.moveTo(x, y);
         } else {

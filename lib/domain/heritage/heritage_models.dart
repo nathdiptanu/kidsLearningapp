@@ -105,11 +105,7 @@ class HeritageActivity {
 }
 
 class HeritageChoice {
-  const HeritageChoice({
-    required this.id,
-    required this.label,
-    this.pictureId,
-  });
+  const HeritageChoice({required this.id, required this.label, this.pictureId});
 
   final String id;
   final String label;

@@ -145,6 +145,36 @@ class MatchingGenerator {
     required int variant,
     int count = 2,
   }) {
+    if (band == AgeBand.toddler) {
+      const familiar = [
+        PictureId.apple,
+        PictureId.banana,
+        PictureId.cat,
+        PictureId.dog,
+        PictureId.car,
+        PictureId.spoon,
+      ];
+      final target = familiar[variant % familiar.length];
+      final other = familiar[(variant + 1) % familiar.length];
+      return [
+        PlayQuestion(
+          prompt: 'With a grown-up, find the same picture.',
+          promptVisuals: [PictureVisual(target)],
+          choices: [
+            for (final id in [target, other])
+              PlayChoice(
+                id: id.name,
+                label: pictureById(id).label,
+                visual: PictureVisual(id),
+              ),
+          ],
+          correctId: target.name,
+          firstHint: 'Look at the picture together.',
+          strongerHint: 'Find the picture that looks the same.',
+          explanation: 'You found the same picture.',
+        ),
+      ];
+    }
     final templates = [
       for (final template in oddTemplates)
         if (template.bands.contains(band)) template,

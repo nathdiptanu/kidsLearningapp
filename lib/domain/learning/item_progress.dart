@@ -91,7 +91,8 @@ class ItemPracticeRules {
     if (correct <= 1) {
       return ItemPracticeStatus.introduced;
     }
-    final ready = unaidedCorrect >= 2 &&
+    final ready =
+        unaidedCorrect >= 2 &&
         (mode != PracticeMode.recall || recalledCount >= 2) &&
         (mode == PracticeMode.recall || unaidedCorrect >= 2);
     if (ready && !(correct == 1 && unaidedCorrect == 1)) {
@@ -123,7 +124,8 @@ class ItemPracticeRules {
       hintsUsed: hints,
       assisted: assisted,
       recalledCount: recalled,
-      firstCompletedAt: current.firstCompletedAt ??
+      firstCompletedAt:
+          current.firstCompletedAt ??
           (attempt.completed ? attempt.nowMillis : null),
       lastCompletedAt: attempt.completed
           ? attempt.nowMillis

@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import '../lessons/lesson_models.dart';
 import '../models/age_band.dart';
 import '../models/content_pack.dart';
@@ -214,6 +216,7 @@ class IndiaMapAtlas {
     required this.reviewStatus,
     required this.country,
     required this.regions,
+    this.contentBounds = const Rect.fromLTWH(0, 0, 1, 1),
   });
 
   final String packId;
@@ -225,6 +228,9 @@ class IndiaMapAtlas {
   final ReviewStatus reviewStatus;
   final List<MapRing> country;
   final List<RegionOutline> regions;
+
+  /// Inclusive bounds of every stored ring, including islands past 0–1.
+  final Rect contentBounds;
 
   RegionOutline? byId(String id) {
     for (final region in regions) {

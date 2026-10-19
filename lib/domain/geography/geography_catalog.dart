@@ -12,7 +12,8 @@ import 'question_engine.dart';
 
 class GeographyCatalog {
   GeographyCatalog({GeographyPack? pack})
-    : pack = pack ??
+    : pack =
+          pack ??
           (includeDevelopmentSamples()
               ? developmentGeographyPack()
               : emptyGeographyPack());

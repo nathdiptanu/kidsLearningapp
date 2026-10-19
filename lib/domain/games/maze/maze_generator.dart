@@ -27,18 +27,36 @@ class MazeCell {
   bool west = true;
 }
 
+class MazeMetrics {
+  const MazeMetrics({
+    required this.shortestPathLength,
+    required this.deadEndCount,
+    required this.cells,
+  });
+
+  final int shortestPathLength;
+  final int deadEndCount;
+  final int cells;
+}
+
 class MazeLevel {
   MazeLevel({
     required this.rows,
     required this.cols,
     required this.cells,
     required this.nextTowardGoal,
+    this.metrics = const MazeMetrics(
+      shortestPathLength: 0,
+      deadEndCount: 0,
+      cells: 0,
+    ),
   });
 
   final int rows;
   final int cols;
   final List<MazeCell> cells;
   final Map<int, MazePoint> nextTowardGoal;
+  final MazeMetrics metrics;
 
   MazePoint get start => const MazePoint(0, 0);
 
@@ -108,7 +126,7 @@ class MazeGenerator {
 
   (int, int) sizeFor(AgeBand band, int variant) {
     return switch (band) {
-      AgeBand.a => variant.isEven ? (4, 4) : (5, 5),
+      AgeBand.a || AgeBand.toddler => variant.isEven ? (4, 4) : (5, 5),
       AgeBand.b => variant.isEven ? (5, 5) : (6, 6),
       AgeBand.c => variant.isEven ? (6, 6) : (8, 8),
       AgeBand.d => variant.isEven ? (8, 8) : (10, 10),
@@ -125,7 +143,7 @@ class MazeGenerator {
     final checked = carved.solvable && validate(carved).isValid
         ? carved
         : _corridor(size.$1, size.$2);
-    return checked;
+    return _withMetrics(checked);
   }
 
   /// Checks bounds, border walls, reciprocal openings and the cached path.
@@ -269,6 +287,43 @@ class MazeGenerator {
       }
     }
     return next;
+  }
+
+  MazeLevel _withMetrics(MazeLevel level) {
+    var cursor = level.start;
+    var length = 0;
+    final seen = <MazePoint>{cursor};
+    while (cursor != level.goal) {
+      final next = level.nextTowardGoal[cursor.key(level.cols)];
+      if (next == null || !seen.add(next)) {
+        break;
+      }
+      length += 1;
+      cursor = next;
+    }
+    var deadEnds = 0;
+    for (var row = 0; row < level.rows; row++) {
+      for (var col = 0; col < level.cols; col++) {
+        final point = MazePoint(row, col);
+        if (point == level.start || point == level.goal) {
+          continue;
+        }
+        if (level.openNeighbors(point).length == 1) {
+          deadEnds += 1;
+        }
+      }
+    }
+    return MazeLevel(
+      rows: level.rows,
+      cols: level.cols,
+      cells: level.cells,
+      nextTowardGoal: level.nextTowardGoal,
+      metrics: MazeMetrics(
+        shortestPathLength: length,
+        deadEndCount: deadEnds,
+        cells: level.rows * level.cols,
+      ),
+    );
   }
 
   MazeLevel _corridor(int rows, int cols) {

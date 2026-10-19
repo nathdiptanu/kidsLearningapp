@@ -2,6 +2,7 @@ import '../lessons/lesson_models.dart';
 import '../models/age_band.dart';
 import '../models/content_pack.dart';
 import 'geography_models.dart';
+import 'geography_places.dart';
 
 const geographyDevPackId = 'geography_dev_slice';
 const knowIndiaDirectory = 'https://knowindia.india.gov.in/states-uts/';
@@ -331,14 +332,27 @@ const developmentGeoActivities = <GeographyActivity>[
 ];
 
 GeographyPack developmentGeographyPack() {
-  return const GeographyPack(
+  return GeographyPack(
     packId: geographyDevPackId,
     schemaVersion: 1,
-    contentVersion: 1,
+    contentVersion: 2,
     reviewStatus: ReviewStatus.placeholder,
-    places: developmentPlaces,
-    activities: developmentGeoActivities,
-    clips: developmentGeoClips,
+    places: {...developmentPlaces, ...extraPlaces},
+    activities: [
+      ...developmentGeoActivities,
+      for (final place in extraPlaces.values)
+        GeographyActivity(
+          id: 'geo:india:learn:${place.id.substring(3)}',
+          mode: GeographyMode.learn,
+          title: 'Meet ${place.name}',
+          prompt: 'Meet a place in India',
+          placeId: place.id,
+          narrationId: place.narrationId,
+          ageBands: const [AgeBand.a, AgeBand.b, AgeBand.c, AgeBand.d],
+          reviewStatus: ReviewStatus.placeholder,
+        ),
+    ],
+    clips: {...developmentGeoClips, ...extraGeoClips},
   );
 }
 

@@ -11,6 +11,7 @@ Color engineColor(GameCategory category) {
     GameCategory.matching => SproutColors.observation,
     GameCategory.maze => SproutColors.maze,
     GameCategory.findDifference => SproutColors.difference,
+    GameCategory.findObjects => SproutColors.observation,
     GameCategory.knowledge => SproutColors.knowledge,
     GameCategory.ticTacToe => SproutColors.logic,
     GameCategory.hindi => SproutColors.hindi,
@@ -26,7 +27,8 @@ Color sectionSurface(GameCategory category) {
     GameCategory.maze ||
     GameCategory.ticTacToe => SproutColors.logicSurface,
     GameCategory.matching ||
-    GameCategory.findDifference => SproutColors.observationSurface,
+    GameCategory.findDifference ||
+    GameCategory.findObjects => SproutColors.observationSurface,
     GameCategory.knowledge => SproutColors.knowledgeSurface,
     GameCategory.hindi => SproutColors.hindiSurface,
     GameCategory.discoverIndia => SproutColors.indiaSurface,
@@ -141,6 +143,22 @@ class _EngineMarkPainter extends CustomPainter {
           Offset(size.width * 0.78, size.height * 0.32),
           size.width * 0.05,
           paint,
+        );
+      case GameCategory.findObjects:
+        canvas.drawCircle(
+          Offset(size.width * 0.32, size.height * 0.38),
+          size.width * 0.1,
+          paint,
+        );
+        canvas.drawCircle(
+          Offset(size.width * 0.58, size.height * 0.54),
+          size.width * 0.1,
+          paint,
+        );
+        canvas.drawCircle(
+          Offset(size.width * 0.74, size.height * 0.32),
+          size.width * 0.08,
+          stroke,
         );
       case GameCategory.knowledge:
         canvas.drawRRect(

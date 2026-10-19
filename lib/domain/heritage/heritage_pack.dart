@@ -366,7 +366,8 @@ const heritageIllustrationCredits = <CreditRecord>[
     creator: 'SproutLab engineering',
     license: 'Original work for this project',
     attribution: 'Drawn in the app. Not copied from a photo.',
-    modifications: 'Geometric stupa, railing and harmika for child recognition.',
+    modifications:
+        'Geometric stupa, railing and harmika for child recognition.',
     reviewStatus: ReviewStatus.placeholder,
   ),
   CreditRecord(
@@ -477,7 +478,8 @@ const heritageResearchCredits = <CreditRecord>[
     title: 'UNESCO: Ajanta Caves (not in this slice)',
     detail: 'Candidate from the brief. Held out of playable activities until licensed pictures and editorial review exist.',
     creator: _unesco,
-    license: 'Research link only. No Ajanta image or child activity is shipped.',
+    license:
+        'Research link only. No Ajanta image or child activity is shipped.',
     sourceUrl: unescoAjanta,
     attribution: 'Listing 242. Not playable in this pack.',
     reviewStatus: ReviewStatus.placeholder,
@@ -487,7 +489,8 @@ const heritageResearchCredits = <CreditRecord>[
     title: 'UNESCO: Ellora Caves (not in this slice)',
     detail: 'Candidate from the brief. Held out of playable activities until licensed pictures and editorial review exist.',
     creator: _unesco,
-    license: 'Research link only. No Ellora image or child activity is shipped.',
+    license:
+        'Research link only. No Ellora image or child activity is shipped.',
     sourceUrl: unescoEllora,
     attribution: 'Listing 243. Not playable in this pack.',
     reviewStatus: ReviewStatus.placeholder,
@@ -507,8 +510,5 @@ HeritagePack emptyHeritagePack() {
 }
 
 List<CreditRecord> parentVisibleCredits() {
-  return [
-    ...heritageIllustrationCredits,
-    ...heritageResearchCredits,
-  ];
+  return [...heritageIllustrationCredits, ...heritageResearchCredits];
 }

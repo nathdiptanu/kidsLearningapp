@@ -1,7 +1,7 @@
 name: sproutlab
 description: "SproutLab temporary codename. Offline-first kids learning app."
 publish_to: 'none'
-version: 0.1.2+3
+version: 0.1.7+9
 
 environment:
   sdk: ^3.13.4
@@ -36,13 +36,16 @@ flutter:
     - assets/content/illustration_provenance.json
     - assets/content/sticker_provenance.json
     - assets/content/audio_provenance.json
+    - assets/content/explorer_asset_provenance.json
     - assets/content/language_asset_manifest.json
     - assets/content/geography/slice_geometry.json
+    - assets/content/geography/india_source_interaction.json
     - assets/content/geography/geography_asset_manifest.json
     - assets/content/heritage/heritage_asset_manifest.json
     - assets/audio/
     - assets/brand/sproutlab_fox.png
     - assets/art/
+    - assets/teaching/
   # Nunito, SIL Open Font License 1.1. See assets/fonts/Nunito-OFL.txt.
   fonts:
     - family: Nunito

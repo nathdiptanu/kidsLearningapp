@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/audio/audio_controller.dart';
 
 import '../../app/session_providers.dart';
+import '../../domain/games/find_objects/find_objects_catalog.dart';
 import '../../domain/games/knowledge/knowledge_bank.dart';
 import '../../domain/games/matching/matching_generator.dart';
 import '../../domain/games/maths/maths_generator.dart';
@@ -38,6 +39,7 @@ Future<void> saveFinishedActivity(
     GameCategory.vocabulary => VocabularyGenerator.generatorVersion,
     GameCategory.maze => MazeGenerator.generatorVersion,
     GameCategory.findDifference => 'find_difference:v1',
+    GameCategory.findObjects => FindObjectsCatalog.generatorVersion,
     GameCategory.knowledge => KnowledgeGenerator.generatorVersion,
     GameCategory.ticTacToe => TicTacToeEngine.generatorVersion,
     GameCategory.hindi => 'hindi:v1',
@@ -94,6 +96,24 @@ Future<String?> loadCheckpoint(WidgetRef ref, String activityId) async {
   return ref
       .read(progressRepositoryProvider)
       .readCheckpoint(profile.id, activityId);
+}
+
+Future<void> skipJourneyActivity(
+  WidgetRef ref,
+  String activityId,
+  String? journeyDate,
+) async {
+  if (journeyDate == null) return;
+  final profile = ref.read(sessionProvider).value?.profile;
+  if (profile == null) return;
+  await ref
+      .read(journeyRepositoryProvider)
+      .markSkipped(
+        profileId: profile.id,
+        dateKey: journeyDate,
+        activityId: activityId,
+      );
+  ref.invalidate(dailyJourneyProvider);
 }
 
 Future<void> storeCheckpoint(

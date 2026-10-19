@@ -19,6 +19,7 @@ import 'package:sproutlab/domain/repositories/profile_repository.dart';
 import 'package:sproutlab/domain/settings/local_settings.dart';
 import 'package:sproutlab/features/explore/explore_screen.dart';
 import 'package:sproutlab/features/regional/regional_module_screen.dart';
+import 'package:sproutlab/features/regional/explorer_library_screen.dart';
 
 const _done = LocalSettings(
   soundEffectsEnabled: true,
@@ -293,9 +294,9 @@ void main() {
       );
       await tester.tap(find.text('Discover India'));
       await tester.pumpAndSettle();
-      expect(find.byType(RegionalModuleScreen), findsOneWidget);
-      expect(find.text('Development samples'), findsWidgets);
-      expect(find.text('Places'), findsOneWidget);
+      expect(find.byType(ExplorerLibraryScreen), findsOneWidget);
+      expect(find.text('Development samples'), findsNothing);
+      expect(find.text('States and union territories'), findsOneWidget);
       expect(tester.takeException(), isNull);
       semantics.dispose();
     });
@@ -310,7 +311,7 @@ void main() {
         await tester.pumpAndSettle();
         await tester.tap(find.text('Hindi'));
         await tester.pumpAndSettle();
-        expect(find.byType(RegionalModuleScreen), findsOneWidget);
+        expect(find.byType(ExplorerLibraryScreen), findsOneWidget);
 
         final settings = container.read(sessionProvider).value!.settings;
         await container
@@ -319,7 +320,7 @@ void main() {
               settings.copyWith(learningRegion: LearningRegion.other),
             );
         await tester.pumpAndSettle();
-        expect(find.byType(RegionalModuleScreen), findsNothing);
+        expect(find.byType(ExplorerLibraryScreen), findsNothing);
         expect(find.text('Hindi'), findsNothing);
 
         await container
@@ -364,7 +365,7 @@ void main() {
       await tester.tap(find.text('open'));
       await tester.pumpAndSettle();
       expect(opened, isFalse);
-      expect(find.byType(RegionalModuleScreen), findsNothing);
+      expect(find.byType(ExplorerLibraryScreen), findsNothing);
 
       await tester.pumpWidget(
         UncontrolledProviderScope(

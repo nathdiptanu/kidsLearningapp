@@ -231,7 +231,11 @@ class TracingSession {
     }
     var best = double.infinity;
     for (var index = 1; index < drawn.length; index++) {
-      final distance = _distanceToSegment(sample, drawn[index - 1], drawn[index]);
+      final distance = _distanceToSegment(
+        sample,
+        drawn[index - 1],
+        drawn[index],
+      );
       if (distance < best) {
         best = distance;
       }

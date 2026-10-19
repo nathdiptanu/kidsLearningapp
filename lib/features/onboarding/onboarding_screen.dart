@@ -438,7 +438,7 @@ class _BandPage extends StatelessWidget {
           style: Theme.of(context).textTheme.bodyMedium,
         ),
         const SizedBox(height: SproutSpace.md),
-        for (final band in AgeBand.values) ...[
+        for (final band in AgeBand.ordered) ...[
           _SelectRow(
             label: 'Ages ${band.label}',
             selected: selected == band,
@@ -733,7 +733,9 @@ class _SelectRow extends StatelessWidget {
               child: Row(
                 children: [
                   Icon(
-                    selected ? Icons.check_circle_rounded : Icons.circle_outlined,
+                    selected
+                        ? Icons.check_circle_rounded
+                        : Icons.circle_outlined,
                     color: selected ? SproutColors.seed : SproutColors.inkMuted,
                   ),
                   const SizedBox(width: SproutSpace.sm),

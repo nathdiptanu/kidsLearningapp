@@ -98,7 +98,7 @@ class MathsGenerator {
 
   _MathsMode _modeFor(AgeBand band, int variant) {
     final modes = switch (band) {
-      AgeBand.a => const [
+      AgeBand.a || AgeBand.toddler => const [
         _MathsMode.count,
         _MathsMode.count,
         _MathsMode.bigger,
@@ -136,7 +136,7 @@ class MathsGenerator {
 
   int _choiceCount(AgeBand band) {
     return switch (band) {
-      AgeBand.a || AgeBand.b => 3,
+      AgeBand.a || AgeBand.toddler || AgeBand.b => 3,
       AgeBand.c || AgeBand.d => 4,
     };
   }
@@ -205,7 +205,7 @@ class MathsGenerator {
 
   PlayQuestion _add(AgeBand band, Random random) {
     final limit = switch (band) {
-      AgeBand.a || AgeBand.b => 10,
+      AgeBand.a || AgeBand.toddler || AgeBand.b => 10,
       AgeBand.c => 20,
       AgeBand.d => 30,
     };
@@ -422,7 +422,7 @@ class MathsGenerator {
     }
     if (text.contains('+')) {
       final limit = switch (band) {
-        AgeBand.a || AgeBand.b => 10,
+        AgeBand.a || AgeBand.toddler || AgeBand.b => 10,
         AgeBand.c => 20,
         AgeBand.d => 30,
       };

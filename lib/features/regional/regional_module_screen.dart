@@ -23,6 +23,7 @@ import '../lessons/lesson_list.dart';
 import '../play/activity_access.dart';
 import '../play/open_activity.dart';
 import 'regional_module_style.dart';
+import 'explorer_library_screen.dart';
 
 /// Opens a regional module only when the availability rule allows it.
 /// Returns false when the module is hidden for the current settings.
@@ -36,7 +37,7 @@ bool openRegionalModule(
   }
   Navigator.of(context).push(
     MaterialPageRoute<void>(
-      builder: (context) => RegionalModuleScreen(module: module),
+      builder: (context) => ExplorerLibraryScreen(module: module),
     ),
   );
   return true;

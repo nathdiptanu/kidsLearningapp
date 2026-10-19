@@ -10,7 +10,8 @@ import 'lesson_models.dart';
 
 class LessonCatalog {
   LessonCatalog({LanguagePack? pack})
-    : pack = pack ??
+    : pack =
+          pack ??
           (includeDevelopmentSamples()
               ? developmentLanguagePack()
               : emptyLanguagePack());

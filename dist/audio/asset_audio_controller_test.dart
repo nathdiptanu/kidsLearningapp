@@ -1,9 +1,42 @@
+import 'dart:async';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sproutlab/core/audio/asset_audio_controller.dart';
 import 'package:sproutlab/core/audio/audio_controller.dart';
 import 'package:sproutlab/core/audio/audio_playback.dart';
 
 void main() {
+  test('failed narration is missing and restores music', () async {
+    final playback = _FakePlayback()..failNarration = true;
+    final audio = AssetAudioController(playback);
+    addTearDown(audio.dispose);
+    await audio.applySettings(
+      effectsEnabled: true,
+      musicEnabled: true,
+      narrationEnabled: true,
+    );
+    expect(
+      await audio.playNarration('broken', assetPath: 'audio/missing.wav'),
+      NarrationPlayResult.missing,
+    );
+    expect(playback.musicVolume, AssetAudioController.musicVolume);
+  });
+
+  test('narration completion restores ducked music', () async {
+    final playback = _FakePlayback();
+    final audio = AssetAudioController(playback);
+    addTearDown(audio.dispose);
+    await audio.applySettings(
+      effectsEnabled: true,
+      musicEnabled: true,
+      narrationEnabled: true,
+    );
+    await audio.playNarration('word', assetPath: 'audio/word.wav');
+    expect(playback.musicVolume, AssetAudioController.duckedMusicVolume);
+    playback.completed.add(null);
+    await Future<void>.delayed(Duration.zero);
+    expect(playback.musicVolume, AssetAudioController.musicVolume);
+  });
   test('effects stay quiet when sound is off', () async {
     final playback = _FakePlayback();
     final audio = AssetAudioController(playback);
@@ -147,7 +180,11 @@ void main() {
   });
 }
 
-class _FakePlayback implements AudioPlayback {
+class _FakePlayback implements AudioPlayback, NarrationLifecycle {
+  final completed = StreamController<void>.broadcast();
+  bool failNarration = false;
+  @override
+  Stream<void> get narrationCompleted => completed.stream;
   final List<String> effects = [];
   final List<String> narration = [];
   final List<double> musicVolumes = [];
@@ -164,9 +201,10 @@ class _FakePlayback implements AudioPlayback {
   }
 
   @override
-  Future<void> startMusic(String assetPath, double volume) async {
+  Future<bool> startMusic(String assetPath, double volume) async {
     musicStarts++;
     musicVolume = volume;
+    return true;
   }
 
   @override
@@ -184,6 +222,7 @@ class _FakePlayback implements AudioPlayback {
 
   @override
   Future<void> playNarration(String assetPath) async {
+    if (failNarration) throw StateError('Playback failed');
     narration.add(assetPath);
   }
 
@@ -202,5 +241,7 @@ class _FakePlayback implements AudioPlayback {
   }
 
   @override
-  Future<void> dispose() async {}
+  Future<void> dispose() async {
+    await completed.close();
+  }
 }

@@ -21,10 +21,13 @@ import '../../domain/progress/activity_record.dart';
 import '../../features/parent/grown_up_settings_screen.dart';
 import '../../features/play/activity_access.dart';
 import '../../features/play/open_activity.dart';
+import '../explore/explore_screen.dart';
 
 void openGrownUpArea(BuildContext context) {
   Navigator.of(context).push(
-    MaterialPageRoute<void>(builder: (context) => const GrownUpSettingsScreen()),
+    MaterialPageRoute<void>(
+      builder: (context) => const GrownUpSettingsScreen(),
+    ),
   );
 }
 
@@ -65,13 +68,33 @@ class HomeScreen extends ConsumerWidget {
             error: (error, stack) => const [
               EmptyState(
                 title: 'Today\'s adventure could not be opened',
-                message:
-                    'Saved progress is safe. Try Explore, or close and open the app again.',
+                message: 'Saved progress is safe. Try Explore, or close and open the app again.',
               ),
             ],
             data: (plan) => [
               _JourneyHero(
                 plan: plan,
+                onNext: () async {
+                  await ref
+                      .read(journeyRepositoryProvider)
+                      .ensure(
+                        profile: profile,
+                        records: progress,
+                        now: DateTime.now(),
+                        premiumActive: ref.read(premiumActiveProvider),
+                        settings: session!.settings,
+                        itemProgress: await ref.read(
+                          itemProgressProvider.future,
+                        ),
+                        afterCompletedJourneyId: plan.id,
+                      );
+                  ref.invalidate(dailyJourneyProvider);
+                },
+                onReplay: () => Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => const PlayAgainScreen(),
+                  ),
+                ),
                 onStart: plan.current == null
                     ? null
                     : () => _open(context, ref, plan.current!, plan, progress),
@@ -81,7 +104,8 @@ class HomeScreen extends ConsumerWidget {
                 _JourneyActivity(
                   step: index + 1,
                   slot: plan.slots[index],
-                  current: plan.current?.activityId == plan.slots[index].activityId,
+                  current:
+                      plan.current?.activityId == plan.slots[index].activityId,
                   onTap: () =>
                       _open(context, ref, plan.slots[index], plan, progress),
                 ),
@@ -170,10 +194,17 @@ class _Greeting extends StatelessWidget {
 }
 
 class _JourneyHero extends StatelessWidget {
-  const _JourneyHero({required this.plan, required this.onStart});
+  const _JourneyHero({
+    required this.plan,
+    required this.onStart,
+    required this.onNext,
+    required this.onReplay,
+  });
 
   final DailyJourneyView plan;
   final VoidCallback? onStart;
+  final VoidCallback onNext;
+  final VoidCallback onReplay;
 
   @override
   Widget build(BuildContext context) {
@@ -192,10 +223,13 @@ class _JourneyHero extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Today\'s adventure', style: text.titleLarge),
+          Text(
+            plan.isComplete ? 'Adventure complete' : 'Today\'s adventure',
+            style: text.titleLarge,
+          ),
           const SizedBox(height: SproutSpace.xs),
           Text(
-            '$done of $total activities complete',
+            '$done of $total activities complete${plan.skippedCount == 0 ? '' : ' · ${plan.skippedCount} skipped'}',
             style: text.bodyMedium?.copyWith(color: SproutColors.ink),
           ),
           const SizedBox(height: SproutSpace.md + 4),
@@ -221,7 +255,9 @@ class _JourneyHero extends StatelessWidget {
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
-                        'All done for today. Well played! You can play any activity again.',
+                        plan.skippedCount == 0
+                            ? 'Well played! You finished this adventure.'
+                            : 'Well explored! You can try a new adventure.',
                         style: text.bodyLarge,
                       ),
                     ),
@@ -238,6 +274,23 @@ class _JourneyHero extends StatelessWidget {
                 onPressed: onStart,
               ),
             ),
+          if (plan.isComplete) ...[
+            const SizedBox(height: 12),
+            PrimaryKidButton(label: 'Next adventure', onPressed: onNext),
+            const SizedBox(height: 12),
+            SecondaryKidButton(label: 'Play again', onPressed: onReplay),
+            const SizedBox(height: 12),
+            SecondaryKidButton(
+              label: 'Take a break',
+              onPressed: () => showDialog<void>(
+                context: context,
+                builder: (_) => const AlertDialog(
+                  title: Text('Time for a break'),
+                  content: Text('You can come back whenever you are ready.'),
+                ),
+              ),
+            ),
+          ],
         ],
       ),
     );
@@ -271,11 +324,15 @@ class _JourneyActivity extends StatelessWidget {
     final stars = slot.stars == 1 ? '1 star' : '${slot.stars} stars';
     final status = slot.done
         ? StatusChip(label: 'Done · $stars', tone: StatusTone.done)
+        : slot.skipped
+        ? const StatusChip(label: 'Skipped')
         : current
         ? const StatusChip(label: 'Up next', tone: StatusTone.ready)
         : null;
     final stateWords = slot.done
         ? 'Done, $stars'
+        : slot.skipped
+        ? 'Skipped'
         : current
         ? 'Up next'
         : 'Later';
@@ -289,9 +346,7 @@ class _JourneyActivity extends StatelessWidget {
       title: slot.title,
       subtitle: detail.isEmpty ? null : detail,
       art: category == null ? SproutArt.logic : artFor(category),
-      tint: category == null
-          ? SproutColors.logicSurface
-          : tintFor(category),
+      tint: category == null ? SproutColors.logicSurface : tintFor(category),
       status: status,
       highlighted: current,
       onTap: onTap,

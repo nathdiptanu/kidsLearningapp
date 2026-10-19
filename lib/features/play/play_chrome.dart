@@ -100,6 +100,10 @@ class FinishedBanner extends ConsumerWidget {
     final rewardName = fresh.isEmpty ? null : rewardById(fresh.first)?.title;
     final text = Theme.of(context).textTheme;
     final shown = stars.clamp(0, maxStars);
+    final adventure = onNext == null
+        ? null
+        : ref.watch(dailyJourneyProvider).value;
+    final adventureFinished = onNext != null && adventure?.isComplete == true;
     return Align(
       alignment: Alignment.topCenter,
       child: ConstrainedBox(
@@ -189,7 +193,44 @@ class FinishedBanner extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: SproutSpace.lg),
-            _FinishActions(onReplay: onReplay, onNext: onNext, onDone: onDone),
+            if (adventureFinished) ...[
+              Text(
+                'Adventure finished! Choose another adventure or take a break.',
+                style: text.titleMedium,
+              ),
+              const SizedBox(height: 12),
+              PrimaryKidButton(
+                label: 'Next adventure',
+                onPressed: () async {
+                  final session = ref.read(sessionProvider).value;
+                  final profile = session?.profile;
+                  if (profile == null || adventure == null) return;
+                  await ref
+                      .read(journeyRepositoryProvider)
+                      .ensure(
+                        profile: profile,
+                        records: await ref.read(progressListProvider.future),
+                        now: DateTime.now(),
+                        premiumActive: ref.read(premiumActiveProvider),
+                        settings: session!.settings,
+                        itemProgress: await ref.read(
+                          itemProgressProvider.future,
+                        ),
+                        afterCompletedJourneyId: adventure.id,
+                      );
+                  ref.invalidate(dailyJourneyProvider);
+                  if (context.mounted) onDone();
+                },
+              ),
+              const SizedBox(height: 12),
+              SecondaryKidButton(label: 'Take a break', onPressed: onDone),
+              const SizedBox(height: 12),
+            ],
+            _FinishActions(
+              onReplay: onReplay,
+              onNext: adventureFinished ? null : onNext,
+              onDone: onDone,
+            ),
           ],
         ),
       ),
@@ -223,7 +264,10 @@ class _LevelBadge extends StatelessWidget {
               ),
               const SizedBox(width: SproutSpace.sm),
               Expanded(
-                child: Text(label, style: Theme.of(context).textTheme.bodyLarge),
+                child: Text(
+                  label,
+                  style: Theme.of(context).textTheme.bodyLarge,
+                ),
               ),
             ],
           ),
@@ -251,6 +295,7 @@ class PinnedActivityActions extends StatelessWidget {
     required this.primaryKey,
     required this.onPrimary,
     this.onHearAgain,
+    this.audioUnavailable = false,
     this.onSkip,
     this.fromJourney = false,
     this.onHome,
@@ -261,6 +306,7 @@ class PinnedActivityActions extends StatelessWidget {
   final Key primaryKey;
   final VoidCallback onPrimary;
   final VoidCallback? onHearAgain;
+  final bool audioUnavailable;
   final VoidCallback? onSkip;
   final bool fromJourney;
   final VoidCallback? onHome;
@@ -273,11 +319,11 @@ class PinnedActivityActions extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        if (hear != null) ...[
+        if (hear != null || audioUnavailable) ...[
           SecondaryKidButton(
-            label: 'Hear again',
+            label: audioUnavailable ? 'Audio unavailable' : 'Hear again',
             trailingIcon: Icons.replay_rounded,
-            onPressed: hear,
+            onPressed: audioUnavailable ? null : hear,
           ),
           const SizedBox(height: 12),
         ],

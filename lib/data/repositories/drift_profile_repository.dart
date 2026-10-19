@@ -53,7 +53,8 @@ class DriftProfileRepository implements ProfileRepository {
               createdAt: DateTime.now().millisecondsSinceEpoch,
               nickname: Value(normalizedNickname),
               active: const Value(true),
-              readiness: Value(readiness.storageKey),
+              readiness: Value((ageBand == AgeBand.toddler && readiness == Readiness.steady
+                  ? Readiness.gentle : readiness).storageKey),
             ),
           );
     });

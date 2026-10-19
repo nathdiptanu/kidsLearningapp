@@ -12,7 +12,8 @@ import 'heritage_pack.dart';
 
 class HeritageCatalog {
   HeritageCatalog({HeritagePack? pack})
-    : pack = pack ??
+    : pack =
+          pack ??
           (includeDevelopmentSamples()
               ? developmentHeritagePack()
               : emptyHeritagePack());

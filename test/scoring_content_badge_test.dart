@@ -77,16 +77,20 @@ void main() {
     expect(loss.points, greaterThan(0));
   });
 
-  test('the learning library has 100 activities in each section', () {
+  test('the learning library keeps 1000 generator-validated items', () {
     final manifest = const LaunchManifest().entries();
     final ids = manifest.map((entry) => entry.id).toSet();
     expect(ids, hasLength(manifest.length));
     final counts = const LaunchManifest().libraryCountsBySection();
-    expect(counts['maths'], 100);
-    expect(counts['english'], 100);
-    expect(counts['logic'], 100);
-    expect(counts['observation'], 100);
+    expect(counts['maths'], 220);
+    expect(counts['english'], 152);
+    expect(counts['logic'], 340);
+    expect(counts['observation'], 242);
     expect(counts['knowledge'], 100);
+    expect(
+      counts.values.fold<int>(0, (sum, value) => sum + value),
+      1054,
+    );
     expect(counts.containsKey('tic_tac_toe'), isFalse);
     expect(
       manifest.where((entry) => entry.engine == 'tic_tac_toe'),

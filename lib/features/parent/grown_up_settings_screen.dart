@@ -17,6 +17,7 @@ import 'parent_dashboard_screen.dart';
 import 'parent_hold_gate.dart';
 import 'premium_screen.dart';
 import 'privacy_screen.dart';
+import 'speech_settings_card.dart';
 
 class GrownUpSettingsScreen extends StatelessWidget {
   const GrownUpSettingsScreen({super.key});
@@ -189,7 +190,7 @@ class _SettingsFormState extends ConsumerState<_SettingsForm> {
               spacing: SproutSpace.sm,
               runSpacing: SproutSpace.sm,
               children: [
-                for (final band in AgeBand.values)
+                for (final band in AgeBand.ordered)
                   ChoiceChip(
                     label: Text('Ages ${band.label}'),
                     selected: _band == band,
@@ -202,7 +203,7 @@ class _SettingsFormState extends ConsumerState<_SettingsForm> {
             ),
             const SizedBox(height: SproutSpace.sm),
             Text(
-              'Changing the band keeps finished activities. It never changes on its own, for example on a birthday.',
+              'Ages 2–3 is for playing together with a grown-up. At age 3, choose the band that suits your child. Changing the band keeps finished activities. The band never changes on its own.',
               style: text.bodySmall,
             ),
             const SizedBox(height: SproutSpace.md),
@@ -251,11 +252,12 @@ class _SettingsFormState extends ConsumerState<_SettingsForm> {
               contentPadding: EdgeInsets.zero,
               title: const Text('Spoken instructions'),
               subtitle: const Text(
-                'Plays reviewed recordings when lessons include them. This build has none yet, so pictures and words stay on screen.',
+                'Hindi and India use device speech with an installed offline voice. Reviewed recordings are not bundled yet.',
               ),
               value: _narration,
               onChanged: (value) => setState(() => _narration = value),
             ),
+            const SpeechSettingsCard(),
             const ListTile(
               contentPadding: EdgeInsets.zero,
               enabled: false,
@@ -266,6 +268,12 @@ class _SettingsFormState extends ConsumerState<_SettingsForm> {
               trailing: StatusChip(label: 'Not available'),
             ),
           ],
+        ),
+        const Padding(
+          padding: EdgeInsets.symmetric(vertical: 12),
+          child: Text(
+            'SproutLab 0.1.7 (9) · India learning 1\nDevice speech is an interim pronunciation option.',
+          ),
         ),
         _Group(
           title: 'Gentle stop',
@@ -371,7 +379,10 @@ class _NavRow extends StatelessWidget {
                 ],
               ),
             ),
-            const Icon(Icons.chevron_right_rounded, color: SproutColors.primary),
+            const Icon(
+              Icons.chevron_right_rounded,
+              color: SproutColors.primary,
+            ),
           ],
         ),
       ),
@@ -651,7 +662,7 @@ class _AddChildFormState extends ConsumerState<_AddChildForm> {
               spacing: SproutSpace.sm,
               runSpacing: SproutSpace.sm,
               children: [
-                for (final band in AgeBand.values)
+                for (final band in AgeBand.ordered)
                   ChoiceChip(
                     label: Text('Ages ${band.label}'),
                     selected: _band == band,
@@ -680,3 +691,4 @@ class _AddChildFormState extends ConsumerState<_AddChildForm> {
     );
   }
 }
+

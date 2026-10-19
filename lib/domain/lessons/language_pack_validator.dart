@@ -67,7 +67,9 @@ class LanguagePackValidator {
           issues.add('${lesson.id} missing clip $clipId');
         } else if (clip.reviewStatus == ReviewStatus.approved &&
             (clip.assetPath == null || clip.assetPath!.isEmpty)) {
-          issues.add('${lesson.id} approved clip $clipId is missing a media file');
+          issues.add(
+            '${lesson.id} approved clip $clipId is missing a media file',
+          );
         }
       }
       if (release && lesson.strokeTemplateId != null) {

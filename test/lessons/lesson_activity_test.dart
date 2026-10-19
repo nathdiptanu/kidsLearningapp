@@ -74,6 +74,18 @@ void main() {
     return container;
   }
 
+  testWidgets('skipping does not complete learning or award a badge', (tester) async {
+    final database = await seeded();
+    addTearDown(database.close);
+    await pumpLesson(tester, database, 'lesson:hindi:build:anar');
+    await tester.tap(find.text('Skip'));
+    await tester.pumpAndSettle();
+    final profile = (await DriftProfileRepository(database).getActiveProfile())!;
+    final progress = DriftProgressRepository(database);
+    expect(await progress.listForProfile(profile.id), isEmpty);
+    expect(await progress.levelBadgeCount(profile.id), 0);
+  });
+
   testWidgets('word building accepts अनार and persists one badge', (
     tester,
   ) async {
@@ -85,7 +97,7 @@ void main() {
       'lesson:hindi:build:anar',
     );
     expect(find.text('Development sample'), findsOneWidget);
-    expect(find.text('Hear again'), findsOneWidget);
+    expect(find.text('Audio unavailable'), findsOneWidget);
     await tester.ensureVisible(find.text('Skip', skipOffstage: false));
     await tester.pumpAndSettle();
     expect(find.text('Skip'), findsOneWidget);

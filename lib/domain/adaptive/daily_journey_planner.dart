@@ -36,6 +36,44 @@ class DailyJourneyPlanner {
     List<LearningItemSnapshot> itemProgress = const [],
   }) {
     final seed = dateSeed(dateKey);
+    if (band == AgeBand.toddler) {
+      final pictures = catalog.forBand(GameCategory.matching, band);
+      final exhausted =
+          !premiumActive &&
+          records
+                  .where(
+                    (record) =>
+                        record.completed &&
+                        record.countedAsFree &&
+                        record.engineType == GameCategory.matching.storageKey,
+                  )
+                  .length >=
+              5;
+      if (exhausted) {
+        final replays = [
+          for (final record in records)
+            if (record.completed &&
+                record.engineType == GameCategory.matching.storageKey)
+              ?catalog.byId(record.activityId),
+        ];
+        if (replays.isNotEmpty) {
+          return [
+            for (var i = 0; i < 3; i++)
+              PlannedActivity(
+                activity: replays[(seed + i) % replays.length],
+                role: JourneyRole.review,
+              ),
+          ];
+        }
+      }
+      return [
+        for (var i = 0; i < 3; i++)
+          PlannedActivity(
+            activity: pictures[(seed + i) % pictures.length],
+            role: JourneyRole.current,
+          ),
+      ];
+    }
     final logic = seed.isEven ? GameCategory.pattern : GameCategory.maze;
     final otherLogic = logic == GameCategory.pattern
         ? GameCategory.maze
@@ -92,7 +130,8 @@ class DailyJourneyPlanner {
       }
     }
     final reviewDifficulty = _difficulty(difficultyBySkill, otherLogic, band);
-    final reviewPick = regionalReview ??
+    final reviewPick =
+        regionalReview ??
         _confidencePick(
           category: otherLogic,
           difficulty: reviewDifficulty,

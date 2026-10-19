@@ -117,40 +117,46 @@ void main() {
     expect(rows.single.activityId, 'heritage:india:story:konark');
   });
 
-  testWidgets('Discover India lists heritage samples when the region is India', (
-    tester,
-  ) async {
-    final database = await seeded();
-    addTearDown(database.close);
-    tester.view.physicalSize = const Size(411, 900) * 3;
-    tester.view.devicePixelRatio = 3;
-    addTearDown(tester.view.reset);
-    final container = ProviderContainer(
-      overrides: [
-        bootstrapStateProvider.overrideWithValue(const BootstrapReady()),
-        databaseProvider.overrideWith((ref) => database),
-      ],
-    );
-    addTearDown(container.dispose);
-    await tester.pumpWidget(
-      UncontrolledProviderScope(
-        container: container,
-        child: MaterialApp(
-          theme: SproutTheme.child(),
-          home: const RegionalModuleScreen(
-            module: RegionalModule.discoverIndia,
+  testWidgets(
+    'Discover India lists heritage samples when the region is India',
+    (tester) async {
+      final database = await seeded();
+      addTearDown(database.close);
+      tester.view.physicalSize = const Size(411, 900) * 3;
+      tester.view.devicePixelRatio = 3;
+      addTearDown(tester.view.reset);
+      final container = ProviderContainer(
+        overrides: [
+          bootstrapStateProvider.overrideWithValue(const BootstrapReady()),
+          databaseProvider.overrideWith((ref) => database),
+        ],
+      );
+      addTearDown(container.dispose);
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: container,
+          child: MaterialApp(
+            theme: SproutTheme.child(),
+            home: const RegionalModuleScreen(
+              module: RegionalModule.discoverIndia,
+            ),
           ),
         ),
-      ),
-    );
-    await tester.pumpAndSettle();
-    await container.read(sessionProvider.future);
-    await tester.pumpAndSettle();
-    expect(find.text('Heritage', skipOffstage: false), findsWidgets);
-    expect(find.text('Find Sanchi', skipOffstage: false), findsWidgets);
-    expect(find.text('A marble tomb', skipOffstage: false), findsWidgets);
-    expect(find.text('Remember a place', skipOffstage: false), findsNothing);
-  });
+      );
+      await tester.pumpAndSettle();
+      await container.read(sessionProvider.future);
+      await tester.pumpAndSettle();
+      await tester.scrollUntilVisible(
+        find.text('Heritage'),
+        300,
+        scrollable: find.byType(Scrollable).first,
+      );
+      expect(find.text('Heritage', skipOffstage: false), findsWidgets);
+      expect(find.text('Find Sanchi', skipOffstage: false), findsWidgets);
+      expect(find.text('A marble tomb', skipOffstage: false), findsWidgets);
+      expect(find.text('Remember a place', skipOffstage: false), findsNothing);
+    },
+  );
 
   testWidgets('parent credits show sources as text and not as child links', (
     tester,
@@ -175,6 +181,9 @@ void main() {
     expect(find.text('Sanchi drawing'), findsOneWidget);
     expect(find.text(unescoSanchi), findsOneWidget);
     expect(find.textContaining('do not open websites'), findsOneWidget);
-    expect(find.textContaining('Google image'), findsOneWidget);
+    expect(
+      find.textContaining('Monument photographs retain their authors'),
+      findsOneWidget,
+    );
   });
 }

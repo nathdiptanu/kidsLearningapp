@@ -13,7 +13,10 @@ class ContentSchemaValidator {
   const ContentSchemaValidator();
 
   List<String> validateLanguage(LanguagePack pack, {required bool release}) {
-    final issues = const LanguagePackValidator().validate(pack, release: release);
+    final issues = const LanguagePackValidator().validate(
+      pack,
+      release: release,
+    );
     issues.addAll(_languageExtras(pack, release: release));
     return issues;
   }
@@ -28,10 +31,14 @@ class ContentSchemaValidator {
       atlas,
       release: release,
     );
-    issues.addAll(_clipIssues(pack.clips, prefix: pack.packId, release: release));
-    issues.addAll(_duplicateActivityIds([
-      for (final activity in pack.activities) activity.id,
-    ]));
+    issues.addAll(
+      _clipIssues(pack.clips, prefix: pack.packId, release: release),
+    );
+    issues.addAll(
+      _duplicateActivityIds([
+        for (final activity in pack.activities) activity.id,
+      ]),
+    );
     for (final place in pack.places.values) {
       if (place.sources.isEmpty) {
         issues.add('${place.id} missing sources');
@@ -51,7 +58,9 @@ class ContentSchemaValidator {
               activity.mode == GeographyMode.capital) &&
           activity.placeId != null &&
           !learned.contains(activity.placeId)) {
-        issues.add('${activity.id} has no learn activity for ${activity.placeId}');
+        issues.add(
+          '${activity.id} has no learn activity for ${activity.placeId}',
+        );
       }
     }
     return issues;
@@ -62,10 +71,14 @@ class ContentSchemaValidator {
       pack,
       release: release,
     );
-    issues.addAll(_clipIssues(pack.clips, prefix: pack.packId, release: release));
-    issues.addAll(_duplicateActivityIds([
-      for (final activity in pack.activities) activity.id,
-    ]));
+    issues.addAll(
+      _clipIssues(pack.clips, prefix: pack.packId, release: release),
+    );
+    issues.addAll(
+      _duplicateActivityIds([
+        for (final activity in pack.activities) activity.id,
+      ]),
+    );
     final identified = {
       for (final activity in pack.activities)
         if (activity.mode == HeritageMode.identify && activity.siteId != null)
@@ -99,10 +112,12 @@ class ContentSchemaValidator {
 
   List<String> _languageExtras(LanguagePack pack, {required bool release}) {
     final issues = <String>[];
-    issues.addAll(_duplicateActivityIds([
-      for (final lesson in pack.lessons) lesson.id,
-    ]));
-    issues.addAll(_clipIssues(pack.clips, prefix: pack.packId, release: release));
+    issues.addAll(
+      _duplicateActivityIds([for (final lesson in pack.lessons) lesson.id]),
+    );
+    issues.addAll(
+      _clipIssues(pack.clips, prefix: pack.packId, release: release),
+    );
     final introduced = <String>{};
     for (final lesson in pack.lessons) {
       if (lessonIntroduces(lesson.mode)) {
@@ -127,13 +142,13 @@ class ContentSchemaValidator {
           }
         }
       }
-      if (release &&
-          lesson.reviewStatus != ReviewStatus.approved) {
+      if (release && lesson.reviewStatus != ReviewStatus.approved) {
         issues.add('${lesson.id} draft content cannot ship');
       }
     }
     for (final lesson in pack.lessons) {
-      if ((lesson.mode == LessonMode.review || lesson.mode == LessonMode.trace) &&
+      if ((lesson.mode == LessonMode.review ||
+              lesson.mode == LessonMode.trace) &&
           !introduced.contains(itemIdForLesson(lesson))) {
         issues.add('${lesson.id} has no introduce activity');
       }

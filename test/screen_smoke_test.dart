@@ -252,6 +252,8 @@ void main() {
     expect(find.text('Hindi'), findsOneWidget);
     expect(find.text('Discover India'), findsOneWidget);
     expect(find.text('अ आ'), findsOneWidget);
+    await tester.drag(find.byType(ListView).first, const Offset(0, -1800));
+    await tester.pumpAndSettle();
     expect(find.text('Play again'), findsOneWidget);
   });
 

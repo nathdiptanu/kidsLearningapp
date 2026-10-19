@@ -61,3 +61,11 @@ key.properties
 gradle_download.txt
 gradle_stack.txt
 shell_probe.txt
+
+# Workspace PDF-rendering dependencies
+.runtime/
+
+# Local design references and screenshot dumps. Not Play assets.
+design/maps/
+design/audio/
+docs/screenshot-references/

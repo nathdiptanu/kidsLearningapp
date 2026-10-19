@@ -31,7 +31,9 @@ void main() {
           GameCategory.matching,
         ]) {
           final activities = catalog.forBand(category, band);
-          expect(activities, hasLength(activitiesInBand(category)));
+          expect(activities, hasLength(band == AgeBand.toddler
+              ? category == GameCategory.matching ? 6 : 0
+              : activitiesInBand(category)));
           for (final activity in activities) {
             final questions = catalog.questionsFor(activity);
             expect(questions, isNotEmpty);

@@ -62,6 +62,7 @@ class _GeographyActivityScreenState
   int _wrong = 0;
   int _hints = 0;
   var _showList = false;
+  NarrationPlayResult? _audioState;
 
   GeographyActivity get _activity => widget.activity;
 
@@ -148,13 +149,30 @@ class _GeographyActivityScreenState
     final id =
         _activity.narrationId ?? _catalog.place(_selectedPlaceId)?.narrationId;
     if (id == null) {
+      if (mounted) {
+        setState(() => _audioState = NarrationPlayResult.missing);
+      }
       return;
     }
-    await _audio.playNarration(id);
+    final clip = _catalog.pack.clips[id];
+    final result = await _audio.playNarration(id, assetPath: clip?.assetPath);
+    if (mounted) {
+      setState(() => _audioState = result);
+    }
   }
 
   Future<void> _finish({required bool skipped}) async {
     if (_saved) {
+      return;
+    }
+    if (skipped) {
+      await skipJourneyActivity(ref, _activity.id, widget.journeyDate);
+      if (!mounted) return;
+      // Leaving a task is not completed learning and earns no reward.
+      setState(() => _saved = true);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) Navigator.of(context).pop();
+      });
       return;
     }
     _saved = true;
@@ -285,6 +303,31 @@ class _GeographyActivityScreenState
                           ),
                         ),
                       PlayInstruction(text: _activity.prompt),
+                      if (_audioState == NarrationPlayResult.missing ||
+                          _audioState == NarrationPlayResult.muted)
+                        Padding(
+                          padding: const EdgeInsets.only(top: SproutSpace.sm),
+                          child: Text(
+                            _audioState == NarrationPlayResult.muted
+                                ? 'Spoken words are switched off in grown-up settings.'
+                                : 'The name stays on the screen. A reviewed recording is not in this build yet.',
+                            style: text.bodyMedium,
+                          ),
+                        ),
+                      const SizedBox(height: SproutSpace.md),
+                      ..._info(text, teaching),
+                      if ((_catalog
+                                  .place(_selectedPlaceId ?? _activity.placeId)
+                                  ?.smallTarget ??
+                              false) &&
+                          _activity.mode != GeographyMode.explore)
+                        Padding(
+                          padding: const EdgeInsets.only(top: SproutSpace.sm),
+                          child: Text(
+                            'A list is easier for small places.',
+                            style: text.bodyMedium,
+                          ),
+                        ),
                       const SizedBox(height: SproutSpace.md),
                       if (atlas == null)
                         const Text('The map is still opening.')
@@ -306,17 +349,18 @@ class _GeographyActivityScreenState
                           },
                         ),
                       const SizedBox(height: SproutSpace.md),
-                      ..._info(text, teaching),
-                      if (_showList) ...[
+                      if (_showList ||
+                          _activity.mode == GeographyMode.explore) ...[
                         const SizedBox(height: SproutSpace.md),
-                        Text(
-                          'A list is easier for small places.',
-                          style: text.bodyMedium,
-                        ),
+                        if (_activity.mode == GeographyMode.explore)
+                          Text(
+                            'All places in this sample. Small ones also have a closer view.',
+                            style: text.bodyMedium,
+                          ),
                         const SizedBox(height: SproutSpace.sm),
                         for (final place in _listPlaces()) ...[
                           ChoiceCard(
-                            label: place.name,
+                            label: '${place.name} · ${place.typeLabel}',
                             selected: _selectedPlaceId == place.id,
                             onPressed: () => _choose(place.id),
                           ),
@@ -360,37 +404,46 @@ class _GeographyActivityScreenState
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         PinnedActivityActions(
-                        finished: finished,
-                        primaryKey: const Key('geo-next'),
-                        fromJourney: widget.journeyDate != null,
-                        onHearAgain: _playName,
-                        onSkip: () => _finish(skipped: true),
-                        onHome: () => Navigator.of(context).maybePop(),
-                        onPrimary: () async {
-                          if (finished) {
-                            if (widget.journeyDate != null) {
-                              await openNextJourneyActivity(
-                                context,
-                                ref,
-                                activity: _definition,
-                                journeyDate: widget.journeyDate,
-                              );
+                          finished: finished,
+                          primaryKey: const Key('geo-next'),
+                          fromJourney: widget.journeyDate != null,
+                          onHearAgain: _playName,
+                          audioUnavailable:
+                              _catalog
+                                  .pack
+                                  .clips[_activity.narrationId ??
+                                      _catalog
+                                          .place(_selectedPlaceId)
+                                          ?.narrationId]
+                                  ?.hasReviewedFile !=
+                              true,
+                          onSkip: () => _finish(skipped: true),
+                          onHome: () => Navigator.of(context).maybePop(),
+                          onPrimary: () async {
+                            if (finished) {
+                              if (widget.journeyDate != null) {
+                                await openNextJourneyActivity(
+                                  context,
+                                  ref,
+                                  activity: _definition,
+                                  journeyDate: widget.journeyDate,
+                                );
+                                return;
+                              }
+                              Navigator.of(context).maybePop();
                               return;
                             }
-                            Navigator.of(context).maybePop();
-                            return;
-                          }
-                          final learnReady =
-                              _activity.mode == GeographyMode.explore ||
-                              _activity.mode == GeographyMode.learn;
-                          await _finish(
-                            skipped: learnReady ? false : !_accepted,
-                          );
-                        },
-                      ),
-                    ],
+                            final learnReady =
+                                _activity.mode == GeographyMode.explore ||
+                                _activity.mode == GeographyMode.learn;
+                            await _finish(
+                              skipped: learnReady ? false : !_accepted,
+                            );
+                          },
+                        ),
+                      ],
+                    ),
                   ),
-                ),
                 ),
               ],
             ),
@@ -439,6 +492,11 @@ class _GeographyActivityScreenState
   }
 
   List<PlaceRecord> _listPlaces() {
+    if (_activity.mode == GeographyMode.explore) {
+      final places = _catalog.pack.places.values.toList()
+        ..sort((a, b) => a.name.compareTo(b.name));
+      return places;
+    }
     final playable = {
       for (final activity in _catalog.pack.activities)
         if (activity.placeId != null) activity.placeId!,

@@ -1,0 +1,12 @@
+{
+  "analysis": "No issues found",
+  "package": "com.sproutlab.kids",
+  "physicalDeviceTested": false,
+  "bytes": 130956354,
+  "fullSuitePassed": 341,
+  "bundleFilesVerified": 20,
+  "sha256": "53d5b364861c4609513d24bec36faa30a6ac3d3d30dbdce66f4b32fd50e48416",
+  "file": "sproutlab-0.1.6+8-features-release.apk",
+  "version": "0.1.6+8",
+  "additionalMusicPreviewRegressionPassed": 1
+}

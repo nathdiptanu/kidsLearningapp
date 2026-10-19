@@ -5,7 +5,9 @@ String skillForCategory(GameCategory category) {
     GameCategory.maths => 'maths',
     GameCategory.vocabulary => 'english',
     GameCategory.pattern || GameCategory.maze => 'logic',
-    GameCategory.matching || GameCategory.findDifference => 'observation',
+    GameCategory.matching ||
+    GameCategory.findDifference ||
+    GameCategory.findObjects => 'observation',
     GameCategory.knowledge => 'knowledge',
     GameCategory.ticTacToe => 'tic_tac_toe',
     GameCategory.hindi => 'hindi',
@@ -19,7 +21,9 @@ String learningSectionFor(GameCategory category) {
     GameCategory.maths => 'maths',
     GameCategory.vocabulary => 'english',
     GameCategory.pattern || GameCategory.maze => 'logic',
-    GameCategory.matching || GameCategory.findDifference => 'observation',
+    GameCategory.matching ||
+    GameCategory.findDifference ||
+    GameCategory.findObjects => 'observation',
     GameCategory.knowledge => 'knowledge',
     GameCategory.ticTacToe => 'tic_tac_toe',
     GameCategory.hindi => 'hindi',

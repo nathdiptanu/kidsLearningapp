@@ -105,13 +105,11 @@ class CategoryCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Expanded(child: words),
-                      const SizedBox(width: SproutSpace.sm),
-                      const ChevronBadge(size: 36),
-                    ],
+                  words,
+                  const SizedBox(height: SproutSpace.sm),
+                  const Align(
+                    alignment: Alignment.bottomRight,
+                    child: ChevronBadge(size: 36),
                   ),
                 ],
               ),

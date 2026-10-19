@@ -273,8 +273,8 @@ void main() {
       records: await progress.listForProfile(profile.id),
       now: DateTime(2026, 10, 1, 8),
     );
-    expect(nextDay.dateKey, '2026-10-01');
-    expect(nextDay.finishedCount, 0);
+    expect(nextDay.dateKey, partial.dateKey);
+    expect(nextDay.finishedCount, 1);
     final yesterday = await journeys.ensure(
       profile: profile,
       records: await progress.listForProfile(profile.id),

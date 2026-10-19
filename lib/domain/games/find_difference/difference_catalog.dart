@@ -131,6 +131,220 @@ const differenceScenes = <DifferenceScene>[
       DifferenceSpot(id: 'post', region: Rect.fromLTWH(0.78, 0.72, 0.1, 0.16)),
     ],
   ),
+  DifferenceScene(
+    id: 'pond',
+    title: 'Pond',
+    spots: [
+      DifferenceSpot(
+        id: 'cloud',
+        region: Rect.fromLTWH(0.06, 0.08, 0.16, 0.14),
+      ),
+      DifferenceSpot(id: 'reed', region: Rect.fromLTWH(0.76, 0.08, 0.16, 0.18)),
+      DifferenceSpot(id: 'lily', region: Rect.fromLTWH(0.42, 0.42, 0.14, 0.14)),
+      DifferenceSpot(id: 'duck', region: Rect.fromLTWH(0.06, 0.74, 0.16, 0.14)),
+      DifferenceSpot(id: 'frog', region: Rect.fromLTWH(0.76, 0.74, 0.16, 0.14)),
+    ],
+  ),
+  DifferenceScene(
+    id: 'hill',
+    title: 'Hill',
+    spots: [
+      DifferenceSpot(id: 'sun', region: Rect.fromLTWH(0.06, 0.08, 0.16, 0.14)),
+      DifferenceSpot(id: 'flag', region: Rect.fromLTWH(0.76, 0.08, 0.16, 0.18)),
+      DifferenceSpot(id: 'goat', region: Rect.fromLTWH(0.42, 0.42, 0.14, 0.14)),
+      DifferenceSpot(
+        id: 'flower',
+        region: Rect.fromLTWH(0.06, 0.74, 0.16, 0.14),
+      ),
+      DifferenceSpot(id: 'tree', region: Rect.fromLTWH(0.76, 0.62, 0.16, 0.22)),
+    ],
+  ),
+  DifferenceScene(
+    id: 'shop',
+    title: 'Shop',
+    spots: [
+      DifferenceSpot(id: 'sign', region: Rect.fromLTWH(0.06, 0.08, 0.16, 0.14)),
+      DifferenceSpot(
+        id: 'clock',
+        region: Rect.fromLTWH(0.76, 0.08, 0.16, 0.14),
+      ),
+      DifferenceSpot(
+        id: 'apple',
+        region: Rect.fromLTWH(0.42, 0.42, 0.14, 0.14),
+      ),
+      DifferenceSpot(id: 'cup', region: Rect.fromLTWH(0.06, 0.74, 0.16, 0.16)),
+      DifferenceSpot(id: 'bag', region: Rect.fromLTWH(0.76, 0.74, 0.16, 0.16)),
+    ],
+  ),
+  DifferenceScene(
+    id: 'classroom',
+    title: 'Classroom',
+    spots: [
+      DifferenceSpot(
+        id: 'clock',
+        region: Rect.fromLTWH(0.06, 0.08, 0.16, 0.14),
+      ),
+      DifferenceSpot(
+        id: 'picture',
+        region: Rect.fromLTWH(0.76, 0.08, 0.16, 0.14),
+      ),
+      DifferenceSpot(id: 'book', region: Rect.fromLTWH(0.42, 0.42, 0.16, 0.14)),
+      DifferenceSpot(id: 'ball', region: Rect.fromLTWH(0.06, 0.74, 0.16, 0.14)),
+      DifferenceSpot(id: 'bag', region: Rect.fromLTWH(0.76, 0.74, 0.16, 0.16)),
+    ],
+  ),
+  DifferenceScene(
+    id: 'zoo',
+    title: 'Zoo',
+    spots: [
+      DifferenceSpot(id: 'bird', region: Rect.fromLTWH(0.06, 0.08, 0.16, 0.14)),
+      DifferenceSpot(id: 'sun', region: Rect.fromLTWH(0.76, 0.08, 0.16, 0.14)),
+      DifferenceSpot(id: 'dog', region: Rect.fromLTWH(0.42, 0.42, 0.14, 0.14)),
+      DifferenceSpot(id: 'ball', region: Rect.fromLTWH(0.06, 0.74, 0.16, 0.14)),
+      DifferenceSpot(id: 'tree', region: Rect.fromLTWH(0.76, 0.58, 0.16, 0.26)),
+    ],
+  ),
+  DifferenceScene(
+    id: 'river',
+    title: 'River',
+    spots: [
+      DifferenceSpot(id: 'bird', region: Rect.fromLTWH(0.06, 0.08, 0.16, 0.14)),
+      DifferenceSpot(id: 'boat', region: Rect.fromLTWH(0.76, 0.28, 0.16, 0.16)),
+      DifferenceSpot(id: 'tree', region: Rect.fromLTWH(0.42, 0.2, 0.16, 0.22)),
+      DifferenceSpot(
+        id: 'flower',
+        region: Rect.fromLTWH(0.06, 0.74, 0.16, 0.14),
+      ),
+      DifferenceSpot(id: 'fish', region: Rect.fromLTWH(0.76, 0.74, 0.16, 0.14)),
+    ],
+  ),
+  DifferenceScene(
+    id: 'playground',
+    title: 'Playground',
+    spots: [
+      DifferenceSpot(id: 'kite', region: Rect.fromLTWH(0.06, 0.08, 0.16, 0.16)),
+      DifferenceSpot(
+        id: 'bench',
+        region: Rect.fromLTWH(0.76, 0.36, 0.16, 0.14),
+      ),
+      DifferenceSpot(id: 'ball', region: Rect.fromLTWH(0.42, 0.42, 0.14, 0.14)),
+      DifferenceSpot(id: 'shoe', region: Rect.fromLTWH(0.06, 0.74, 0.16, 0.14)),
+      DifferenceSpot(id: 'hat', region: Rect.fromLTWH(0.76, 0.74, 0.16, 0.14)),
+    ],
+  ),
+  DifferenceScene(
+    id: 'bakery',
+    title: 'Bakery',
+    spots: [
+      DifferenceSpot(
+        id: 'clock',
+        region: Rect.fromLTWH(0.06, 0.08, 0.16, 0.14),
+      ),
+      DifferenceSpot(
+        id: 'apple',
+        region: Rect.fromLTWH(0.76, 0.12, 0.16, 0.14),
+      ),
+      DifferenceSpot(id: 'cup', region: Rect.fromLTWH(0.42, 0.42, 0.14, 0.16)),
+      DifferenceSpot(
+        id: 'spoon',
+        region: Rect.fromLTWH(0.06, 0.74, 0.16, 0.14),
+      ),
+      DifferenceSpot(id: 'bag', region: Rect.fromLTWH(0.76, 0.74, 0.16, 0.16)),
+    ],
+  ),
+  DifferenceScene(
+    id: 'market',
+    title: 'Market',
+    spots: [
+      DifferenceSpot(
+        id: 'mango',
+        region: Rect.fromLTWH(0.06, 0.12, 0.16, 0.14),
+      ),
+      DifferenceSpot(
+        id: 'flower',
+        region: Rect.fromLTWH(0.76, 0.12, 0.16, 0.16),
+      ),
+      DifferenceSpot(
+        id: 'banana',
+        region: Rect.fromLTWH(0.42, 0.42, 0.16, 0.12),
+      ),
+      DifferenceSpot(id: 'hat', region: Rect.fromLTWH(0.06, 0.74, 0.16, 0.14)),
+      DifferenceSpot(id: 'bag', region: Rect.fromLTWH(0.76, 0.74, 0.16, 0.16)),
+    ],
+  ),
+  DifferenceScene(
+    id: 'snow',
+    title: 'Snow',
+    spots: [
+      DifferenceSpot(id: 'bird', region: Rect.fromLTWH(0.06, 0.08, 0.16, 0.14)),
+      DifferenceSpot(id: 'tree', region: Rect.fromLTWH(0.76, 0.16, 0.16, 0.26)),
+      DifferenceSpot(id: 'hat', region: Rect.fromLTWH(0.42, 0.42, 0.16, 0.14)),
+      DifferenceSpot(id: 'shoe', region: Rect.fromLTWH(0.06, 0.74, 0.16, 0.14)),
+      DifferenceSpot(id: 'ball', region: Rect.fromLTWH(0.76, 0.74, 0.16, 0.14)),
+    ],
+  ),
+  DifferenceScene(
+    id: 'desert',
+    title: 'Desert',
+    spots: [
+      DifferenceSpot(id: 'sun', region: Rect.fromLTWH(0.76, 0.08, 0.16, 0.16)),
+      DifferenceSpot(id: 'hat', region: Rect.fromLTWH(0.06, 0.16, 0.16, 0.14)),
+      DifferenceSpot(id: 'cup', region: Rect.fromLTWH(0.42, 0.42, 0.14, 0.14)),
+      DifferenceSpot(id: 'ball', region: Rect.fromLTWH(0.06, 0.74, 0.16, 0.14)),
+      DifferenceSpot(
+        id: 'shell',
+        region: Rect.fromLTWH(0.76, 0.74, 0.16, 0.14),
+      ),
+    ],
+  ),
+  DifferenceScene(
+    id: 'forest',
+    title: 'Forest',
+    spots: [
+      DifferenceSpot(id: 'bird', region: Rect.fromLTWH(0.42, 0.08, 0.14, 0.12)),
+      DifferenceSpot(id: 'tree', region: Rect.fromLTWH(0.06, 0.16, 0.16, 0.26)),
+      DifferenceSpot(
+        id: 'flower',
+        region: Rect.fromLTWH(0.42, 0.42, 0.14, 0.14),
+      ),
+      DifferenceSpot(id: 'leaf', region: Rect.fromLTWH(0.06, 0.74, 0.16, 0.14)),
+      DifferenceSpot(
+        id: 'mushroom',
+        region: Rect.fromLTWH(0.76, 0.74, 0.16, 0.16),
+      ),
+    ],
+  ),
+  DifferenceScene(
+    id: 'station',
+    title: 'Station',
+    spots: [
+      DifferenceSpot(
+        id: 'clock',
+        region: Rect.fromLTWH(0.76, 0.08, 0.16, 0.14),
+      ),
+      DifferenceSpot(id: 'train', region: Rect.fromLTWH(0.28, 0.4, 0.28, 0.14)),
+      DifferenceSpot(id: 'bag', region: Rect.fromLTWH(0.06, 0.74, 0.16, 0.16)),
+      DifferenceSpot(
+        id: 'bench',
+        region: Rect.fromLTWH(0.42, 0.74, 0.16, 0.12),
+      ),
+      DifferenceSpot(id: 'hat', region: Rect.fromLTWH(0.76, 0.74, 0.16, 0.14)),
+    ],
+  ),
+  DifferenceScene(
+    id: 'harbour',
+    title: 'Harbour',
+    spots: [
+      DifferenceSpot(id: 'sun', region: Rect.fromLTWH(0.06, 0.08, 0.16, 0.14)),
+      DifferenceSpot(id: 'bird', region: Rect.fromLTWH(0.76, 0.08, 0.16, 0.14)),
+      DifferenceSpot(id: 'boat', region: Rect.fromLTWH(0.36, 0.36, 0.24, 0.14)),
+      DifferenceSpot(
+        id: 'shell',
+        region: Rect.fromLTWH(0.06, 0.74, 0.16, 0.14),
+      ),
+      DifferenceSpot(id: 'fish', region: Rect.fromLTWH(0.76, 0.74, 0.16, 0.14)),
+    ],
+  ),
 ];
 
 class DifferenceCatalog {
@@ -141,7 +355,7 @@ class DifferenceCatalog {
 
   int countFor(AgeBand band) {
     return switch (band) {
-      AgeBand.a => 2,
+      AgeBand.a || AgeBand.toddler => 2,
       AgeBand.b => 3,
       AgeBand.c => 4,
       AgeBand.d => 5,
@@ -150,7 +364,7 @@ class DifferenceCatalog {
 
   double padFor(AgeBand band) {
     return switch (band) {
-      AgeBand.a => 0.04,
+      AgeBand.a || AgeBand.toddler => 0.04,
       AgeBand.b => 0.03,
       AgeBand.c => 0.025,
       AgeBand.d => 0.02,

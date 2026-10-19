@@ -202,6 +202,16 @@ class _LessonActivityScreenState extends ConsumerState<LessonActivityScreen>
     if (_saved) {
       return;
     }
+    if (skipped) {
+      await skipJourneyActivity(ref, _activity.id, widget.journeyDate);
+      if (!mounted) return;
+      // Leaving a task is not completed learning and earns no reward.
+      setState(() => _saved = true);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) Navigator.of(context).pop();
+      });
+      return;
+    }
     _saved = true;
     _skipped = skipped;
     if (skipped) {
@@ -361,28 +371,34 @@ class _LessonActivityScreenState extends ConsumerState<LessonActivityScreen>
                           const SizedBox(height: SproutSpace.sm),
                         ],
                         PinnedActivityActions(
-                    finished: finished,
-                    primaryKey: const Key('lesson-next'),
-                    fromJourney: widget.journeyDate != null,
-                    onHearAgain: _replay,
-                    onSkip: () => _finish(skipped: true),
-                    onHome: () => Navigator.of(context).maybePop(),
-                    onPrimary: () async {
-                      if (finished) {
-                        if (widget.journeyDate != null) {
-                          await openNextJourneyActivity(
-                            context,
-                            ref,
-                            activity: _activity,
-                            journeyDate: widget.journeyDate,
-                          );
-                          return;
-                        }
-                        Navigator.of(context).maybePop();
-                        return;
-                      }
-                      await _finish(skipped: !_accepted);
-                    },
+                          finished: finished,
+                          primaryKey: const Key('lesson-next'),
+                          fromJourney: widget.journeyDate != null,
+                          onHearAgain: _replay,
+                          audioUnavailable:
+                              _lesson.narrationIds.isEmpty ||
+                              _catalog
+                                      .clip(_lesson.narrationIds.first)
+                                      ?.hasReviewedFile !=
+                                  true,
+                          onSkip: () => _finish(skipped: true),
+                          onHome: () => Navigator.of(context).maybePop(),
+                          onPrimary: () async {
+                            if (finished) {
+                              if (widget.journeyDate != null) {
+                                await openNextJourneyActivity(
+                                  context,
+                                  ref,
+                                  activity: _activity,
+                                  journeyDate: widget.journeyDate,
+                                );
+                                return;
+                              }
+                              Navigator.of(context).maybePop();
+                              return;
+                            }
+                            await _finish(skipped: !_accepted);
+                          },
                         ),
                       ],
                     ),
@@ -408,7 +424,7 @@ class _LessonActivityScreenState extends ConsumerState<LessonActivityScreen>
     }
     return Text(
       [
-        if (missing) 'The words stay on the screen. A reviewed recording is not in this build yet.',
+        if (missing) 'Audio unavailable in this preview',
         if (voices?.note != null) voices!.note!,
       ].join(' '),
       style: text.bodyMedium,

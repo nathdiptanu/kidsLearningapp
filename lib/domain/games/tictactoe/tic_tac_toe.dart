@@ -188,6 +188,16 @@ class TicTacToeEngine {
 
   bool isComplete(TicState state) => state.finished;
 
+  /// Pass-and-play uses the same terminal-state and occupied-cell guards.
+  TicState playOnDevice(TicState state, int index) {
+    if (state.finished || !_open(state.cells, index)) return state;
+    return _place(
+      state,
+      index,
+      state.childTurn ? TicState.child : TicState.opponent,
+    );
+  }
+
   TicState _hint(TicState state) {
     if (state.finished || !state.childTurn || state.hintsUsed > 0) {
       return state;

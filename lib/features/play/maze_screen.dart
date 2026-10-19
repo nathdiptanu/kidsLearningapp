@@ -13,6 +13,8 @@ import '../../domain/games/play/activity_definition.dart';
 import '../../domain/games/play/play_checkpoint.dart';
 import '../../domain/models/age_band.dart';
 import 'maze_board.dart';
+import 'maze_palette.dart';
+import '../../core/design_system/widgets/primary_kid_button.dart';
 import 'open_activity.dart';
 import '../../domain/scoring/activity_score.dart';
 import 'play_chrome.dart';
@@ -49,6 +51,7 @@ class _MazeScreenState extends ConsumerState<MazeScreen>
   int _hintsUsed = 0;
   FeedbackKind? _kind;
   MazePoint? _dragMissCell;
+  Set<MazePoint> _visited = {const MazePoint(0, 0)};
 
   @override
   void initState() {
@@ -101,20 +104,27 @@ class _MazeScreenState extends ConsumerState<MazeScreen>
 
   MazePoint? _hintPlayer;
   int? _hintWrong;
+  int? _hintUsed;
   List<MazePoint> _hintCache = const [];
 
   List<MazePoint> get _hintCells {
-    if (_hintPlayer == _player && _hintWrong == _wrong) {
+    if (_hintPlayer == _player &&
+        _hintWrong == _wrong &&
+        _hintUsed == _hintsUsed) {
       return _hintCache;
     }
     final stage = hintStageForWrongCount(_wrong);
     final cells = switch (stage) {
       HintStage.firstHint => _maze.stepsTowardGoal(_player, 1),
       HintStage.strongerHint => _maze.stepsTowardGoal(_player, 3),
-      HintStage.none || HintStage.retryOnly => const <MazePoint>[],
+      HintStage.none || HintStage.retryOnly =>
+        _hintsUsed > 0
+            ? _maze.stepsTowardGoal(_player, 1)
+            : const <MazePoint>[],
     };
     _hintPlayer = _player;
     _hintWrong = _wrong;
+    _hintUsed = _hintsUsed;
     _hintCache = cells;
     return cells;
   }
@@ -136,6 +146,7 @@ class _MazeScreenState extends ConsumerState<MazeScreen>
       _dragMissCell = null;
       setState(() {
         _player = target;
+        _visited = {..._visited, target};
         _kind = null;
         _pulse = false;
         if (_player == _maze.goal) {
@@ -212,6 +223,7 @@ class _MazeScreenState extends ConsumerState<MazeScreen>
       await deleteCheckpoint(ref, widget.activity.id);
     } else if (restored != null) {
       _player = restored;
+      _visited = {_maze.start, restored};
       _wrong = parsed!.wrong;
       _hintsUsed = parsed.hintsUsed;
     }
@@ -244,6 +256,7 @@ class _MazeScreenState extends ConsumerState<MazeScreen>
   @override
   Widget build(BuildContext context) {
     final wide = MediaQuery.sizeOf(context).width >= 700;
+    final garden = MazePalette.forVariant(widget.activity.variant);
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
@@ -257,6 +270,7 @@ class _MazeScreenState extends ConsumerState<MazeScreen>
               ? const Center(child: CircularProgressIndicator())
               : _finished
               ? FinishedBanner(
+                  headline: 'You found the flower! Lovely exploring.',
                   stars: scoreRound(
                     category: widget.activity.category,
                     wrongCount: _wrong,
@@ -290,40 +304,73 @@ class _MazeScreenState extends ConsumerState<MazeScreen>
                 )
               : PageWidth(
                   child: ListView(
-                  padding: const EdgeInsets.all(SproutSpace.md),
-                  children: [
-                    GameHeader(
-                      title: widget.activity.title,
-                      activity: widget.activity,
-                      onClose: () =>
-                          confirmLeaveActivity(context, finished: _finished),
-                    ),
-                    PlayInstruction(
-                      text: widget.activity.band == AgeBand.a
-                          ? 'Tap the next open square. Reach the orange circle.'
-                          : 'Find a path to the orange circle.',
-                      detail: _pulse
-                          ? 'Tap a square next to the green sprout.'
-                          : null,
-                    ),
-                    if (_kind != null) ...[
+                    padding: const EdgeInsets.all(SproutSpace.md),
+                    children: [
+                      GameHeader(
+                        title: widget.activity.title,
+                        activity: widget.activity,
+                        onClose: () =>
+                            confirmLeaveActivity(context, finished: _finished),
+                      ),
+                      PlayInstruction(
+                        text: widget.activity.band == AgeBand.a
+                            ? 'Help your smiling friend reach the flower. Tap the next open square.'
+                            : 'Help your smiling friend find a path to the flower.',
+                        detail: _pulse
+                            ? 'Take your time. Tap an open square beside your friend.'
+                            : _wrong > 0
+                            ? 'Every explorer tries different paths. You can do it!'
+                            : 'Take your time. Each little step is an adventure!',
+                      ),
                       const SizedBox(height: SproutSpace.sm),
-                      FeedbackOverlay(kind: _kind!),
-                    ],
-                    const SizedBox(height: SproutSpace.md),
-                    Center(
-                      child: ConstrainedBox(
-                        constraints: BoxConstraints(maxWidth: wide ? 560 : 420),
-                        child: MazeBoard(
-                          maze: _maze,
-                          player: _player,
-                          hintCells: _hintCells,
-                          onTapCell: (cell) => _tryMove(cell, fromDrag: false),
-                          onDragCell: (cell) => _tryMove(cell, fromDrag: true),
+                      Row(
+                        children: [
+                          Icon(garden.icon, color: garden.wall),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              garden.name,
+                              style: Theme.of(context).textTheme.titleMedium,
+                            ),
+                          ),
+                        ],
+                      ),
+                      if (_kind != null) ...[
+                        const SizedBox(height: SproutSpace.sm),
+                        FeedbackOverlay(kind: _kind!),
+                      ],
+                      const SizedBox(height: SproutSpace.md),
+                      Center(
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(
+                            maxWidth: wide ? 560 : 420,
+                          ),
+                          child: MazeBoard(
+                            variant: widget.activity.variant,
+                            visitedCells: _visited,
+                            maze: _maze,
+                            player: _player,
+                            hintCells: _hintCells,
+                            onTapCell: (cell) =>
+                                _tryMove(cell, fromDrag: false),
+                            onDragCell: (cell) =>
+                                _tryMove(cell, fromDrag: true),
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: SproutSpace.md),
+                      SecondaryKidButton(
+                        label: 'Show a little clue',
+                        trailingIcon: Icons.lightbulb_outline_rounded,
+                        onPressed: () {
+                          setState(() {
+                            _hintsUsed = _hintsUsed < 1 ? 1 : _hintsUsed;
+                            _kind = FeedbackKind.hint;
+                          });
+                          _storeCheckpoint();
+                        },
+                      ),
+                    ],
                   ),
                 ),
         ),

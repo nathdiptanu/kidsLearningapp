@@ -204,6 +204,14 @@ class _Picture extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final item = pictureById(id);
+    if ({
+      PictureId.apple,
+      PictureId.banana,
+      PictureId.mango,
+      PictureId.sun,
+    }.contains(id)) {
+      return WordPicture(wordId: id.name, size: size);
+    }
     final color = switch (item.kind) {
       PictureKind.fruit => const Color(0xFFC45C26),
       PictureKind.animal => const Color(0xFF8A5A2B),

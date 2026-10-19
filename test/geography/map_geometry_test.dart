@@ -39,6 +39,23 @@ void main() {
     expect(back.y, closeTo(0.5, 0.001));
   });
 
+  test('content bounds include Andaman islands past y=1', () {
+    expect(atlas.contentBounds.bottom, greaterThan(1));
+    final andaman = atlas.byId('in-andaman-and-nicobar-islands')!;
+    expect(andaman.maxY, greaterThan(1));
+    final fitted = CanvasMapTransform.fit(const Size(300, 400), atlas.contentBounds);
+    final local = fitted.toLocal(OffsetPoint(andaman.centroid.x, andaman.maxY));
+    expect(local.dy, lessThanOrEqualTo(fitted.height));
+    expect(local.dy, greaterThan(0));
+  });
+
+  test('inset keep the region aspect ratio', () {
+    final goa = atlas.byId('in-goa')!;
+    final inset = interactor.insetBounds(goa);
+    expect(inset.left, greaterThanOrEqualTo(atlas.contentBounds.left - 0.03));
+    expect(inset.top, greaterThanOrEqualTo(atlas.contentBounds.top - 0.03));
+  });
+
   test('a tap inside Kerala hits Kerala and Goa uses a list alternative', () {
     final kerala = atlas.byId('in-kerala')!;
     final goa = atlas.byId('in-goa')!;

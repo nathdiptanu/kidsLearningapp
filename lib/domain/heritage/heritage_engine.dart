@@ -85,7 +85,12 @@ class HeritageQuestionEngine {
     ];
     final choices = pool.length < 2
         ? _sites(pack, site, band, readiness, seed)
-        : _pick(pool, site, choiceCount(band: band, readiness: readiness), seed);
+        : _pick(
+            pool,
+            site,
+            choiceCount(band: band, readiness: readiness),
+            seed,
+          );
     return HeritageQuestion(
       prompt: 'Which building is in ${site.locationLabel}?',
       correctId: site.id,
@@ -158,8 +163,10 @@ class HeritageQuestionEngine {
     int seed,
   ) {
     final unique = <String, HeritageSite>{correct.id: correct};
-    final others = [for (final item in pool) if (item.id != correct.id) item]
-      ..sort((a, b) => (a.id.hashCode ^ seed).compareTo(b.id.hashCode ^ seed));
+    final others = [
+      for (final item in pool)
+        if (item.id != correct.id) item,
+    ]..sort((a, b) => (a.id.hashCode ^ seed).compareTo(b.id.hashCode ^ seed));
     for (final item in others) {
       unique[item.id] = item;
       if (unique.length >= count) {

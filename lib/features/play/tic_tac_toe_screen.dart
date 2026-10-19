@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/design_system/sprout_tokens.dart';
+import '../../app/session_providers.dart';
 import '../../core/design_system/widgets/app_page_scaffold.dart';
 import '../../core/design_system/widgets/game_header.dart';
 import '../../core/design_system/widgets/primary_kid_button.dart';
@@ -31,10 +32,35 @@ class _TicTacToeScreenState extends ConsumerState<TicTacToeScreen> {
   bool _saved = false;
   bool _ready = false;
   Timer? _opponent;
+  bool _choosing = true;
+  bool _twoPlayers = false;
+  bool _computerFirst = false;
+  int? _profileId;
+
+  void _start({required bool twoPlayers, required bool computerFirst}) {
+    _opponent?.cancel();
+    setState(() {
+      _twoPlayers = twoPlayers;
+      _computerFirst = computerFirst;
+      _choosing = false;
+      _saved = false;
+      _state = TicState(
+        cells: List.filled(9, 0),
+        childTurn: !computerFirst,
+        difficulty: ticScenario(widget.activity.variant).difficulty,
+        seed: widget.activity.seed,
+        opening: List.filled(9, 0),
+        openingChildTurn: !computerFirst,
+      );
+    });
+    _storeCheckpoint();
+    if (computerFirst && !twoPlayers) _scheduleOpponent();
+  }
 
   @override
   void initState() {
     super.initState();
+    _profileId = ref.read(sessionProvider).value?.profile?.id;
     _state = _engine.create(
       variant: widget.activity.variant,
       seed: widget.activity.seed,
@@ -67,9 +93,15 @@ class _TicTacToeScreenState extends ConsumerState<TicTacToeScreen> {
     }
     if (restored != null) {
       _state = restored;
+      _twoPlayers = payload!.contains(';local=1');
+      _computerFirst = payload.contains(';computerFirst=1');
+      _choosing = false;
     }
     if (mounted) {
       setState(() => _ready = true);
+      if (!_choosing && !_twoPlayers && !_state.childTurn && !_state.finished) {
+        _scheduleOpponent();
+      }
     }
   }
 
@@ -80,16 +112,14 @@ class _TicTacToeScreenState extends ConsumerState<TicTacToeScreen> {
     await storeCheckpoint(
       ref,
       widget.activity.id,
-      ticCheckpointPayload(
-        seed: widget.activity.seed,
-        variant: widget.activity.variant,
-        state: _state,
-      ),
+      '${ticCheckpointPayload(seed: widget.activity.seed, variant: widget.activity.variant, state: _state)};local=${_twoPlayers ? 1 : 0};computerFirst=${_computerFirst ? 1 : 0}',
     );
   }
 
   void _apply(TicAction action) {
-    final next = _engine.reduce(_state, action);
+    final next = _twoPlayers && action.kind == TicActionKind.play
+        ? _engine.playOnDevice(_state, action.index ?? -1)
+        : _engine.reduce(_state, action);
     if (identical(next, _state)) {
       return;
     }
@@ -99,7 +129,7 @@ class _TicTacToeScreenState extends ConsumerState<TicTacToeScreen> {
       _save();
       return;
     }
-    if (!next.childTurn) {
+    if (!next.childTurn && !_twoPlayers) {
       _scheduleOpponent();
     } else {
       _storeCheckpoint();
@@ -110,7 +140,7 @@ class _TicTacToeScreenState extends ConsumerState<TicTacToeScreen> {
     _opponent?.cancel();
     final delay = SproutMotion.resolve(context, SproutMotion.small);
     _opponent = Timer(delay == Duration.zero ? Duration.zero : delay, () {
-      if (!mounted) {
+      if (!mounted || _twoPlayers || _choosing || _state.finished) {
         return;
       }
       _apply(const TicAction.opponent());
@@ -137,7 +167,7 @@ class _TicTacToeScreenState extends ConsumerState<TicTacToeScreen> {
       ref,
       activity: widget.activity,
       hintsUsed: _state.hintsUsed,
-      firstAttemptCorrect: scored.mastery,
+      firstAttemptCorrect: !_twoPlayers && scored.mastery,
       stars: scored.stars,
       wrongCount: outcome == RoundOutcome.win ? 0 : 1,
       journeyDate: widget.journeyDate,
@@ -147,14 +177,17 @@ class _TicTacToeScreenState extends ConsumerState<TicTacToeScreen> {
   }
 
   void _replay() {
-    _opponent?.cancel();
-    _saved = false;
-    setState(() {
-      _state = _engine.reduce(_state, const TicAction.reset());
-    });
+    _start(twoPlayers: _twoPlayers, computerFirst: _computerFirst);
   }
 
   String _headline() {
+    if (_twoPlayers) {
+      return switch (_state.outcome) {
+        TicOutcome.childWin => 'Player 1: X made three in a line!',
+        TicOutcome.opponentWin => 'Player 2: O made three in a line!',
+        _ => 'A draw is a fine game.',
+      };
+    }
     return switch (_state.outcome) {
       TicOutcome.childWin => 'Three in a line!',
       TicOutcome.draw => 'A draw is a fine game.',
@@ -165,6 +198,13 @@ class _TicTacToeScreenState extends ConsumerState<TicTacToeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    ref.listen(sessionProvider, (previous, next) {
+      final id = next.value?.profile?.id;
+      if (id != null && id != _profileId) {
+        _opponent?.cancel();
+        if (mounted) Navigator.of(context).pop();
+      }
+    });
     final scored = scoreRound(
       category: widget.activity.category,
       wrongCount: _state.outcome == TicOutcome.childWin ? 0 : 1,
@@ -186,6 +226,31 @@ class _TicTacToeScreenState extends ConsumerState<TicTacToeScreen> {
         body: SafeArea(
           child: !_ready
               ? const Center(child: CircularProgressIndicator())
+              : _choosing
+              ? ListView(
+                  padding: const EdgeInsets.all(24),
+                  children: [
+                    const PlayInstruction(text: 'Choose how to play'),
+                  const Text('Play with computer'),
+                    PrimaryKidButton(
+                      label: 'I go first (X)',
+                      onPressed: () =>
+                          _start(twoPlayers: false, computerFirst: false),
+                    ),
+                    const SizedBox(height: 12),
+                    SecondaryKidButton(
+                      label: 'Computer goes first (I play O)',
+                      onPressed: () =>
+                          _start(twoPlayers: false, computerFirst: true),
+                    ),
+                    const SizedBox(height: 12),
+                    SecondaryKidButton(
+                      label: 'Two players on this device',
+                      onPressed: () =>
+                          _start(twoPlayers: true, computerFirst: false),
+                    ),
+                  ],
+                )
               : _state.finished
               ? FinishedBanner(
                   headline: _headline(),
@@ -205,58 +270,75 @@ class _TicTacToeScreenState extends ConsumerState<TicTacToeScreen> {
                 )
               : PageWidth(
                   child: ListView(
-                  padding: const EdgeInsets.all(SproutSpace.md),
-                  children: [
-                    GameHeader(
-                      title: widget.activity.title,
-                      activity: widget.activity,
-                      onClose: () => confirmLeaveActivity(
-                        context,
-                        finished: _state.finished,
+                    padding: const EdgeInsets.all(SproutSpace.md),
+                    children: [
+                      GameHeader(
+                        title: widget.activity.title,
+                        activity: widget.activity,
+                        onClose: () => confirmLeaveActivity(
+                          context,
+                          finished: _state.finished,
+                        ),
                       ),
-                    ),
-                    Semantics(
-                      liveRegion: true,
-                      child: PlayInstruction(
-                        text: _state.childTurn
-                            ? 'Your turn. You are the cross.'
-                            : 'Circle is thinking.',
-                        detail: widget.activity.band == AgeBand.a
-                            ? 'Get three crosses in a line. The circle plays on this device.'
-                            : null,
+                      Semantics(
+                        liveRegion: true,
+                        child: PlayInstruction(
+                          text: _twoPlayers
+                              ? (_state.childTurn
+                                    ? 'Player 1: X. Your turn.'
+                                    : 'Player 2: O. Your turn.')
+                              : _state.childTurn
+                              ? (_computerFirst
+                                    ? 'Your turn. You are O.'
+                                    : 'Your turn. You are X.')
+                              : 'Computer is thinking.',
+                          detail: widget.activity.band == AgeBand.a
+                            ? 'Take turns to make three in a line.'
+                              : null,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: SproutSpace.md),
-                    Center(
-                      child: ConstrainedBox(
-                        constraints: const BoxConstraints(maxWidth: 420),
-                        child: DecoratedBox(
-                          decoration: const BoxDecoration(
-                            color: SproutColors.ticTacToeSurface,
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(SproutRadius.card),
+                      const SizedBox(height: SproutSpace.md),
+                      Center(
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 420),
+                          child: DecoratedBox(
+                            decoration: const BoxDecoration(
+                              color: SproutColors.ticTacToeSurface,
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(SproutRadius.card),
+                              ),
                             ),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(12),
-                            child: _Board(
-                              state: _state,
-                              onTap: (index) => _apply(TicAction.play(index)),
+                            child: Padding(
+                              padding: const EdgeInsets.all(12),
+                              child: _Board(
+                                state: _state,
+                                twoPlayers: _twoPlayers,
+                                swapMarks: _computerFirst,
+                                onTap: (index) => _apply(TicAction.play(index)),
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                    const SizedBox(height: SproutSpace.md),
-                    SecondaryKidButton(
-                      label: _state.hintsUsed == 0
-                          ? 'Show a good square'
-                          : 'Hint used',
-                      onPressed: _state.hintsUsed == 0 && _state.childTurn
-                          ? () => _apply(const TicAction.hint())
-                          : null,
-                    ),
-                  ],
+                      const SizedBox(height: SproutSpace.md),
+                      SecondaryKidButton(
+                        label: 'Choose players / restart',
+                        onPressed: () {
+                          _opponent?.cancel();
+                          deleteCheckpoint(ref, widget.activity.id);
+                          setState(() => _choosing = true);
+                        },
+                      ),
+                      if (!_twoPlayers)
+                        SecondaryKidButton(
+                          label: _state.hintsUsed == 0
+                              ? 'Show a good square'
+                              : 'Hint used',
+                          onPressed: _state.hintsUsed == 0 && _state.childTurn
+                              ? () => _apply(const TicAction.hint())
+                              : null,
+                        ),
+                    ],
                   ),
                 ),
         ),
@@ -266,10 +348,17 @@ class _TicTacToeScreenState extends ConsumerState<TicTacToeScreen> {
 }
 
 class _Board extends StatelessWidget {
-  const _Board({required this.state, required this.onTap});
+  const _Board({
+    required this.state,
+    required this.onTap,
+    this.twoPlayers = false,
+    this.swapMarks = false,
+  });
 
   final TicState state;
   final ValueChanged<int> onTap;
+  final bool twoPlayers;
+  final bool swapMarks;
 
   @override
   Widget build(BuildContext context) {
@@ -282,13 +371,17 @@ class _Board extends StatelessWidget {
       children: [
         for (var index = 0; index < 9; index++)
           _Cell(
-            mark: state.cells[index],
+            mark: swapMarks && state.cells[index] != 0
+                ? 3 - state.cells[index]
+                : state.cells[index],
             hinted: state.hintIndex == index,
             won:
                 state.winLine != null &&
                 ticLines[state.winLine!].contains(index),
             enabled:
-                state.childTurn && !state.finished && state.cells[index] == 0,
+                (twoPlayers || state.childTurn) &&
+                !state.finished &&
+                state.cells[index] == 0,
             onTap: () => onTap(index),
           ),
       ],
@@ -361,9 +454,7 @@ class _MarkPainter extends CustomPainter {
       return;
     }
     final paint = Paint()
-      ..color = mark == TicState.child
-          ? SproutColors.maths
-          : SproutColors.retry
+      ..color = mark == TicState.child ? SproutColors.maths : SproutColors.retry
       ..style = PaintingStyle.stroke
       ..strokeWidth = size.shortestSide * 0.08
       ..strokeCap = StrokeCap.round;
@@ -399,7 +490,7 @@ String ticCheckpointPayload({
   required int variant,
   required TicState state,
 }) {
-  return 'v=1;kind=tic;seed=$seed;variant=$variant;cells=${state.cells.join()};turn=${state.childTurn ? 1 : 0};hints=${state.hintsUsed};ply=${state.ply}';
+  return 'v=1;kind=tic;seed=$seed;variant=$variant;cells=${state.cells.join(',')};turn=${state.childTurn ? 1 : 0};hints=${state.hintsUsed};ply=${state.ply}';
 }
 
 TicState? parseTicCheckpoint(

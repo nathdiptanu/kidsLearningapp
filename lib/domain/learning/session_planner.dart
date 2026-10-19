@@ -43,21 +43,22 @@ class LearningSessionPlanner {
             item.requiresItemIds.every(introduced.contains))
           item,
     ];
-    final review = [
-      for (final item in offered)
-        if (introduced.contains(item.itemId) &&
-            item.requiresItemIds.every(introduced.contains) &&
-            (item.mode != PracticeMode.recall ||
-                introduced.contains(item.itemId)) &&
-            _reviewable(item, byItem[item.itemId] ?? const []))
-          item,
-    ]..sort((a, b) {
-      final rank = _reviewRank(b, byItem) - _reviewRank(a, byItem);
-      if (rank != 0) {
-        return rank;
-      }
-      return a.activity.id.compareTo(b.activity.id);
-    });
+    final review =
+        [
+          for (final item in offered)
+            if (introduced.contains(item.itemId) &&
+                item.requiresItemIds.every(introduced.contains) &&
+                (item.mode != PracticeMode.recall ||
+                    introduced.contains(item.itemId)) &&
+                _reviewable(item, byItem[item.itemId] ?? const []))
+              item,
+        ]..sort((a, b) {
+          final rank = _reviewRank(b, byItem) - _reviewRank(a, byItem);
+          if (rank != 0) {
+            return rank;
+          }
+          return a.activity.id.compareTo(b.activity.id);
+        });
     final easy = [
       for (final item in offered)
         if (introduced.contains(item.itemId) &&
@@ -69,11 +70,7 @@ class LearningSessionPlanner {
 
     final used = <String>{};
     final slots = <PlannedActivity>[];
-    void take(
-      List<LearningCandidate> pool,
-      int limit,
-      JourneyRole role,
-    ) {
+    void take(List<LearningCandidate> pool, int limit, JourneyRole role) {
       var taken = 0;
       for (final item in pool) {
         if (taken >= limit || used.contains(item.activity.id)) {
@@ -116,12 +113,11 @@ class LearningSessionPlanner {
     return unaided * 2 < attempts || hints * 2 >= attempts;
   }
 
-  bool _reviewable(
-    LearningCandidate item,
-    List<LearningItemSnapshot> rows,
-  ) {
+  bool _reviewable(LearningCandidate item, List<LearningItemSnapshot> rows) {
     if (item.mode == PracticeMode.recall) {
-      return rows.any((row) => row.correct > 0 && row.mode != PracticeMode.recall) ||
+      return rows.any(
+            (row) => row.correct > 0 && row.mode != PracticeMode.recall,
+          ) ||
           rows.any((row) => row.itemId == item.itemId && row.correct > 0);
     }
     return rows.any((row) => row.correct > 0);

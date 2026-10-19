@@ -14,7 +14,7 @@ const knowledgePackVersion = 'knowledge:v1';
 
 List<KnowledgeFact> knowledgeFactsFor(AgeBand band) {
   return switch (band) {
-    AgeBand.a => _bandA,
+    AgeBand.a || AgeBand.toddler => _bandA,
     AgeBand.b => _bandB,
     AgeBand.c => _bandC,
     AgeBand.d => _bandD,

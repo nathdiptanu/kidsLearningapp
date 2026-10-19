@@ -13,7 +13,7 @@ void main() {
     const generator = MathsGenerator();
     final seen = <String>{};
     var count = 0;
-    for (final band in AgeBand.values) {
+    for (final band in AgeBand.values.where((band) => band != AgeBand.toddler)) {
       for (var variant = 0; variant < 6; variant++) {
         for (var seed = 0; seed < 42; seed++) {
           final questions = generator.generate(
@@ -47,7 +47,7 @@ void main() {
     const generator = PatternGenerator();
     final rules = <String>{};
     var count = 0;
-    for (final band in AgeBand.values) {
+    for (final band in AgeBand.values.where((band) => band != AgeBand.toddler)) {
       for (var variant = 0; variant < 6; variant++) {
         for (var seed = 0; seed < 42; seed++) {
           final question = generator
@@ -75,7 +75,7 @@ void main() {
   test('maze stress: 1000+ mazes stay bounded and solvable', () {
     const generator = MazeGenerator();
     var count = 0;
-    for (final band in AgeBand.values) {
+    for (final band in AgeBand.values.where((band) => band != AgeBand.toddler)) {
       for (var variant = 0; variant < 6; variant++) {
         for (var seed = 0; seed < 42; seed++) {
           final maze = generator.generate(

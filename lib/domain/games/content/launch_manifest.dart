@@ -77,7 +77,7 @@ class LaunchManifest {
       skill: skillForCategory(category),
       engine: category.storageKey,
       band: activity.band.storageKey,
-      difficulty: activity.band.index + 1,
+      difficulty: activity.band.learningRank,
       packVersion: launchPackVersion,
       seed: activity.seed,
       generatorVersion: _version(category),
@@ -94,6 +94,7 @@ class LaunchManifest {
       GameCategory.vocabulary => 'vocabulary:v1',
       GameCategory.maze => 'maze:v1',
       GameCategory.findDifference => 'find_difference:v1',
+      GameCategory.findObjects => 'find_objects:v1',
       GameCategory.knowledge => 'knowledge:v1',
       GameCategory.ticTacToe => 'tic_tac_toe:v1',
       GameCategory.hindi => 'hindi:v1',
@@ -103,7 +104,8 @@ class LaunchManifest {
 
   String _review(GameCategory category) {
     return switch (category) {
-      GameCategory.findDifference => 'placeholder_artwork',
+      GameCategory.findDifference ||
+      GameCategory.findObjects => 'placeholder_artwork',
       GameCategory.knowledge => 'authored_structure_checked',
       GameCategory.ticTacToe => 'rules_checked',
       GameCategory.hindi => 'development_sample',

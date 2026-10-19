@@ -2,7 +2,9 @@
 abstract interface class AudioPlayback {
   Future<void> playEffect(String assetPath);
 
-  Future<void> startMusic(String assetPath, double volume);
+  /// Returns false when the player could not start, so callers do not
+  /// treat silence as a running loop.
+  Future<bool> startMusic(String assetPath, double volume);
 
   Future<void> pauseMusic();
 
@@ -19,4 +21,8 @@ abstract interface class AudioPlayback {
   Future<void> setMusicVolume(double volume);
 
   Future<void> dispose();
+}
+
+abstract interface class NarrationLifecycle {
+  Stream<void> get narrationCompleted;
 }

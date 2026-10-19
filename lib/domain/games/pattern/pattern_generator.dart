@@ -83,7 +83,7 @@ class PatternGenerator {
 
   List<PatternRule> rulesFor(AgeBand band) {
     return switch (band) {
-      AgeBand.a => const [PatternRule.ab],
+      AgeBand.a || AgeBand.toddler => const [PatternRule.ab],
       AgeBand.b => const [PatternRule.ab, PatternRule.aab, PatternRule.abb],
       AgeBand.c => const [
         PatternRule.abc,

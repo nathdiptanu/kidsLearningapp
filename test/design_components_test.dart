@@ -49,7 +49,7 @@ void main() {
         'maths:v1:A',
         'maths:v2:A:0',
         'maths:v1:Z:0',
-        'maths:v1:A:25',
+        'maths:v1:A:55',
         'maths:v1:A:-1',
         'maths:v1:A:01',
         'nope:v1:A:0',
@@ -69,7 +69,7 @@ void main() {
     });
 
     test('knowledge titles are the real questions and are distinct', () {
-      for (final band in AgeBand.values) {
+      for (final band in AgeBand.values.where((band) => band != AgeBand.toddler)) {
         final titles = catalog
             .forBand(GameCategory.knowledge, band)
             .map((activity) => activity.title)

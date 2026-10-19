@@ -3,6 +3,7 @@
 enum GameCategory {
   maze('maze'),
   findDifference('find_difference'),
+  findObjects('find_objects'),
   maths('maths'),
   vocabulary('vocabulary'),
   pattern('pattern'),

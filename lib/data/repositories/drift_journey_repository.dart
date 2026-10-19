@@ -8,6 +8,7 @@ import '../../../domain/learning/learning_candidate.dart';
 import '../../../domain/learning/learning_index.dart';
 import '../../../domain/lessons/lesson_models.dart';
 import '../../../domain/models/child_profile.dart';
+import '../../../domain/models/age_band.dart';
 import '../../../domain/progress/activity_record.dart';
 import '../../../domain/regional/regional_availability.dart';
 import '../../../domain/settings/local_settings.dart';
@@ -21,6 +22,7 @@ class JourneySlotView {
     required this.role,
     required this.done,
     required this.stars,
+    this.skipped = false,
   });
 
   final int position;
@@ -29,6 +31,7 @@ class JourneySlotView {
   final JourneyRole role;
   final bool done;
   final int stars;
+  final bool skipped;
 }
 
 class DailyJourneyView {
@@ -44,11 +47,14 @@ class DailyJourneyView {
 
   int get finishedCount => slots.where((slot) => slot.done).length;
 
-  bool get isComplete => slots.isNotEmpty && finishedCount == slots.length;
+  int get skippedCount =>
+      slots.where((slot) => slot.skipped && !slot.done).length;
+  bool get isComplete =>
+      slots.isNotEmpty && finishedCount + skippedCount == slots.length;
 
   JourneySlotView? get current {
     for (final slot in slots) {
-      if (!slot.done) {
+      if (!slot.done && !slot.skipped) {
         return slot;
       }
     }
@@ -59,13 +65,13 @@ class DailyJourneyView {
     final index = slots.indexWhere((slot) => slot.activityId == activityId);
     if (index >= 0) {
       for (var cursor = index + 1; cursor < slots.length; cursor++) {
-        if (!slots[cursor].done) {
+        if (!slots[cursor].done && !slots[cursor].skipped) {
           return slots[cursor];
         }
       }
     }
     for (final slot in slots) {
-      if (!slot.done && slot.activityId != activityId) {
+      if (!slot.done && !slot.skipped && slot.activityId != activityId) {
         return slot;
       }
     }
@@ -79,6 +85,7 @@ class DriftJourneyRepository {
   final AppDatabase _database;
   final DailyJourneyPlanner _planner = const DailyJourneyPlanner();
   final ActivityCatalog _catalog = const ActivityCatalog();
+  final Map<int, Future<DailyJourneyView>> _advances = {};
 
   Future<Map<String, int>> skillDifficulties(int profileId) async {
     final rows = await (_database.select(
@@ -94,12 +101,61 @@ class DriftJourneyRepository {
     bool premiumActive = false,
     LocalSettings? settings,
     List<LearningItemSnapshot> itemProgress = const [],
+    int? afterCompletedJourneyId,
+  }) {
+    Future<DailyJourneyView> run() => _ensure(
+      profile: profile,
+      records: records,
+      now: now,
+      premiumActive: premiumActive,
+      settings: settings,
+      itemProgress: itemProgress,
+      afterCompletedJourneyId: afterCompletedJourneyId,
+    );
+    if (afterCompletedJourneyId == null) return run();
+    final pending = _advances[profile.id];
+    if (pending != null) return pending;
+    final result = run().whenComplete(() {
+      _advances.remove(profile.id);
+    });
+    _advances[profile.id] = result;
+    return result;
+  }
+
+  Future<DailyJourneyView> _ensure({
+    required ChildProfile profile,
+    required List<ActivityRecord> records,
+    required DateTime now,
+    bool premiumActive = false,
+    LocalSettings? settings,
+    List<LearningItemSnapshot> itemProgress = const [],
+    int? afterCompletedJourneyId,
   }) async {
-    final dateKey = localDateKey(now);
-    final existing = await _load(profile.id, dateKey, records);
-    if (existing != null) {
+    final latest =
+        await (_database.select(_database.dailyJourneys)
+              ..where((table) => table.profileId.equals(profile.id))
+              ..orderBy([(table) => OrderingTerm.desc(table.id)])
+              ..limit(1))
+            .getSingleOrNull();
+    final existing = latest == null
+        ? null
+        : await _load(profile.id, latest.localDateKey, records);
+    final parentLedChanged =
+        existing != null &&
+        existing.slots.any(
+          (slot) =>
+              (_catalog.byId(slot.activityId)?.band == AgeBand.toddler) !=
+              (profile.ageBand == AgeBand.toddler),
+        );
+    if (existing != null &&
+        !parentLedChanged &&
+        (afterCompletedJourneyId != existing.id || !existing.isComplete)) {
       return existing;
     }
+    // The persisted key identifies a session, independent of calendar resets.
+    final dateKey = latest == null
+        ? localDateKey(now)
+        : '${localDateKey(now)}#${latest.id + 1}';
     final difficulties = await skillDifficulties(profile.id);
     final regional = _regionalCandidates(
       settings: settings,
@@ -199,6 +255,43 @@ class DriftJourneyRepository {
     });
   }
 
+  /// Resolution is stored alongside the slot role, preserving the existing
+  /// schema and distinguishing a skip from completed learning/rewards.
+  Future<void> markSkipped({
+    required int profileId,
+    required String dateKey,
+    required String activityId,
+  }) async {
+    await _database.transaction(() async {
+      final journey =
+          await (_database.select(_database.dailyJourneys)..where(
+                (table) =>
+                    table.profileId.equals(profileId) &
+                    table.localDateKey.equals(dateKey),
+              ))
+              .getSingleOrNull();
+      if (journey == null) return;
+      final query = _database.select(_database.dailyJourneyItems)
+        ..where(
+          (table) =>
+              table.journeyId.equals(journey.id) &
+              table.activityId.equals(activityId),
+        );
+      final rows = await query.get();
+      for (final item in rows) {
+        if (item.done || item.role.endsWith(':skipped')) continue;
+        await (_database.update(_database.dailyJourneyItems)..where(
+              (table) =>
+                  table.journeyId.equals(item.journeyId) &
+                  table.position.equals(item.position),
+            ))
+            .write(
+              DailyJourneyItemsCompanion(role: Value('${item.role}:skipped')),
+            );
+      }
+    });
+  }
+
   Future<DailyJourneyView?> _load(
     int profileId,
     String dateKey,
@@ -230,10 +323,11 @@ class DriftJourneyRepository {
               activityId: item.activityId,
               title: _catalog.byId(item.activityId)!.title,
               role: JourneyRole.values.firstWhere(
-                (role) => role.name == item.role,
+                (role) => role.name == item.role.split(':').first,
                 orElse: () => JourneyRole.current,
               ),
               done: item.done,
+              skipped: item.role.endsWith(':skipped'),
               stars: item.done ? _stars(records, item.activityId) : 0,
             ),
       ],
@@ -245,8 +339,7 @@ class DriftJourneyRepository {
     required ChildProfile profile,
     required List<LearningItemSnapshot> itemProgress,
   }) {
-    if (settings == null ||
-        RegionalAvailability.available(settings).isEmpty) {
+    if (settings == null || RegionalAvailability.available(settings).isEmpty) {
       return const [];
     }
     return LearningIndex().visible(

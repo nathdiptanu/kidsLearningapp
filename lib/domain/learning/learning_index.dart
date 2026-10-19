@@ -152,7 +152,9 @@ class LearningIndex {
           category == GameCategory.discoverIndia) {
         continue;
       }
-      generated += activitiesInBand(category) * AgeBand.values.length;
+      for (final band in AgeBand.values) {
+        generated += const ActivityCatalog().forBand(category, band).length;
+      }
     }
     return CatalogueCensus(
       reviewedItems: reviewed,

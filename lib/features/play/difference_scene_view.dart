@@ -87,11 +87,13 @@ class _ScenePainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final paint = Paint()..style = PaintingStyle.fill;
     final background = switch (sceneId) {
-      'room' => const Color(0xFFF3E6D4),
-      'park' => const Color(0xFFD7EBD4),
-      'kitchen' => const Color(0xFFF7E7C8),
-      'beach' => const Color(0xFFD5E8F6),
-      'farm' => const Color(0xFFE7D7A8),
+      'room' || 'classroom' || 'shop' || 'bakery' => const Color(0xFFF3E6D4),
+      'park' || 'hill' || 'forest' || 'zoo' || 'playground' =>
+        const Color(0xFFD7EBD4),
+      'kitchen' || 'market' => const Color(0xFFF7E7C8),
+      'beach' || 'harbour' || 'pond' || 'river' => const Color(0xFFD5E8F6),
+      'farm' || 'desert' => const Color(0xFFE7D7A8),
+      'snow' || 'station' => const Color(0xFFE8F1F8),
       _ => const Color(0xFFD7E7F5),
     };
     canvas.drawRRect(
@@ -138,11 +140,13 @@ class _ScenePainter extends CustomPainter {
 
   void _ground(Canvas canvas, Size size, Paint paint) {
     paint.color = switch (sceneId) {
-      'room' => const Color(0xFFCDB89A),
-      'park' => const Color(0xFF7DAA6A),
-      'kitchen' => const Color(0xFFD9C4A0),
-      'beach' => const Color(0xFFF2D59A),
-      'farm' => const Color(0xFF8FBF6A),
+      'room' || 'classroom' || 'shop' || 'bakery' => const Color(0xFFCDB89A),
+      'park' || 'hill' || 'forest' || 'zoo' || 'playground' || 'farm' =>
+        const Color(0xFF7DAA6A),
+      'kitchen' || 'market' => const Color(0xFFD9C4A0),
+      'beach' || 'harbour' || 'desert' => const Color(0xFFF2D59A),
+      'pond' || 'river' => const Color(0xFF7EB6D4),
+      'snow' => const Color(0xFFF7FBFF),
       _ => const Color(0xFF7DAA6A),
     };
     canvas.drawRect(
@@ -159,15 +163,20 @@ class _ScenePainter extends CustomPainter {
       spot.region.height * size.height,
     );
     paint.color = switch (spot.id) {
-      'cloud' || 'shell' || 'towel' => const Color(0xFFFFF8F0),
-      'bird' || 'fish' || 'kite' => const Color(0xFF3D7EA6),
-      'flower' || 'apple' || 'crab' || 'chicken' => const Color(0xFFD64545),
-      'butterfly' || 'picture' || 'umbrella' => const Color(0xFF6B4C9A),
-      'can' || 'cup' || 'clock' || 'sun' => const Color(0xFFC47B2B),
-      'lamp' || 'fruit' || 'ball' => const Color(0xFFE07A2F),
-      'book' || 'window' => const Color(0xFF3D6FBF),
-      'plant' || 'bench' => const Color(0xFF2F7D4A),
-      'dog' || 'post' || 'spoon' => const Color(0xFF6B4A2B),
+      'cloud' || 'shell' || 'towel' || 'lily' => const Color(0xFFFFF8F0),
+      'bird' || 'fish' || 'kite' || 'duck' || 'boat' => const Color(0xFF3D7EA6),
+      'flower' || 'apple' || 'crab' || 'chicken' || 'frog' =>
+        const Color(0xFFD64545),
+      'butterfly' || 'picture' || 'umbrella' || 'hat' || 'bag' =>
+        const Color(0xFF6B4C9A),
+      'can' || 'cup' || 'clock' || 'sun' || 'sign' || 'flag' =>
+        const Color(0xFFC47B2B),
+      'lamp' || 'fruit' || 'ball' || 'mango' || 'banana' =>
+        const Color(0xFFE07A2F),
+      'book' || 'window' || 'train' => const Color(0xFF3D6FBF),
+      'plant' || 'bench' || 'tree' || 'reed' || 'leaf' => const Color(0xFF2F7D4A),
+      'dog' || 'post' || 'spoon' || 'goat' || 'mushroom' =>
+        const Color(0xFF6B4A2B),
       'boat' || 'wheel' => const Color(0xFF2C2416),
       _ => const Color(0xFFC47B2B),
     };

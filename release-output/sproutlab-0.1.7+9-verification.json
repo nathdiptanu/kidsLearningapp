@@ -1,0 +1,109 @@
+{
+  "apk": "sproutlab-0.1.7+9-india-learning-release.apk",
+  "bytes": 132367974,
+  "sha256": "7aa5524f3ebcf2591c5ff88d8174671b57bd23e5b9ee647846a3fd9ad6c89dd9",
+  "archiveIntegrity": true,
+  "sourceMapRegions": 31,
+  "bundledMedia": [
+    {
+      "path": "assets/teaching/apple.png",
+      "bytes": 1978088,
+      "sha256": "f4caff69ae494b98fcc47b617695bb11f77b5e2f378de38840b8f3071d41f5f0"
+    },
+    {
+      "path": "assets/teaching/ball.png",
+      "bytes": 2190154,
+      "sha256": "9d4b0aeeeaff884b28126f3706d6622cc2da483f4404bbb837649e1ecf5a6f8f"
+    },
+    {
+      "path": "assets/teaching/banana.png",
+      "bytes": 1568103,
+      "sha256": "db4f9d0af284937a31f46f7570162a4bb7fa0d0a6cc07099b5045ebeb1edbcb5"
+    },
+    {
+      "path": "assets/teaching/book.png",
+      "bytes": 2720218,
+      "sha256": "f9ec10c33084b48d511ac5bfc7e6f4f8fd4704e0c57f6af415466c69d1cdf309"
+    },
+    {
+      "path": "assets/teaching/fish.png",
+      "bytes": 2111928,
+      "sha256": "9fa7f8df5f14370c5a9cdf322bfa1f9adfbbcaf5a5c0e49e0aee96a8a74883ce"
+    },
+    {
+      "path": "assets/teaching/flower.png",
+      "bytes": 1903402,
+      "sha256": "6e6eb0923ac5a020e3c66f94ba5501d37800e6d2122dde64b1e0443fb405f8e1"
+    },
+    {
+      "path": "assets/teaching/house.png",
+      "bytes": 2855425,
+      "sha256": "4d0b0dc4c54aecf24e70fd81d324df895e3a7ceaa4e8a64643cc2c43453b0fec"
+    },
+    {
+      "path": "assets/teaching/india-map-2026.png",
+      "bytes": 4579367,
+      "sha256": "7b7d7f4291ea378ca6efd315fac23b41b67c675a4aaf122a053a7c55edc8ea92"
+    },
+    {
+      "path": "assets/teaching/konark.jpg",
+      "bytes": 14543859,
+      "sha256": "8b4b32c5d64ce4450d6740e90bb391cd9c50ad288a6a5b1b7b9b619ec7eb4ffc"
+    },
+    {
+      "path": "assets/teaching/lotus.png",
+      "bytes": 2089712,
+      "sha256": "b92a0f67c76d2dda6c731d4f418de8a732ba58275b29885ef8c30df0d60e6cdc"
+    },
+    {
+      "path": "assets/teaching/mango.png",
+      "bytes": 1697613,
+      "sha256": "87029b19608983a59df3dc9fd87babf33f7c42391a6494453cf2af4417ee0ebe"
+    },
+    {
+      "path": "assets/teaching/pomegranate.png",
+      "bytes": 2126920,
+      "sha256": "32b68ee4caa8d754d1e07d42ad3158289ba77cf70630f4b4cde186e4a4bf161d"
+    },
+    {
+      "path": "assets/teaching/sanchi.jpg",
+      "bytes": 4923803,
+      "sha256": "04336cdbb27896db5b738d85d58e6c05e62ba73a465e998e50a1e95829372e91"
+    },
+    {
+      "path": "assets/teaching/shore-temple.jpg",
+      "bytes": 13291240,
+      "sha256": "5a985e447990eb3f6bdfc62b5e7de5d13ae6115aafbd1c6e31268266de35d635"
+    },
+    {
+      "path": "assets/teaching/sun.png",
+      "bytes": 1412124,
+      "sha256": "01fdb737ceafd8e591bfb3f65e1385c0967183b7b1c9d5341c527109d843c047"
+    },
+    {
+      "path": "assets/teaching/taj-mahal.jpg",
+      "bytes": 3269013,
+      "sha256": "ee9c6a4bca02f4533f5fb191abe4ddd4af1fceb8c685459558d8554ff6a9e408"
+    },
+    {
+      "path": "assets/teaching/tree.png",
+      "bytes": 2463338,
+      "sha256": "3d7d23ba5553da2978ac631b13beea80ef7a14c8d9ab2ca4467dbfc98e219479"
+    },
+    {
+      "path": "assets/teaching/qutb-minar.jpg",
+      "bytes": 298383,
+      "sha256": "87cc8eed0617fe6e5815210b02a677ef3e7919a3962f58a7a7e75162d4aa15f7"
+    },
+    {
+      "path": "assets/teaching/red-fort.jpg",
+      "bytes": 476610,
+      "sha256": "39ccb6a09fc1fe487f0ae7a5b7638d624d6cc5901b3be6357a4df81aa36b674d"
+    },
+    {
+      "path": "assets/content/geography/india_source_interaction.json",
+      "bytes": 2502703,
+      "sha256": "a855c48af45d1e12289e2d843d186ac2e21d97ef588baa848e417ded029192c5"
+    }
+  ]
+}

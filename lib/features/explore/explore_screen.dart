@@ -11,7 +11,6 @@ import '../../core/design_system/widgets/category_card.dart';
 import '../../core/design_system/widgets/fox_mascot.dart';
 import '../../core/design_system/widgets/sprout_card.dart';
 import '../../core/design_system/widgets/status_chip.dart';
-import '../../domain/lessons/lesson_models.dart';
 import '../../domain/games/play/activity_catalog.dart';
 import '../lessons/lesson_list.dart';
 import '../../domain/games/play/activity_definition.dart';
@@ -24,8 +23,8 @@ import '../../domain/regional/regional_availability.dart';
 import '../../features/play/activity_access.dart';
 import '../../features/play/open_activity.dart';
 import '../home/home_screen.dart';
-import '../regional/regional_module_screen.dart';
 import '../regional/regional_module_style.dart';
+import '../regional/explorer_library_screen.dart';
 
 class ExploreScreen extends ConsumerWidget {
   const ExploreScreen({super.key});
@@ -86,18 +85,23 @@ class ExploreScreen extends ConsumerWidget {
           _CategoryGrid(
             cards: [
               for (final area in LearningArea.values)
-                CategoryCard(
-                  title: area.title,
-                  subtitle: area.subtitle,
-                  art: area.art,
-                  tint: area.tint,
-                  footnote: _finishedNote(area, band, progress),
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute<void>(
-                      builder: (context) => CategoryScreen(area: area),
+                if (area.categories.any(
+                  (category) => const ActivityCatalog()
+                      .forBand(category, band)
+                      .isNotEmpty,
+                ))
+                  CategoryCard(
+                    title: area.title,
+                    subtitle: area.subtitle,
+                    art: area.art,
+                    tint: area.tint,
+                    footnote: _finishedNote(area, band, progress),
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (context) => CategoryScreen(area: area),
+                      ),
                     ),
                   ),
-                ),
               for (final module in regional)
                 CategoryCard(
                   title: module.title,
@@ -106,10 +110,14 @@ class ExploreScreen extends ConsumerWidget {
                   tint: module.tint,
                   scriptSample: module.scriptSample,
                   scriptColor: module.mark,
-                  footnote: includeDevelopmentSamples()
-                      ? 'Development samples'
-                      : 'Coming soon',
-                  onTap: () => openRegionalModule(context, ref, module),
+                  footnote: module == RegionalModule.hindi
+                      ? 'Letters and picture words'
+                      : '36 regions · neighbours · monuments',
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute<void>(
+                      builder: (_) => ExplorerLibraryScreen(module: module),
+                    ),
+                  ),
                 ),
             ],
           ),
@@ -166,7 +174,7 @@ class _CategoryGrid extends StatelessWidget {
         final width = constraints.maxWidth;
         var columns = width >= 600
             ? 3
-            : width >= 300
+            : width / scale >= 320
             ? 2
             : 1;
         if (scale > 1.3) {
@@ -306,7 +314,7 @@ class CategoryScreen extends ConsumerWidget {
     final where = category == GameCategory.ticTacToe
         ? ' Played on this device against the app.'
         : '';
-    if (premium) {
+    if (premium || MonetizationConfig.unlockAllGames) {
       return '$base.$where';
     }
     const limit = MonetizationConfig.freeCompletedLevelsPerGame;
@@ -401,10 +409,7 @@ class LevelCard extends StatelessWidget {
   }
 }
 
-bool _replayVisible(
-  ActivityDefinition activity,
-  List<RegionalModule> modules,
-) {
+bool _replayVisible(ActivityDefinition activity, List<RegionalModule> modules) {
   if (activity.category == GameCategory.hindi) {
     return modules.contains(RegionalModule.hindi);
   }
@@ -434,12 +439,12 @@ class PlayAgainScreen extends ConsumerWidget {
       for (final record in finished)
         if (catalog.byId(record.activityId) case final activity?)
           if (_replayVisible(activity, modules))
-          accessFor(
-            activity: activity,
-            records: progress,
-            premiumActive: premium,
-            startedActivityIds: started,
-          ),
+            accessFor(
+              activity: activity,
+              records: progress,
+              premiumActive: premium,
+              startedActivityIds: started,
+            ),
     ].where((decision) => decision.access != LevelAccess.locked).toList();
     return AppPageScaffold(
       title: 'Play again',

@@ -18,11 +18,13 @@ class GeographyLane extends ConsumerWidget {
   const GeographyLane({
     required this.activities,
     this.title = 'Places',
+    this.showAll = false,
     super.key,
   });
 
   final List<GeographyActivity> activities;
   final String title;
+  final bool showAll;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -36,7 +38,29 @@ class GeographyLane extends ConsumerWidget {
       children: [
         Text(title, style: text.titleMedium),
         const SizedBox(height: 12),
-        for (final activity in activities) ...[
+        if (!showAll && activities.length > 12) ...[
+          TextButton(
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (_) => Scaffold(
+                  appBar: AppBar(title: const Text('All places')),
+                  body: SingleChildScrollView(
+                    padding: const EdgeInsets.all(20),
+                    child: GeographyLane(
+                      activities: activities,
+                      title: 'Meet places in India',
+                      showAll: true,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            child: const Text('Browse all places'),
+          ),
+          const SizedBox(height: 12),
+        ],
+        for (final activity
+            in (showAll ? activities : activities.take(12))) ...[
           _GeoRow(
             activity: activity,
             completed: progress.any(
