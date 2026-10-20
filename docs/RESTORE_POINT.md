@@ -10,7 +10,7 @@ Pushed to `origin/main` on 20 October 2026. App version `0.1.8+10`. Play AAB has
 |---|---|
 | Remote | `origin` → `https://github.com/nathdiptanu/kidsLearningapp.git` |
 | Branch | `main` |
-| Commit | `REPLACE_AFTER_COMMIT` |
+| Commit | `2f1a6095ecffb79058da404fcbe4356491e3d64a` |
 | Date | 20 October 2026 |
 | Version | `0.1.8+10` |
 
@@ -18,7 +18,7 @@ Restore this snapshot:
 
 ```text
 git fetch origin
-git checkout REPLACE_AFTER_COMMIT
+git checkout 2f1a6095ecffb79058da404fcbe4356491e3d64a
 ```
 
 ## Previous working push
