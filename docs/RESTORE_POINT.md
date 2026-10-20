@@ -2,43 +2,34 @@
 
 Use this file to get back to a known working tree after later changes.
 
-## This working snapshot (0.1.7 India Learning Play AAB)
+## This working snapshot (0.1.8 Play AAB, versionCode 10)
 
-Pushed to `origin/main` on 19 October 2026. App version `0.1.7+9`. Play AAB hashes are in `release-output/PLAY_RELEASE_0.1.7.md` (the `.aab` file stays out of git).
+Pushed to `origin/main` on 20 October 2026. App version `0.1.8+10`. Play AAB hashes are in `release-output/PLAY_RELEASE_0.1.8.md` (the `.aab` file stays out of git).
 
 | Field | Value |
 |---|---|
 | Remote | `origin` → `https://github.com/nathdiptanu/kidsLearningapp.git` |
 | Branch | `main` |
-| Commit | `20d0e1726a715ac6cfb1a6e800ba0beb63f407e2` |
-| Date | 19 October 2026 |
-| Version | `0.1.7+9` |
+| Commit | `REPLACE_AFTER_COMMIT` |
+| Date | 20 October 2026 |
+| Version | `0.1.8+10` |
 
 Restore this snapshot:
 
 ```text
 git fetch origin
-git checkout 20d0e1726a715ac6cfb1a6e800ba0beb63f407e2
-```
-
-If `main` has moved and you only want this file’s commit:
-
-```text
-git log --oneline -- docs/RESTORE_POINT.md
-git checkout <the commit that last updated this file>
+git checkout REPLACE_AFTER_COMMIT
 ```
 
 ## Previous working push
 
 | Field | Value |
 |---|---|
-| Commit | `6102982b0b98abce10f85b49ef461809ffce6076` |
-| Message | Record the working-snapshot SHA in the restore-point note. |
+| Commit | `b5389e0d1b58f911ca538fc573e3d066f5cd23b9` |
+| Message | Record the 0.1.7 working-snapshot SHA in the restore-point note. |
 
 ```text
-git checkout 6102982b0b98abce10f85b49ef461809ffce6076
+git checkout b5389e0d1b58f911ca538fc573e3d066f5cd23b9
 ```
 
-Earlier Hindi / Discover India polish snapshot: `34801ddaf46194aaa03f8643440ae1218dd3fd62`. Theme snapshot: `84bf29b`.
-
-Do not force-push over `main` unless you intend to rewrite history. Prefer `git checkout` or a new branch from the SHA above.
+India Learning source snapshot: `20d0e1726a715ac6cfb1a6e800ba0beb63f407e2`. Do not force-push over `main`. Prefer `git checkout` of a SHA.
