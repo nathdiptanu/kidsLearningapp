@@ -1,4 +1,5 @@
 import 'explorer_content.dart';
+import 'india_general_knowledge.dart';
 import '../models/age_band.dart';
 
 /// Main capital names; special conventions are explained rather than hidden.
@@ -55,7 +56,18 @@ const capitalNotes = <String, String>{
       'Sri Vijaya Puram was formerly called Port Blair.',
 };
 
-enum IndiaQuestionKind { locate, capital, neighbour, monument, mapBasics }
+enum IndiaQuestionKind {
+  locate,
+  capital,
+  neighbour,
+  monument,
+  mapBasics,
+  river,
+  lake,
+  dam,
+  city,
+  culture,
+}
 
 class IndiaQuestion {
   const IndiaQuestion({
@@ -172,6 +184,7 @@ List<IndiaQuestion> indiaQuestions(AgeBand band) {
         teaching:
             '${p.name}. ${p.fact} ${p.type == 'Land neighbour' ? 'It is listed as a land neighbour of India.' : 'It is a nearby island country, not a land-border neighbour.'}',
       ),
+    if (band != AgeBand.toddler) ...extraIndiaQuestions,
     for (final entry in explorerMonuments.entries) ...[
       IndiaQuestion(
         id: 'monument:${entry.key}:name',

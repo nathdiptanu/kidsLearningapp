@@ -95,6 +95,7 @@ class LaunchManifest {
       GameCategory.maze => 'maze:v1',
       GameCategory.findDifference => 'find_difference:v1',
       GameCategory.findObjects => 'find_objects:v1',
+      GameCategory.connectDots => 'connect_dots:v1',
       GameCategory.knowledge => 'knowledge:v1',
       GameCategory.ticTacToe => 'tic_tac_toe:v1',
       GameCategory.hindi => 'hindi:v1',

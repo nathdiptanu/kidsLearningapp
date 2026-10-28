@@ -47,6 +47,7 @@ class _ActivityScreenState extends ConsumerState<ActivityScreen>
   bool _saved = false;
   bool _paused = false;
   bool _ready = false;
+  bool _taught = false;
 
   @override
   void initState() {
@@ -174,6 +175,7 @@ class _ActivityScreenState extends ConsumerState<ActivityScreen>
     if (finished) {
       await _saveIfFinished();
     } else {
+      _taught = false;
       await _storeCheckpoint();
     }
     if (mounted) {
@@ -287,6 +289,19 @@ class _ActivityScreenState extends ConsumerState<ActivityScreen>
                                   'Question ${_session.index + 1} of ${_session.questions.length}',
                             ),
                             const SizedBox(height: SproutSpace.md),
+                            if (question.teaching.isNotEmpty && !_taught) ...[
+                              SproutCard(
+                                child: Text(
+                                  question.teaching,
+                                  style: Theme.of(context).textTheme.bodyLarge,
+                                ),
+                              ),
+                              const SizedBox(height: SproutSpace.md),
+                              PrimaryKidButton(
+                                label: 'Let’s try',
+                                onPressed: () => setState(() => _taught = true),
+                              ),
+                            ] else ...[
                             SproutCard(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -356,6 +371,7 @@ class _ActivityScreenState extends ConsumerState<ActivityScreen>
                                     : 'Next',
                                 onPressed: _advance,
                               ),
+                            ],
                             ],
                           ],
                         ),

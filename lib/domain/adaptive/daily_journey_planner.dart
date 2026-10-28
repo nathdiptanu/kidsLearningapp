@@ -356,6 +356,20 @@ class DailyJourneyPlanner {
               item.completed,
         )
         .length;
+    if (activity.variant > 0) {
+      final previousId =
+          '${activity.category.storageKey}:v1:${activity.band.storageKey}:${activity.variant - 1}';
+      var previousDone = false;
+      for (final item in records) {
+        if (item.activityId == previousId && item.completed) {
+          previousDone = true;
+          break;
+        }
+      }
+      if (!previousDone) {
+        return LevelAccess.locked;
+      }
+    }
     return const FreeEntitlementPolicy().decide(
       premiumActive: premiumActive,
       alreadyStarted: false,

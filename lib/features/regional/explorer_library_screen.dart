@@ -61,6 +61,16 @@ class _ExplorerLibraryState extends ConsumerState<ExplorerLibraryScreen> {
               _heading(context, 'Consonants'),
               _letters(hindiConsonants, 'consonant'),
             ],
+            _heading(context, 'Words from each letter'),
+            for (final entry in hindiLetterWords.entries)
+              _entry(
+                '${entry.key} · ${entry.value.map((word) => word.word).join(', ')}',
+                entry.value.map((word) => word.meaning).join(', '),
+                'hi:family:${entry.key}',
+                '${entry.key}. ${entry.value.map((word) => '${word.word}, ${word.meaning}').join('. ')}',
+                hindi: true,
+                picture: entry.value.first.picture,
+              ),
             _heading(context, 'Picture words'),
             for (final word in hindiPictureWords)
               _entry(

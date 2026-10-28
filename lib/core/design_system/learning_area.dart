@@ -44,6 +44,7 @@ enum LearningArea {
       GameCategory.matching,
       GameCategory.findDifference,
       GameCategory.findObjects,
+      GameCategory.connectDots,
     ],
   ),
   knowledge(
@@ -95,6 +96,7 @@ String gameKindLabel(GameCategory category) {
     GameCategory.matching => 'Odd one out',
     GameCategory.findDifference => 'Spot the difference',
     GameCategory.findObjects => 'Find the objects',
+    GameCategory.connectDots => 'Connect the dots',
     GameCategory.knowledge => 'Quiz',
     GameCategory.ticTacToe => 'Tic-Tac-Toe',
     GameCategory.hindi => 'Hindi',
@@ -111,6 +113,7 @@ String gameKindDetail(GameCategory category) {
     GameCategory.matching => 'Find the one that does not belong',
     GameCategory.findDifference => 'Find what is not the same',
     GameCategory.findObjects => 'Find pictured things in a scene',
+    GameCategory.connectDots => 'Draw one line through the stars in order',
     GameCategory.knowledge => 'Questions about the world',
     GameCategory.ticTacToe => 'Three in a row',
     GameCategory.hindi => 'Letters and words',

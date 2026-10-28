@@ -9,6 +9,7 @@ enum GameCategory {
   pattern('pattern'),
   matching('matching'),
   knowledge('knowledge'),
+  connectDots('connect_dots'),
   ticTacToe('tic_tac_toe'),
   hindi('hindi'),
   discoverIndia('discover_india');

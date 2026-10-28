@@ -93,6 +93,8 @@ class MathsGenerator {
       _MathsMode.subtract => _subtract(random),
       _MathsMode.missing => _missing(band, random),
       _MathsMode.groups => _groups(random),
+      _MathsMode.multiply => _multiply(random),
+      _MathsMode.divide => _divide(random),
     };
   }
 
@@ -116,19 +118,19 @@ class MathsGenerator {
       ],
       AgeBand.c => const [
         _MathsMode.add,
-        _MathsMode.add,
-        _MathsMode.subtract,
         _MathsMode.subtract,
         _MathsMode.missing,
-        _MathsMode.missing,
+        _MathsMode.multiply,
+        _MathsMode.divide,
+        _MathsMode.groups,
       ],
       AgeBand.d => const [
         _MathsMode.add,
         _MathsMode.subtract,
         _MathsMode.groups,
-        _MathsMode.groups,
+        _MathsMode.multiply,
+        _MathsMode.divide,
         _MathsMode.missing,
-        _MathsMode.add,
       ],
     };
     return modes[variant % modes.length];
@@ -266,6 +268,46 @@ class MathsGenerator {
     );
   }
 
+  PlayQuestion _multiply(Random random) {
+    final left = 2 + random.nextInt(4);
+    final right = 2 + random.nextInt(4);
+    final answer = left * right;
+    return _numericChoices(
+      prompt: '$left × $right',
+      answer: answer,
+      choiceCount: 4,
+      random: random,
+      allowZero: false,
+      explanation: 'mul=$left x $right = $answer',
+      firstHint: 'Make $left groups of $right, then count them all.',
+      strongerHint: 'The highlighted number is $left times $right.',
+      teaching:
+          'Times means equal groups. $left × $right means $left groups of $right. Count every item once.',
+      promptVisuals: [
+        for (var group = 0; group < left; group++)
+          CountGroupVisual(count: right, glyph: CountGlyph.star),
+      ],
+    );
+  }
+
+  PlayQuestion _divide(Random random) {
+    final groups = 2 + random.nextInt(3);
+    final each = 2 + random.nextInt(3);
+    final total = groups * each;
+    return _numericChoices(
+      prompt: 'Share $total into $groups equal groups. How many in each?',
+      answer: each,
+      choiceCount: 4,
+      random: random,
+      allowZero: false,
+      explanation: 'div=$total / $groups = $each',
+      firstHint: 'Give one to each group, then another, until they are gone.',
+      strongerHint: 'Each group has $each.',
+      teaching:
+          'Sharing means splitting into equal groups. $total shared into $groups groups gives the same number in each group.',
+    );
+  }
+
   PlayQuestion _groups(Random random) {
     final groups = 2 + random.nextInt(3);
     final each = 2 + random.nextInt(2);
@@ -296,6 +338,7 @@ class MathsGenerator {
     required String firstHint,
     required String strongerHint,
     List<ChoiceVisual> promptVisuals = const [],
+    String teaching = '',
   }) {
     final values = <int>{answer};
     const deltas = [1, -1, 2, -2, 3, -3, 4, 5];
@@ -341,6 +384,7 @@ class MathsGenerator {
       strongerHint: strongerHint,
       explanation: explanation,
       promptVisuals: promptVisuals,
+      teaching: teaching,
     );
   }
 
@@ -403,6 +447,26 @@ class MathsGenerator {
       }
       return answer;
     }
+    final mul = RegExp(r'^mul=(\d+) x (\d+) = (\d+)$').firstMatch(text);
+    if (mul != null) {
+      final left = int.parse(mul.group(1)!);
+      final right = int.parse(mul.group(2)!);
+      final answer = int.parse(mul.group(3)!);
+      if (left * right != answer) {
+        return null;
+      }
+      return answer;
+    }
+    final div = RegExp(r'^div=(\d+) / (\d+) = (\d+)$').firstMatch(text);
+    if (div != null) {
+      final total = int.parse(div.group(1)!);
+      final groups = int.parse(div.group(2)!);
+      final answer = int.parse(div.group(3)!);
+      if (groups == 0 || total != groups * answer) {
+        return null;
+      }
+      return answer;
+    }
     return null;
   }
 
@@ -438,7 +502,19 @@ class MathsGenerator {
       return answer >= 2 && answer <= 40;
     }
     if (text.startsWith('groups=')) {
-      return band == AgeBand.d && answer >= 4 && answer <= 12;
+      return (band == AgeBand.c || band == AgeBand.d) &&
+          answer >= 4 &&
+          answer <= 12;
+    }
+    if (text.startsWith('mul=')) {
+      return (band == AgeBand.c || band == AgeBand.d) &&
+          answer >= 4 &&
+          answer <= 25;
+    }
+    if (text.startsWith('div=')) {
+      return (band == AgeBand.c || band == AgeBand.d) &&
+          answer >= 2 &&
+          answer <= 6;
     }
     return false;
   }
@@ -460,4 +536,14 @@ class MathsGenerator {
   }
 }
 
-enum _MathsMode { count, bigger, numeral, add, subtract, missing, groups }
+enum _MathsMode {
+  count,
+  bigger,
+  numeral,
+  add,
+  subtract,
+  missing,
+  groups,
+  multiply,
+  divide,
+}

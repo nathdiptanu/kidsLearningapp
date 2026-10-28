@@ -72,6 +72,7 @@ ChoiceVisual _visual(String label) {
 }
 
 const _bandA = <KnowledgeFact>[
+  ...indiaChildFacts,
   KnowledgeFact('Which animal says woof?', 'Dog', [
     'Cat',
     'Bird',
@@ -260,6 +261,7 @@ const _bandB = <KnowledgeFact>[
     'Cats',
   ], 'They live in a hive.'),
   KnowledgeFact('A pair is how many?', '2', ['9', '7'], 'Like two shoes.'),
+  ...indiaChildFacts,
 ];
 
 const _bandC = <KnowledgeFact>[
@@ -357,6 +359,7 @@ const _bandC = <KnowledgeFact>[
     'Shark',
     'Lizard',
   ], 'It has feathers.'),
+  ...indiaChildFacts,
 ];
 
 const _bandD = <KnowledgeFact>[
@@ -460,4 +463,58 @@ const _bandD = <KnowledgeFact>[
     'June',
     'January',
   ], 'Say the months in order.'),
+  ...indiaChildFacts,
+];
+
+const indiaChildFacts = <KnowledgeFact>[
+  KnowledgeFact('India is in which continent?', 'Asia', ['Europe', 'Africa'], 'Look at a world map.'),
+  KnowledgeFact('The capital of India is', 'New Delhi', ['Mumbai', 'Jaipur'], 'It is in Delhi.'),
+  KnowledgeFact('Which ocean is south of India?', 'Indian Ocean', ['Arctic Ocean', 'Pacific Ocean'], 'South of the peninsula.'),
+  KnowledgeFact('The Ganga is a', 'River', ['Desert', 'Mountain'], 'It flows across the plains.'),
+  KnowledgeFact('The Himalaya are', 'Mountains', ['Islands', 'Deserts'], 'They stand in the north.'),
+  KnowledgeFact('Mumbai is beside the', 'Arabian Sea', ['Bay of Bengal', 'Ganga'], 'West coast.'),
+  KnowledgeFact('Chennai is beside the', 'Bay of Bengal', ['Arabian Sea', 'Thar Desert'], 'East coast.'),
+  KnowledgeFact('The Thar is a', 'Desert', ['River', 'Lake'], 'It is in the west.'),
+  KnowledgeFact('Which city has the Taj Mahal?', 'Agra', ['Mumbai', 'Chennai'], 'In Uttar Pradesh.'),
+  KnowledgeFact('Ashoka is linked with', 'Sanchi Stupa', ['Red Fort', 'Shore Temple'], 'A Buddhist monument.'),
+  KnowledgeFact('Konark temple honours the', 'Sun', ['Moon', 'Wind'], 'It looks like a stone chariot.'),
+  KnowledgeFact('Chilika is a', 'Lake', ['Mountain', 'Desert'], 'A lagoon in Odisha.'),
+  KnowledgeFact('Bhakra Nangal is a', 'Dam', ['Temple', 'Desert'], 'It stores river water.'),
+  KnowledgeFact('Bengaluru is the capital of', 'Karnataka', ['Goa', 'Punjab'], 'A southern state.'),
+  KnowledgeFact('Punjabi is mainly spoken in', 'Punjab', ['Kerala', 'Nagaland'], 'Northwest India.'),
+  KnowledgeFact('Onam is a festival of', 'Kerala', ['Rajasthan', 'Bihar'], 'A harvest festival.'),
+  KnowledgeFact('Durga Puja is famous in', 'West Bengal', ['Goa', 'Ladakh'], 'An autumn festival.'),
+  KnowledgeFact('Lakshadweep is in the', 'Arabian Sea', ['Bay of Bengal', 'Ganga'], 'Coral islands.'),
+  KnowledgeFact('The Andaman Islands are in the', 'Bay of Bengal', ['Arabian Sea', 'Thar'], 'East of the mainland.'),
+  KnowledgeFact('The Deccan is a', 'Plateau', ['Ocean', 'Island'], 'Southern high land.'),
+  KnowledgeFact('The Western Ghats are', 'Hills', ['Rivers', 'Deserts'], 'Along the west coast.'),
+  KnowledgeFact('Srinagar is a capital of', 'Jammu and Kashmir', ['Goa', 'Sikkim'], 'A seasonal capital.'),
+  KnowledgeFact('Jaipur is the capital of', 'Rajasthan', ['Assam', 'Goa'], 'The Pink City.'),
+  KnowledgeFact('The Brahmaputra flows in', 'Assam', ['Goa', 'Kerala'], 'A wide river.'),
+  KnowledgeFact('Hirakud dam is in', 'Odisha', ['Punjab', 'Goa'], 'On the Mahanadi.'),
+  KnowledgeFact('A metro city is a', 'Very large city', ['Tiny village', 'River'], 'Many people live there.'),
+  KnowledgeFact('New Delhi is inside', 'Delhi', ['Goa', 'Sikkim'], 'The national capital territory.'),
+  KnowledgeFact('Tamil is mainly spoken in', 'Tamil Nadu', ['Punjab', 'Assam'], 'A southern state.'),
+  KnowledgeFact('The Yamuna flows past', 'Agra', ['Kochi', 'Shillong'], 'Then it joins the Ganga.'),
+  KnowledgeFact('Sundarbans are', 'Mangrove forests', ['Snow peaks', 'Deserts'], 'Where river meets sea.'),
+  KnowledgeFact('Pongal is celebrated in', 'Tamil Nadu', ['Ladakh', 'Punjab'], 'A harvest festival.'),
+  KnowledgeFact('Ganesh Chaturthi is famous in', 'Maharashtra', ['Meghalaya', 'Sikkim'], 'A festival in late monsoon.'),
+  KnowledgeFact('Dal Lake is in', 'Srinagar', ['Mumbai', 'Chennai'], 'Houseboats float there.'),
+  KnowledgeFact('The Godavari is a', 'River', ['Hill', 'City'], 'It is long in the peninsula.'),
+  KnowledgeFact('Leh is a capital in', 'Ladakh', ['Goa', 'Kerala'], 'A high cold desert.'),
+  KnowledgeFact('A capital is', 'An important government city', ['A kind of fruit', 'A dance'], 'Offices work there.'),
+  KnowledgeFact('India has how many states?', '28', ['8', '50'], 'Plus 8 union territories.'),
+  KnowledgeFact('A union territory is', 'A special part of India', ['Another country', 'A river'], 'Delhi is one example.'),
+  KnowledgeFact('The Indian Ocean is', 'South of India', ['North of India', 'Inside a lake'], 'Look at the bottom of the map.'),
+  KnowledgeFact('A dam helps', 'Store water', ['Make deserts', 'Hide stars'], 'Farms and lights can use it.'),
+  KnowledgeFact('A lake is', 'Water surrounded by land', ['A mountain', 'A language'], 'Some lakes are salty.'),
+  KnowledgeFact('A festival is', 'A special shared celebration', ['A kind of dam', 'A desert'], 'Families cook and gather.'),
+  KnowledgeFact('A language is', 'How people speak and write', ['A river only', 'A mountain'], 'Each state has main languages.'),
+  KnowledgeFact('Culture includes', 'Festivals, food and stories', ['Only numbers', 'Only roads'], 'It is how people live together.'),
+  KnowledgeFact('A monument can teach', 'History and craft', ['How to fly', 'Ocean waves only'], 'We look with respect.'),
+  KnowledgeFact('The Red Fort is in', 'Delhi', ['Goa', 'Pune'], 'A sandstone palace-fort.'),
+  KnowledgeFact('Qutb Minar is a', 'Tall tower', ['River dam', 'Desert'], 'It stands in Delhi.'),
+  KnowledgeFact('Shore Temple is beside the', 'Sea', ['Desert', 'Snow'], 'Mahabalipuram, Tamil Nadu.'),
+  KnowledgeFact('Mumbai is a', 'Port city', ['Hill village', 'Desert camp'], 'Ships use its harbour.'),
+  KnowledgeFact('Kolkata is in', 'West Bengal', ['Gujarat', 'Punjab'], 'An eastern metro city.'),
 ];

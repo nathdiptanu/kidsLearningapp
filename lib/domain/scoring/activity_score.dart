@@ -44,7 +44,9 @@ RoundScore scoreRound({
       wrong: wrong,
       hints: hints,
     ),
-    GameCategory.findDifference || GameCategory.findObjects => _banded(
+    GameCategory.findDifference ||
+    GameCategory.findObjects ||
+    GameCategory.connectDots => _banded(
       clean: 12,
       retry: 8,
       hinted: 5,

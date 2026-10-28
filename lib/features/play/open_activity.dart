@@ -15,6 +15,7 @@ import '../lessons/lesson_activity_screen.dart';
 import 'activity_access.dart';
 import 'activity_screen.dart';
 import 'difference_screen.dart';
+import 'connect_dots_screen.dart';
 import 'find_objects_screen.dart';
 import 'maze_screen.dart';
 import 'tic_tac_toe_screen.dart';
@@ -38,7 +39,7 @@ void openActivity(
       .push(
         MaterialPageRoute<void>(
           builder: (context) => decision.access == LevelAccess.locked
-              ? const LockedActivityScreen()
+              ? LockedActivityScreen(sequential: decision.sequential)
               : screenFor(decision.activity, journeyDate: journeyDate),
         ),
       )
@@ -100,6 +101,10 @@ Widget screenFor(ActivityDefinition activity, {String? journeyDate}) {
       journeyDate: journeyDate,
     ),
     GameCategory.findObjects => FindObjectsScreen(
+      activity: activity,
+      journeyDate: journeyDate,
+    ),
+    GameCategory.connectDots => ConnectDotsScreen(
       activity: activity,
       journeyDate: journeyDate,
     ),

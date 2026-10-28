@@ -382,7 +382,9 @@ class LevelCard extends StatelessWidget {
       ),
       LevelAccess.locked => (
         const StatusChip(label: 'Locked', tone: StatusTone.locked),
-        'Locked. Ask a grown-up.',
+        decision.sequential
+            ? 'Locked. Finish the level before this first.'
+            : 'Locked. Ask a grown-up.',
       ),
       LevelAccess.playNew => (
         const StatusChip(label: 'Ready', tone: StatusTone.ready),

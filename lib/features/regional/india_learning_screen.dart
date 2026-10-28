@@ -9,6 +9,7 @@ import '../../domain/models/age_band.dart';
 import '../../domain/models/game_category.dart';
 import '../../domain/games/play/activity_definition.dart';
 import '../../domain/regional/explorer_content.dart';
+import '../../domain/regional/india_general_knowledge.dart';
 import '../../domain/regional/india_learning_content.dart';
 import '../play/save_completion.dart';
 import 'india_interactive_map.dart';
@@ -40,9 +41,14 @@ class _IndiaLearningState extends ConsumerState<IndiaLearningScreen> {
     final questions = indiaQuestions(band);
     const order = [
       IndiaQuestionKind.mapBasics,
+      IndiaQuestionKind.river,
+      IndiaQuestionKind.lake,
+      IndiaQuestionKind.dam,
+      IndiaQuestionKind.city,
       IndiaQuestionKind.neighbour,
       IndiaQuestionKind.locate,
       IndiaQuestionKind.capital,
+      IndiaQuestionKind.culture,
       IndiaQuestionKind.monument,
     ];
     return [
@@ -200,7 +206,7 @@ class _IndiaLearningState extends ConsumerState<IndiaLearningScreen> {
                     setState(() => _selected = name);
                     final p = explorerPlaces.where((p) => p.name == name).first;
                     _hear(
-                      '$name. ${p.fact} ${toddler ? '' : capitalNotes[name] ?? 'Its capital is ${indiaCapitals[name]}.'}',
+                      '$name. ${p.fact} ${toddler ? '' : capitalNotes[name] ?? 'Its capital is ${indiaCapitals[name]}.'} ${cultureBlurb(name)}',
                     );
                   }
                 },
@@ -214,7 +220,7 @@ class _IndiaLearningState extends ConsumerState<IndiaLearningScreen> {
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 child: Text(
-                  '$_selected${toddler ? '' : ' · ${capitalNotes[_selected] ?? 'Capital: ${indiaCapitals[_selected]}'}'}',
+                  '$_selected${toddler ? '' : ' · ${capitalNotes[_selected] ?? 'Capital: ${indiaCapitals[_selected]}'} ${cultureBlurb(_selected!)}'}',
                 ),
               ),
             if (_feedback.isNotEmpty)

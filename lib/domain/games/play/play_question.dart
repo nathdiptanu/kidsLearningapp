@@ -154,6 +154,7 @@ class PlayQuestion {
     required this.strongerHint,
     required this.explanation,
     this.promptVisuals = const [],
+    this.teaching = '',
   });
 
   final String prompt;
@@ -163,6 +164,7 @@ class PlayQuestion {
   final String strongerHint;
   final String explanation;
   final List<ChoiceVisual> promptVisuals;
+  final String teaching;
 
   bool get isValid {
     if (choices.length < 2) {

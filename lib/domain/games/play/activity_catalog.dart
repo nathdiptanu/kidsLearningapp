@@ -4,6 +4,7 @@ import '../../lessons/lesson_catalog.dart';
 import '../../models/age_band.dart';
 import '../../models/game_category.dart';
 import '../find_difference/difference_catalog.dart';
+import '../connect_dots/connect_dots_catalog.dart';
 import '../find_objects/find_objects_catalog.dart';
 import '../knowledge/knowledge_bank.dart';
 import '../matching/matching_generator.dart';
@@ -19,14 +20,15 @@ import '../../regional/india_learning_content.dart';
 /// not part of the five learning-section totals.
 int activitiesInBand(GameCategory category) {
   return switch (category) {
-    GameCategory.maths => 55,
-    GameCategory.vocabulary => 38,
-    GameCategory.knowledge => 25,
-    GameCategory.pattern => 35,
-    GameCategory.maze => 50,
-    GameCategory.matching => 19,
+    GameCategory.maths => 105,
+    GameCategory.vocabulary => 88,
+    GameCategory.knowledge => 75,
+    GameCategory.pattern => 85,
+    GameCategory.maze => 100,
+    GameCategory.matching => 69,
     GameCategory.findDifference => differenceScenes.length,
     GameCategory.findObjects => findObjectScenes.length,
+    GameCategory.connectDots => 50,
     GameCategory.ticTacToe => 5,
     GameCategory.hindi || GameCategory.discoverIndia => 0,
   };
@@ -70,6 +72,7 @@ class ActivityCatalog {
               GameCategory.maze ||
               GameCategory.findDifference ||
               GameCategory.findObjects ||
+              GameCategory.connectDots ||
               GameCategory.knowledge ||
               GameCategory.ticTacToe ||
               GameCategory.hindi ||
@@ -182,6 +185,7 @@ class ActivityCatalog {
       GameCategory.maze ||
       GameCategory.findDifference ||
       GameCategory.findObjects ||
+      GameCategory.connectDots ||
       GameCategory.ticTacToe ||
       GameCategory.hindi ||
       GameCategory.discoverIndia => const [],
@@ -202,6 +206,7 @@ class ActivityCatalog {
         const DifferenceCatalog().sceneFor(variant).title,
       GameCategory.findObjects =>
         const FindObjectsCatalog().sceneFor(variant).title,
+      GameCategory.connectDots => connectDotsTitle(variant),
       GameCategory.knowledge => _knowledgeTitle(band, variant),
       GameCategory.ticTacToe => _ticTitle(variant),
       GameCategory.hindi => 'Hindi',
@@ -232,6 +237,9 @@ class ActivityCatalog {
     if (band == AgeBand.a) {
       return variant.isEven ? 'Match the picture' : 'Find this picture';
     }
+    if (variant >= 38) {
+      return 'Words that build a sentence';
+    }
     return switch (variant % 3) {
       0 => 'Match the picture',
       1 => 'Find this picture',
@@ -240,6 +248,9 @@ class ActivityCatalog {
   }
 
   String _mazeTitle(int variant) {
+    if (variant >= 50) {
+      return 'Garden path ${variant + 1}';
+    }
     if (variant >= 38) {
       return const [
         'The rainbow trail',
@@ -286,19 +297,19 @@ class ActivityCatalog {
       ],
       AgeBand.c => const [
         'Add two numbers',
-        'Add a larger pair',
         'Take away',
-        'Subtract a little',
         'Number pattern',
-        'Finish the numbers',
+        'Times in groups',
+        'Share equally',
+        'Equal groups',
       ],
       AgeBand.d => const [
         'Add in your head',
         'Take away in your head',
         'Equal groups',
-        'Share into groups',
+        'Times tables',
+        'Share equally',
         'Number pattern',
-        'A longer sum',
       ],
     };
     return titles[variant % titles.length];

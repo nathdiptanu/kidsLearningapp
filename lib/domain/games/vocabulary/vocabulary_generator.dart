@@ -37,7 +37,7 @@ const vocabWords = <VocabWord>[
   VocabWord(id: 'cup', label: 'Cup', firstLetter: 'C'),
 ];
 
-enum VocabMode { pictureToWord, wordToPicture, firstLetter }
+enum VocabMode { pictureToWord, wordToPicture, firstLetter, grammar }
 
 class VocabularyGenerator {
   const VocabularyGenerator();
@@ -50,6 +50,9 @@ class VocabularyGenerator {
     required int variant,
     int count = 3,
   }) {
+    if (variant >= 38 && band != AgeBand.a && band != AgeBand.toddler) {
+      return [_grammar(variant, seed)];
+    }
     final mode = _mode(band, variant);
     final choiceCount = band == AgeBand.a || band == AgeBand.b ? 3 : 4;
     return List.generate(count, (index) {
@@ -162,6 +165,29 @@ class VocabularyGenerator {
     );
   }
 
+  PlayQuestion _grammar(int variant, int seed) {
+    final fact = _grammarFacts[variant % _grammarFacts.length];
+    final labels = [fact.$2, fact.$3, fact.$4];
+    final shift = seed.abs() % labels.length;
+    final rotated = [for (var i = 0; i < labels.length; i++) labels[(i + shift) % labels.length]];
+    return PlayQuestion(
+      prompt: fact.$1,
+      choices: [
+        for (var i = 0; i < rotated.length; i++)
+          PlayChoice(
+            id: rotated[i] == fact.$2 ? 'answer' : 'other$i',
+            label: rotated[i],
+            visual: LetterVisual(rotated[i][0]),
+          ),
+      ],
+      correctId: 'answer',
+      firstHint: fact.$5,
+      strongerHint: 'The answer is ${fact.$2}.',
+      explanation: 'grammar=${fact.$2}',
+      teaching: fact.$6,
+    );
+  }
+
   List<VocabWord> _pick(Random random, int count) {
     final copy = List<VocabWord>.of(vocabWords)..shuffle(random);
     return copy.take(count).toList();
@@ -175,3 +201,16 @@ class VocabularyGenerator {
     return labels.length == question.choices.length;
   }
 }
+
+const _grammarFacts = <(String, String, String, String, String, String)>[
+  ('A noun names a person, place or thing. Which word is a noun?', 'Fox', 'Run', 'Quickly', 'A noun is a name.', 'A noun is a naming word. Fox, home and apple are nouns. Run is a doing word.'),
+  ('A verb is a doing word. Which word is a verb?', 'Jump', 'Red', 'Soft', 'A verb shows action.', 'A verb tells what someone does. Jump, eat and sleep are verbs.'),
+  ('An adjective describes. Which word is an adjective?', 'Soft', 'Ball', 'Go', 'It tells more about a thing.', 'An adjective describes a noun. Soft, red and tall tell us more.'),
+  ('A pronoun stands in for a name. Which word is a pronoun?', 'She', 'Riya', 'House', 'It can replace a name.', 'A pronoun can take a name’s place. She, he, we and they are pronouns.'),
+  ('An adverb can tell how. Which word is an adverb?', 'Slowly', 'Cat', 'Blue', 'It often ends with -ly.', 'An adverb can tell how we do something. Slowly and gently are adverbs.'),
+  ('Finish the sentence: The cat ___ on the mat.', 'sits', 'sitsing', 'sitness', 'Choose the doing word that fits.', 'A sentence needs a doing word. “The cat sits on the mat” is a full sentence.'),
+  ('Which word is a noun in “The sun is warm”?', 'sun', 'is', 'warm', 'Find the naming word.', 'Sun is a thing we can name. Warm describes it. Is is a verb.'),
+  ('Which word is a verb in “Birds fly high”?', 'fly', 'Birds', 'high', 'Find the doing word.', 'Fly is what the birds do. High tells how or where.'),
+  ('Make a sentence: pick the describing word for “A ___ flower”.', 'pink', 'run', 'they', 'Describe the flower.', 'Pink is an adjective. It tells us what the flower looks like.'),
+  ('Which pronoun can replace “Aarav and Mina”?', 'They', 'He', 'It', 'More than one person.', 'They stands for more than one person. He is for one boy. It is for a thing.'),
+];

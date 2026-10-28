@@ -287,6 +287,18 @@ const hindiConsonants = [
   'स',
   'ह',
 ];
+/// Words a child can make from a letter. Spoken with device speech.
+const hindiLetterWords = <String, List<HindiPictureWord>>{
+  'अ': [HindiPictureWord('अनार', 'Pomegranate', 'pomegranate')],
+  'आ': [HindiPictureWord('आम', 'Mango', 'mango')],
+  'क': [HindiPictureWord('कमल', 'Lotus', 'lotus'), HindiPictureWord('केला', 'Banana', 'banana'), HindiPictureWord('किताब', 'Book', 'book')],
+  'ग': [HindiPictureWord('घर', 'House', 'house'), HindiPictureWord('गेंद', 'Ball', 'ball')],
+  'प': [HindiPictureWord('पेड़', 'Tree', 'tree')],
+  'फ': [HindiPictureWord('फूल', 'Flower', 'flower')],
+  'म': [HindiPictureWord('मछली', 'Fish', 'fish')],
+  'स': [HindiPictureWord('सेब', 'Apple', 'apple'), HindiPictureWord('सूरज', 'Sun', 'sun')],
+};
+
 const hindiPictureWords = [
   HindiPictureWord('अनार', 'Pomegranate', 'pomegranate'),
   HindiPictureWord('आम', 'Mango', 'mango'),
@@ -369,6 +381,21 @@ ExplorerItem? explorerItemById(String id) {
       detail: 'Listen, then find the same letter.',
       choices: [letters[index], letters[(index + 1) % letters.length]],
       hindi: true,
+    );
+  }
+  if (parts[0] == 'hi' && parts[1] == 'family') {
+    final letter = parts[2];
+    final words = hindiLetterWords[letter];
+    if (words == null || words.isEmpty) {
+      return null;
+    }
+    final word = words.first;
+    return ExplorerItem(
+      title: word.word,
+      detail: 'The letter $letter can begin ${words.map((item) => '${item.word} (${item.meaning})').join(', ')}.',
+      choices: [word.word, word.meaning],
+      hindi: true,
+      picture: word.picture,
     );
   }
   if (parts[0] == 'hi' && parts[1] == 'word') {

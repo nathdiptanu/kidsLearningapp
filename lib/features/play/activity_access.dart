@@ -9,6 +9,7 @@ import '../../core/design_system/widgets/status_chip.dart';
 import '../../domain/games/play/activity_definition.dart';
 import '../../domain/models/game_category.dart';
 import '../../domain/monetization/free_entitlement_policy.dart';
+import '../../domain/monetization/monetization_config.dart';
 import '../../domain/progress/activity_record.dart';
 import '../parent/premium_screen.dart';
 
@@ -17,11 +18,13 @@ class ActivityAccess {
     required this.activity,
     required this.access,
     required this.record,
+    this.sequential = false,
   });
 
   final ActivityDefinition activity;
   final LevelAccess access;
   final ActivityRecord? record;
+  final bool sequential;
 }
 
 int freeCompletedCount(List<ActivityRecord> records, GameCategory category) {
@@ -44,6 +47,18 @@ ActivityRecord? recordFor(List<ActivityRecord> records, String activityId) {
   return null;
 }
 
+bool previousLevelFinished(
+  ActivityDefinition activity,
+  List<ActivityRecord> records,
+) {
+  if (activity.variant <= 0) {
+    return true;
+  }
+  final previousId =
+      '${activity.category.storageKey}:v1:${activity.band.storageKey}:${activity.variant - 1}';
+  return recordFor(records, previousId)?.completed ?? false;
+}
+
 ActivityAccess accessFor({
   required ActivityDefinition activity,
   required List<ActivityRecord> records,
@@ -52,6 +67,16 @@ ActivityAccess accessFor({
 }) {
   final record = recordFor(records, activity.id);
   final completed = record?.completed ?? false;
+  if (!completed &&
+      !previousLevelFinished(activity, records) &&
+      !MonetizationConfig.unlockAllGames) {
+    return ActivityAccess(
+      activity: activity,
+      access: LevelAccess.locked,
+      record: record,
+      sequential: true,
+    );
+  }
   final access = const FreeEntitlementPolicy().decide(
     premiumActive: premiumActive,
     alreadyStarted: !completed && startedActivityIds.contains(activity.id),
@@ -85,7 +110,9 @@ ActivityDefinition? nextOpenActivity({
 }
 
 class LockedActivityScreen extends StatelessWidget {
-  const LockedActivityScreen({super.key});
+  const LockedActivityScreen({this.sequential = false, super.key});
+
+  final bool sequential;
 
   @override
   Widget build(BuildContext context) {
@@ -112,12 +139,16 @@ class LockedActivityScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 12),
                     Text(
-                      'This new activity is locked.',
+                      sequential
+                          ? 'Finish the level before this first.'
+                          : 'This new activity is locked.',
                       style: Theme.of(context).textTheme.headlineMedium,
                     ),
                     const SizedBox(height: SproutSpace.md),
                     Text(
-                      'The free new activities in this game are already finished. You can play again any activity you already finished.',
+                      sequential
+                          ? 'Each game opens one level at a time. Play the earlier level, then come back here.'
+                          : 'The free new activities in this game are already finished. You can play again any activity you already finished.',
                       style: Theme.of(context).textTheme.bodyLarge,
                     ),
                     const SizedBox(height: SproutSpace.sm),
@@ -126,17 +157,19 @@ class LockedActivityScreen extends StatelessWidget {
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                     const SizedBox(height: SproutSpace.lg),
-                    PrimaryKidButton(
-                      label: 'Ask a grown-up',
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute<void>(
-                            builder: (context) => const PremiumScreen(),
-                          ),
-                        );
-                      },
-                    ),
-                    const SizedBox(height: 12),
+                    if (!sequential) ...[
+                      PrimaryKidButton(
+                        label: 'Ask a grown-up',
+                        onPressed: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute<void>(
+                              builder: (context) => const PremiumScreen(),
+                            ),
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 12),
+                    ],
                     SecondaryKidButton(
                       label: 'Back',
                       onPressed: () => Navigator.of(context).pop(),

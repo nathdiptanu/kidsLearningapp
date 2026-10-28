@@ -155,6 +155,7 @@ String categoryLabel(String engine) {
     GameCategory.matching => 'Matching',
     GameCategory.findDifference => 'Spot the difference',
     GameCategory.findObjects => 'Find objects',
+    GameCategory.connectDots => 'Connect the dots',
     GameCategory.knowledge => 'Knowledge',
     GameCategory.ticTacToe => 'Tic-Tac-Toe',
     GameCategory.hindi => 'Hindi',

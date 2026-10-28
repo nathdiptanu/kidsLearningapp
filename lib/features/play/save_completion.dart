@@ -40,6 +40,7 @@ Future<void> saveFinishedActivity(
     GameCategory.maze => MazeGenerator.generatorVersion,
     GameCategory.findDifference => 'find_difference:v1',
     GameCategory.findObjects => FindObjectsCatalog.generatorVersion,
+    GameCategory.connectDots => 'connect_dots:v1',
     GameCategory.knowledge => KnowledgeGenerator.generatorVersion,
     GameCategory.ticTacToe => TicTacToeEngine.generatorVersion,
     GameCategory.hindi => 'hindi:v1',
