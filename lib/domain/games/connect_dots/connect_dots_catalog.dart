@@ -25,7 +25,7 @@ ConnectDotsLevel connectDotsLevel(int variant) {
   }
   final shift = ((variant ~/ _levels.length) % 3) * 0.03;
   return ConnectDotsLevel(
-    title: '${base.title} · path ${variant + 1}',
+    title: '${base.title} · another path',
     teaching: base.teaching,
     dots: [
       for (final dot in base.dots)
@@ -90,5 +90,55 @@ const _levels = <ConnectDotsLevel>[
     title: 'Five-point star',
     teaching: 'Follow 1 to 5 in order. A star is five points. Keep one continuous line.',
     dots: [Offset(0.50, 0.12), Offset(0.80, 0.38), Offset(0.70, 0.82), Offset(0.30, 0.82), Offset(0.20, 0.38)],
+  ),
+  ConnectDotsLevel(
+    title: 'A tall triangle',
+    teaching: 'Start at the top, sweep to one base corner, then the other, then home. One line.',
+    dots: [Offset(0.50, 0.14), Offset(0.82, 0.82), Offset(0.18, 0.82)],
+  ),
+  ConnectDotsLevel(
+    title: 'A square window',
+    teaching: 'Join the four corners around the square. Keep your finger down.',
+    dots: [Offset(0.22, 0.20), Offset(0.78, 0.20), Offset(0.78, 0.80), Offset(0.22, 0.80)],
+  ),
+  ConnectDotsLevel(
+    title: 'A gentle wave',
+    teaching: 'Start on the left. Rise and fall through each star like a small wave.',
+    dots: [Offset(0.14, 0.62), Offset(0.32, 0.28), Offset(0.50, 0.62), Offset(0.68, 0.28), Offset(0.86, 0.62)],
+  ),
+  ConnectDotsLevel(
+    title: 'A mountain path',
+    teaching: 'Climb up, then down, then up again. Do not tap each peak. Draw through them.',
+    dots: [Offset(0.12, 0.78), Offset(0.32, 0.28), Offset(0.50, 0.70), Offset(0.68, 0.22), Offset(0.88, 0.78)],
+  ),
+  ConnectDotsLevel(
+    title: 'A diamond jewel',
+    teaching: 'Start at the top point. Travel around the diamond and finish at the start side.',
+    dots: [Offset(0.50, 0.14), Offset(0.82, 0.50), Offset(0.50, 0.86), Offset(0.18, 0.50)],
+  ),
+  ConnectDotsLevel(
+    title: 'A rainbow arch',
+    teaching: 'Begin low on the left. Arc up through the middle, then down to the right.',
+    dots: [Offset(0.16, 0.78), Offset(0.30, 0.42), Offset(0.50, 0.20), Offset(0.70, 0.42), Offset(0.84, 0.78)],
+  ),
+  ConnectDotsLevel(
+    title: 'A plus of stars',
+    teaching: 'Go top, middle, bottom, then across the arms. Keep one flowing stroke.',
+    dots: [Offset(0.50, 0.14), Offset(0.50, 0.50), Offset(0.50, 0.86), Offset(0.18, 0.50), Offset(0.82, 0.50)],
+  ),
+  ConnectDotsLevel(
+    title: 'A boat outline',
+    teaching: 'Draw the sail point, then the deck, then the hull. One continuous line.',
+    dots: [Offset(0.50, 0.16), Offset(0.50, 0.52), Offset(0.82, 0.52), Offset(0.70, 0.82), Offset(0.30, 0.82), Offset(0.18, 0.52)],
+  ),
+  ConnectDotsLevel(
+    title: 'A flower loop',
+    teaching: 'Visit each petal star in order. Sweep, do not poke each one.',
+    dots: [Offset(0.50, 0.18), Offset(0.78, 0.38), Offset(0.70, 0.72), Offset(0.30, 0.72), Offset(0.22, 0.38)],
+  ),
+  ConnectDotsLevel(
+    title: 'A zigzag trail',
+    teaching: 'Zig left and right down the page. Keep the line moving.',
+    dots: [Offset(0.22, 0.18), Offset(0.78, 0.32), Offset(0.22, 0.50), Offset(0.78, 0.68), Offset(0.22, 0.84)],
   ),
 ];

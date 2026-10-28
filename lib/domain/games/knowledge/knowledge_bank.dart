@@ -265,10 +265,10 @@ const _bandB = <KnowledgeFact>[
 ];
 
 const _bandC = <KnowledgeFact>[
-  KnowledgeFact('The capital of India is', 'New Delhi', [
-    'Mumbai',
-    'Chennai',
-  ], 'It is the capital city.'),
+  KnowledgeFact('New Delhi is the capital city of', 'India', [
+    'Nepal',
+    'Sri Lanka',
+  ], 'Look at the northern plains on the map.'),
   KnowledgeFact('How many months are in a year?', '12', [
     '10',
     '7',
@@ -411,7 +411,7 @@ const _bandD = <KnowledgeFact>[
     '4',
     '9',
   ], 'It has only two factors.'),
-  KnowledgeFact('India is in which continent?', 'Asia', [
+  KnowledgeFact('On which continent is India found?', 'Asia', [
     'Europe',
     'Africa',
   ], 'Look at a world map.'),

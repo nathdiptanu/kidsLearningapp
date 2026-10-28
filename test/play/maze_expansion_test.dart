@@ -5,12 +5,12 @@ import 'package:sproutlab/domain/models/age_band.dart';
 import 'package:sproutlab/domain/models/game_category.dart';
 
 void main() {
-  test('50 solvable mazes per older band with fresh additions and stable IDs', () {
+  test('100 solvable mazes per older band with fresh additions and stable IDs', () {
     const catalog = ActivityCatalog();
     const generator = MazeGenerator();
     for (final band in [AgeBand.a, AgeBand.b, AgeBand.c, AgeBand.d]) {
       final activities = catalog.forBand(GameCategory.maze, band);
-      expect(activities, hasLength(50));
+      expect(activities, hasLength(100));
       final layouts = <String>{};
       for (final activity in activities) {
         expect(activity.id, 'maze:v1:${band.storageKey}:${activity.variant}');
@@ -29,7 +29,7 @@ void main() {
             )
             .join();
         final fresh = layouts.add('${maze.rows}:$walls');
-        if (activity.variant < 38) continue;
+        if (activity.variant < 38 || activity.variant >= 50) continue;
         expect(fresh, true, reason: 'Duplicate maze ${activity.id}');
       }
     }

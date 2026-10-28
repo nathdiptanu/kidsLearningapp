@@ -51,12 +51,14 @@ void main() {
         for (final letter in hindiVowels) 'hi:vowel:$letter',
         for (final letter in hindiConsonants) 'hi:consonant:$letter',
         for (final word in hindiPictureWords) 'hi:word:${word.picture}',
+        for (final letter in hindiLetterWords.keys) 'hi:family:$letter',
         for (var i = 0; i < explorerPlaces.length; i++) 'india:region:$i',
         for (var i = 0; i < explorerNeighbours.length; i++)
           'india:neighbour:$i',
         for (final id in explorerMonuments.keys) 'india:monument:$id',
       ];
-      expect(ids.toSet(), hasLength(107));
+      expect(ids.toSet(), hasLength(ids.length));
+      expect(ids, hasLength(107 + hindiLetterWords.length));
       for (final id in ids) {
         final item = explorerItemById(id)!;
         expect(item.choices.toSet().length, item.choices.length);

@@ -61,6 +61,7 @@ class VocabularyGenerator {
         VocabMode.pictureToWord => _pictureToWord(random, choiceCount),
         VocabMode.wordToPicture => _wordToPicture(random, choiceCount),
         VocabMode.firstLetter => _firstLetter(random, choiceCount),
+        VocabMode.grammar => _grammar(variant, seed + index),
       };
       if (question.isValid && _lettersAreUnique(question, mode)) {
         return question;
@@ -168,16 +169,19 @@ class VocabularyGenerator {
   PlayQuestion _grammar(int variant, int seed) {
     final fact = _grammarFacts[variant % _grammarFacts.length];
     final labels = [fact.$2, fact.$3, fact.$4];
+    final ids = const ['answer', 'other1', 'other2'];
     final shift = seed.abs() % labels.length;
-    final rotated = [for (var i = 0; i < labels.length; i++) labels[(i + shift) % labels.length]];
+    final order = [
+      for (var i = 0; i < labels.length; i++) (i + shift) % labels.length,
+    ];
     return PlayQuestion(
       prompt: fact.$1,
       choices: [
-        for (var i = 0; i < rotated.length; i++)
+        for (final index in order)
           PlayChoice(
-            id: rotated[i] == fact.$2 ? 'answer' : 'other$i',
-            label: rotated[i],
-            visual: LetterVisual(rotated[i][0]),
+            id: ids[index],
+            label: labels[index],
+            visual: LetterVisual(labels[index][0]),
           ),
       ],
       correctId: 'answer',

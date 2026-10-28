@@ -249,7 +249,14 @@ class ActivityCatalog {
 
   String _mazeTitle(int variant) {
     if (variant >= 50) {
-      return 'Garden path ${variant + 1}';
+      return const [
+        'A longer garden path',
+        'Through the flower beds',
+        'Past the quiet pond',
+        'Along the hedge',
+        'A hidden garden corner',
+        'The winding petal trail',
+      ][(variant - 50) % 6];
     }
     if (variant >= 38) {
       return const [

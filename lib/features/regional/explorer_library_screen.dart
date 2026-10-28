@@ -69,7 +69,9 @@ class _ExplorerLibraryState extends ConsumerState<ExplorerLibraryScreen> {
                 'hi:family:${entry.key}',
                 '${entry.key}. ${entry.value.map((word) => '${word.word}, ${word.meaning}').join('. ')}',
                 hindi: true,
-                picture: entry.value.first.picture,
+                picture: entry.value.first.picture.isEmpty
+                    ? null
+                    : entry.value.first.picture,
               ),
             _heading(context, 'Picture words'),
             for (final word in hindiPictureWords)
@@ -225,7 +227,7 @@ class _ExplorerLibraryState extends ConsumerState<ExplorerLibraryScreen> {
       child: SproutCard(
         child: ListTile(
           contentPadding: EdgeInsets.zero,
-          leading: picture != null && hindi
+          leading: picture != null && picture.isNotEmpty && hindi
               ? SizedBox(
                   width: 60,
                   child: Image.asset(
@@ -266,7 +268,7 @@ class _ExplorerLibraryState extends ConsumerState<ExplorerLibraryScreen> {
                                     1) %
                                 hindiPictureWords.length]
                             .word
-                      : 'India Gate',
+                      : 'Taj Mahal',
                 ],
           ),
         ),

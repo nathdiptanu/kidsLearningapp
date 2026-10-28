@@ -8,6 +8,7 @@ import '../models/age_band.dart';
 import '../models/game_category.dart';
 import '../models/readiness.dart';
 import '../monetization/free_entitlement_policy.dart';
+import '../monetization/monetization_config.dart';
 import '../progress/activity_record.dart';
 import 'local_date.dart';
 
@@ -356,7 +357,7 @@ class DailyJourneyPlanner {
               item.completed,
         )
         .length;
-    if (activity.variant > 0) {
+    if (activity.variant > 0 && !MonetizationConfig.unlockAllGames) {
       final previousId =
           '${activity.category.storageKey}:v1:${activity.band.storageKey}:${activity.variant - 1}';
       var previousDone = false;

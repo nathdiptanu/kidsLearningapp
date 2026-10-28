@@ -288,15 +288,52 @@ const hindiConsonants = [
   'ह',
 ];
 /// Words a child can make from a letter. Spoken with device speech.
+/// Pictures are used only when a genuine bundled teaching asset already exists.
 const hindiLetterWords = <String, List<HindiPictureWord>>{
   'अ': [HindiPictureWord('अनार', 'Pomegranate', 'pomegranate')],
   'आ': [HindiPictureWord('आम', 'Mango', 'mango')],
+  'इ': [HindiPictureWord('इमली', 'Tamarind', '')],
+  'ई': [HindiPictureWord('ईख', 'Sugarcane', '')],
+  'उ': [HindiPictureWord('उल्लू', 'Owl', '')],
+  'ऊ': [HindiPictureWord('ऊन', 'Wool', '')],
+  'ऋ': [HindiPictureWord('ऋषि', 'Sage', '')],
+  'ए': [HindiPictureWord('एक', 'One', '')],
+  'ऐ': [HindiPictureWord('ऐनक', 'Spectacles', '')],
+  'ओ': [HindiPictureWord('ओखली', 'Mortar', '')],
+  'औ': [HindiPictureWord('औजार', 'Tool', '')],
   'क': [HindiPictureWord('कमल', 'Lotus', 'lotus'), HindiPictureWord('केला', 'Banana', 'banana'), HindiPictureWord('किताब', 'Book', 'book')],
+  'ख': [HindiPictureWord('खरगोश', 'Rabbit', '')],
   'ग': [HindiPictureWord('घर', 'House', 'house'), HindiPictureWord('गेंद', 'Ball', 'ball')],
+  'घ': [HindiPictureWord('घड़ी', 'Clock', '')],
+  'ङ': [HindiPictureWord('ङ', 'A special nasal sound', '')],
+  'च': [HindiPictureWord('चाँद', 'Moon', '')],
+  'छ': [HindiPictureWord('छतरी', 'Umbrella', '')],
+  'ज': [HindiPictureWord('जल', 'Water', '')],
+  'झ': [HindiPictureWord('झंडा', 'Flag', '')],
+  'ञ': [HindiPictureWord('ञ', 'A special nasal sound', '')],
+  'ट': [HindiPictureWord('टमाटर', 'Tomato', '')],
+  'ठ': [HindiPictureWord('ठंड', 'Cold', '')],
+  'ड': [HindiPictureWord('डिब्बा', 'Box', '')],
+  'ढ': [HindiPictureWord('ढक्कन', 'Lid', '')],
+  'ण': [HindiPictureWord('ण', 'A special retroflex sound', '')],
+  'त': [HindiPictureWord('तितली', 'Butterfly', '')],
+  'थ': [HindiPictureWord('थाली', 'Plate', '')],
+  'द': [HindiPictureWord('दवा', 'Medicine', '')],
+  'ध': [HindiPictureWord('धनुष', 'Bow', '')],
+  'न': [HindiPictureWord('नाक', 'Nose', '')],
   'प': [HindiPictureWord('पेड़', 'Tree', 'tree')],
   'फ': [HindiPictureWord('फूल', 'Flower', 'flower')],
+  'ब': [HindiPictureWord('बकरी', 'Goat', '')],
+  'भ': [HindiPictureWord('भालू', 'Bear', '')],
   'म': [HindiPictureWord('मछली', 'Fish', 'fish')],
+  'य': [HindiPictureWord('योग', 'Yoga', '')],
+  'र': [HindiPictureWord('रोटी', 'Bread', '')],
+  'ल': [HindiPictureWord('लड्डू', 'Sweet', '')],
+  'व': [HindiPictureWord('वन', 'Forest', '')],
+  'श': [HindiPictureWord('शेर', 'Lion', '')],
+  'ष': [HindiPictureWord('षट्कोण', 'Hexagon', '')],
   'स': [HindiPictureWord('सेब', 'Apple', 'apple'), HindiPictureWord('सूरज', 'Sun', 'sun')],
+  'ह': [HindiPictureWord('हाथी', 'Elephant', '')],
 };
 
 const hindiPictureWords = [
@@ -395,7 +432,7 @@ ExplorerItem? explorerItemById(String id) {
       detail: 'The letter $letter can begin ${words.map((item) => '${item.word} (${item.meaning})').join(', ')}.',
       choices: [word.word, word.meaning],
       hindi: true,
-      picture: word.picture,
+      picture: word.picture.isEmpty ? null : word.picture,
     );
   }
   if (parts[0] == 'hi' && parts[1] == 'word') {

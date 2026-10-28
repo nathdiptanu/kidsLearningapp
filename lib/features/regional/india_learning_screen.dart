@@ -297,9 +297,14 @@ class _IndiaLearningState extends ConsumerState<IndiaLearningScreen> {
                     ActionChip(
                       label: Text(switch (kind) {
                         IndiaQuestionKind.mapBasics => 'Meet the map',
+                        IndiaQuestionKind.river => 'Rivers',
+                        IndiaQuestionKind.lake => 'Lakes',
+                        IndiaQuestionKind.dam => 'Dams',
+                        IndiaQuestionKind.city => 'Cities',
                         IndiaQuestionKind.neighbour => 'Neighbours',
                         IndiaQuestionKind.locate => 'Find states',
                         IndiaQuestionKind.capital => 'Capitals',
+                        IndiaQuestionKind.culture => 'Culture',
                         IndiaQuestionKind.monument => 'Monuments',
                       }),
                       onPressed: () {
@@ -328,7 +333,9 @@ class _IndiaLearningState extends ConsumerState<IndiaLearningScreen> {
                 ListTile(
                   title: Text(p.name),
                   subtitle: Text(
-                    toddler ? p.type : '${p.type} · ${indiaCapitals[p.name]}',
+                    toddler
+                        ? p.type
+                        : '${p.type} · ${indiaCapitals[p.name]} ${cultureBlurb(p.name)}',
                   ),
                   onTap: () {
                     if (_saving) {
@@ -346,7 +353,7 @@ class _IndiaLearningState extends ConsumerState<IndiaLearningScreen> {
                       curve: Curves.easeOut,
                     );
                     _hear(
-                      '${p.name}. ${p.fact} ${toddler ? '' : capitalNotes[p.name] ?? 'Its capital is ${indiaCapitals[p.name]}.'}',
+                      '${p.name}. ${p.fact} ${toddler ? '' : capitalNotes[p.name] ?? 'Its capital is ${indiaCapitals[p.name]}.'} ${cultureBlurb(p.name)}',
                     );
                   },
                 ),

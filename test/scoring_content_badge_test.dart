@@ -82,22 +82,26 @@ void main() {
     final ids = manifest.map((entry) => entry.id).toSet();
     expect(ids, hasLength(manifest.length));
     final counts = const LaunchManifest().libraryCountsBySection();
-    expect(counts['maths'], 220);
-    expect(counts['english'], 152);
-    expect(counts['logic'], 340);
-    expect(counts['observation'], 242);
-    expect(counts['knowledge'], 100);
+    expect(counts['maths'], 420);
+    expect(counts['english'], 352);
+    expect(counts['logic'], 740);
+    expect(counts['observation'], 642);
+    expect(counts['knowledge'], 300);
     expect(
       counts.values.fold<int>(0, (sum, value) => sum + value),
-      1054,
+      2454,
     );
     expect(counts.containsKey('tic_tac_toe'), isFalse);
     expect(
       manifest.where((entry) => entry.engine == 'tic_tac_toe'),
       hasLength(20),
     );
+    expect(
+      manifest.where((entry) => entry.engine == 'connect_dots'),
+      hasLength(200),
+    );
     for (final band in AgeBand.values) {
-      expect(knowledgeFactsFor(band), hasLength(25));
+      expect(knowledgeFactsFor(band), hasLength(75));
     }
   });
 
