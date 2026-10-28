@@ -18,10 +18,11 @@ More maths, words, mazes, and India facts for ages 3–7. Levels open one after 
 
 ## How to upload
 
-1. Create a new Production release.
-2. Upload only this file:
+1. On the current **Preview and confirm** page, click **Discard draft release**. Do not click **Proceed anyway**. That empty draft has no bundle, so Play shows 0 devices and “you cannot remove all production APKs”.
+2. Create a new Production release.
+3. Upload only this file:
    `release-output/sproutlab-0.1.9+11-play-release.aab`
-3. Confirm the release lists version code **11**, then Preview and confirm.
+4. Confirm the release lists version code **11** and that phones/tablets are supported again, then Preview and confirm.
 
 `versionCode` 11 is higher than 10, so existing testers and users can upgrade.
 
@@ -31,8 +32,8 @@ More maths, words, mazes, and India facts for ages 3–7. Levels open one after 
 |---|---|
 | File | `release-output/sproutlab-0.1.9+11-play-release.aab` |
 | Version name / code | `0.1.9` / `11` |
-| Size | 130,088,318 bytes (124.1 MB) |
-| SHA-256 | `03C35686B0FF9440767E8512FE8463E4BD66A45949D2564A30A316B5C911EB97` |
+| Size | 130,088,273 bytes (124.1 MB) |
+| SHA-256 | `156D0AF44945F75CC6F9002C5561A259E7A897B2A966D6B5F710D4339F541A21` |
 | Signer | `CN=SproutLab Upload, OU=Android, O=SproutLab, C=IN` |
 | `jarsigner -verify` | `jar verified.` |
 
